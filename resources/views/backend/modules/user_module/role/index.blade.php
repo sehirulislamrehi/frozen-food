@@ -15,7 +15,7 @@
     .permission_block {
         width: 90%;
         border-right: 1px solid #e0d9d9;
-        margin-bottom: -6px;
+        margin-bottom: 0;
     }
     .select2-container {
         z-index: 99999 !important;

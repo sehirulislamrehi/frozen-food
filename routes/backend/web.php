@@ -27,13 +27,11 @@ Route::post('/do-logout', [LogoutController::class, 'do_logout'])->name('do.logo
 
 //backend route group start
 Route::group(['prefix' => 'admindashboard', 'middleware' => 'auth'], function () {
+
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     //order progress
     Route::get('order-progress', [DashboardController::class, 'order_progress'])->name('order.progress');
-
-    //area in zipcode
-    Route::get('zipcode-area', [DashboardController::class, 'zipcode_area'])->name('zipcode.area');
 
     //profile module routes start
     Route::group(['prefix' => 'profile-module'], function () {
@@ -48,44 +46,15 @@ Route::group(['prefix' => 'admindashboard', 'middleware' => 'auth'], function ()
     });
     //user module routes end
 
-    //location module routes start
-    Route::group(['prefix' => 'location-module'], function () {
-        require_once 'location_module/zipcode.php';
-        require_once 'location_module/emirate.php';
-        require_once 'location_module/area.php';
-        require_once 'location_module/zone.php';
+    //log sheet module routes start
+    Route::group(['prefix' => 'log-sheet'], function(){
+        require_once 'log_sheet_module/temperature_log.php';
     });
-    //location module routes end
-
-    //service module routes start
-    Route::group(['prefix' => 'service-module'], function () {
-        require_once 'service_module/duration.php';
-        require_once 'service_module/coupon.php';
-        require_once 'service_module/service.php';
-    });
-    //service module routes end
-
-    //order module routes start
-    Route::group(['prefix' => 'order-module'], function () {
-        require_once 'order_module/all_order.php';
-    });
-    //order module routes end
-
-    //customer module routes start
-    Route::group(['prefix' => 'customer-module'], function () {
-        require_once 'customer_module/customer.php';
-        require_once 'customer_module/message.php';
-        require_once 'customer_module/subscribers.php';
-    });
-    //customer module routes end
+    //log sheet module routes end
 
     //settings module routes start
     Route::group(['prefix' => 'settings-module'], function () {
         require_once 'settings_module/app_info.php';
-        require_once 'settings_module/banner.php';
-        require_once 'settings_module/faq.php';
-        require_once 'settings_module/custom_page.php';
-        require_once 'settings_module/testimonial.php';
     });
     //settings module routes end
 

@@ -52,15 +52,26 @@ class PermissionSedder extends Seeder
                 'id' => 6,
                 'key' => 'settings',
                 'display_name' => 'Setting Module',
-                'module_id' => 2,
+                'module_id' => 50,
             ],
             [
                 'id' => 7,
                 'key' => 'app_info',
                 'display_name' => '-- Software Info',
+                'module_id' => 50,
+            ],
+            [
+                'id' => 8,
+                'key' => 'log_sheets',
+                'display_name' => 'Log sheets',
                 'module_id' => 2,
             ],
-            
+            [
+                'id' => 9,
+                'key' => 'temperature_log',
+                'display_name' => '-- Temperature log',
+                'module_id' => 2,
+            ],
         ]);
     }
 }

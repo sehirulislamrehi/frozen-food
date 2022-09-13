@@ -38,19 +38,32 @@ class SubModuleSeeder extends Seeder
             ],
             //module id 1 end
 
+
             //module id 2 start
+            [
+                'id' => 4,
+                'name' => 'Temperature log',
+                'key' => 'temperature_log',
+                'position' => 1,
+                'route' => 'temperature.log',
+                'module_id' => 2,
+            ],
+            //module id 2 end
+
+
+            //module id 50 start
             [
                 'id' => 3,
                 'name' => 'App Info',
                 'key' => 'app_info',
                 'position' => 1,
                 'route' => 'app.info.all',
-                'module_id' => 2,
+                'module_id' => 50,
             ],
-            //module id 2 end
+            //module id 50 end
         
         ]);
 
-        //last id 18
+        //last id 4
     }
 }
