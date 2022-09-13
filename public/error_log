@@ -1,0 +1,1 @@
+[22-Apr-2022 21:53:39 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 7.4.0". You are running 7.2.34. in /home/sehiruli/laundro-admin.sehirulislamrehi.com/vendor/composer/platform_check.php on line 24
