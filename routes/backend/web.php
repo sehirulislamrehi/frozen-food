@@ -65,7 +65,16 @@ Route::group(['prefix' => 'admindashboard', 'middleware' => 'auth'], function ()
     });
     //settings module routes end
 
+    //system module routes start
+    Route::group(['prefix' => 'system-module'], function(){
+        require_once 'system_module/device.php';
+    });
+    //system module routes end
     
+
+    //common
+    require_once 'common.php';
+
 });
 //backend route group end
 

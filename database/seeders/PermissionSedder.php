@@ -114,6 +114,36 @@ class PermissionSedder extends Seeder
                 'display_name' => '-- Edit Location',
                 'module_id' => 3,
             ],
+            [
+                'id' => 17,
+                'key' => 'system_module',
+                'display_name' => 'System',
+                'module_id' => 4,
+            ],
+            [
+                'id' => 18,
+                'key' => 'device',
+                'display_name' => 'Device',
+                'module_id' => 4,
+            ],
+            [
+                'id' => 19,
+                'key' => 'add_device',
+                'display_name' => '-- Add Device',
+                'module_id' => 4,
+            ],
+            [
+                'id' => 20,
+                'key' => 'edit_device',
+                'display_name' => '-- Edit Device',
+                'module_id' => 4,
+            ],
+            [
+                'id' => 21,
+                'key' => 'delete_device',
+                'display_name' => '-- Delete Device',
+                'module_id' => 4,
+            ],
         ]);
     }
 }

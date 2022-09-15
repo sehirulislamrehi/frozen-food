@@ -16,7 +16,7 @@ class CreateLocationsTable extends Migration
         Schema::create('locations', function (Blueprint $table) {
             $table->id();
 
-            $table->string("name")->unique();
+            $table->string("name");
             $table->enum("type",['Group','Company','Location']);
             $table->unsignedBigInteger("location_id")->nullable();
             $table->boolean("is_active", true)->default(false);

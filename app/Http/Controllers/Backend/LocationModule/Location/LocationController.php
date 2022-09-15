@@ -101,7 +101,7 @@ class LocationController extends Controller
             if( can('add_location') ){
                 $validator = Validator::make($request->all(),[
                     'location_id' => 'required|integer|exists:locations,id',
-                    'name' => 'required|unique:locations,name',
+                    'name' => 'required',
                     'is_active' => 'required|in:0,1',
                 ]);
                 
@@ -167,7 +167,7 @@ class LocationController extends Controller
 
                 $validator = Validator::make($request->all(),[
                     'location_id' => 'required|integer|exists:locations,id',
-                    'name' => 'required|unique:locations,name,'. $id,
+                    'name' => 'required',
                     'is_active' => 'required|in:0,1',
                 ]);
                 

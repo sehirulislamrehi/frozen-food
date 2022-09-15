@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Controllers\Backend;
+
+use App\Http\Controllers\Controller;
+use App\Models\LocationModule\Location;
+use Exception;
+use Illuminate\Http\Request;
+
+class CommonController extends Controller
+{
+    //group_wise_company function start
+    public function group_wise_company(Request $request){
+        try{
+            $companies = Location::where("type","Company")->select("id","name")->where("location_id", $request->group_id)->get();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $companies
+            ], 200);
+        }
+        catch( Exception $e ){
+            return response()->json([
+                'status' => 'error',
+                'data' => $e->getMessage()
+            ], 200);
+        }
+    }
+    //group_wise_company function end
+
+
+    //company_wise_location function start
+    public function company_wise_location(Request $request){
+        try{
+            $locations = Location::where("type","Location")->select("id","name")->where("location_id", $request->company_id)->get();
+            
+            return response()->json([
+                'status' => 'success',
+                'data' => $locations
+            ], 200);
+        }
+        catch( Exception $e ){
+            return response()->json([
+                'status' => 'error',
+                'data' => $e->getMessage()
+            ], 200);
+        }
+    }
+    //company_wise_location function end
+}

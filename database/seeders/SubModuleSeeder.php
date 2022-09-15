@@ -81,9 +81,21 @@ class SubModuleSeeder extends Seeder
                 'module_id' => 50,
             ],
             //module id 50 end
+
+
+            //module id 4 start
+            [
+                'id' => 7,
+                'name' => 'Device',
+                'key' => 'device',
+                'position' => 1,
+                'route' => 'device.all',
+                'module_id' => 4,
+            ],
+            //module id 4 end
         
         ]);
 
-        //last id 6
+        //last id 7
     }
 }
