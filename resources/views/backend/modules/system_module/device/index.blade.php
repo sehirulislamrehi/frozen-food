@@ -3,6 +3,14 @@
 @section('per_page_css')
 <link href="{{ asset('backend/css/datatable/jquery.dataTables.min.css') }}" rel="stylesheet">
 <link href="{{ asset('backend/css/datatable/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<style>
+    .data-indicator ul{
+        padding-left: 15px;
+    }
+    .data-indicator ul li{
+        display: inline;
+    }
+</style>
 @endsection
 
 @section('body-content')
@@ -46,6 +54,30 @@
                                     <td>{{ $device->group->name }}</td>
                                     <td>{{ $device->company->name }}</td>
                                     <td>{{ $device->location->name }}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-{{ $key }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdown-{{ $key }}">
+
+                                                @if( can("edit_device") )
+                                                <a class="dropdown-item" href="#" data-content="{{ route('device.edit.modal', encrypt($device->id)) }}" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                                                    <i class="fas fa-edit"></i>
+                                                    Edit
+                                                </a>
+                                                @endif
+
+                                                @if( can("delete_device") )
+                                                <a class="dropdown-item" href="#" data-content="" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                                                    <i class="fas fa-trash"></i>
+                                                    Delete
+                                                </a>
+                                                @endif
+
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>

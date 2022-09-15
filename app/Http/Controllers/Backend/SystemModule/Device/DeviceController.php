@@ -95,4 +95,83 @@ class DeviceController extends Controller
     }
     //add function end
 
+
+    //edit_modal function start
+    public function edit_modal($id){
+        try{
+            if( can("edit_device") ){
+                $device = Device::where("id", decrypt($id))->with("group","company","location")->first();
+
+                if( $device ){
+                    $groups = Location::where("type","Group")->select("id","name")->get();
+                    return view("backend.modules.system_module.device.modals.edit",compact('device','groups'));
+                }
+                else{
+                    return "No device found";
+                }
+
+                
+            }
+            else{
+                return unauthorized();
+            }
+        }
+        catch( Exception $e ){
+            return $e->getMessage();
+        }
+    }
+    //edit_modal function end
+
+
+    //add function start
+    public function update(Request $request, $id){
+        try{
+            if( can('edit_device') ){
+                $id = decrypt($id);
+
+                $validator = Validator::make($request->all(),[
+                    'device_id' => 'required|unique:devices,device_id,'. $id
+                ]);
+    
+               if( $validator->fails() ){
+                   return response()->json(['errors' => $validator->errors()] ,422);
+               }
+               else{
+
+                    $device = Device::where("id",$id)->first();
+
+                    if( $device ){
+
+                        if( $request->group_id && $request->company_id && $request->location_id ){
+                            if( auth('super_admin')->check() ){
+                                $device->group_id = $request->group_id;
+                                $device->company_id = $request->company_id;
+                                $device->location_id = $request->location_id;
+                            }
+                        }
+                        
+    
+                        $device->device_id = $request->device_id;
+                        
+                        if( $device->save() ){
+                            return response()->json(['success' => 'Device updated'], 200);
+                        }
+                    }
+                    else{
+                        return response()->json(['warning' => 'No device found'], 200);
+                    }
+
+                    
+               }
+            }
+            else{
+                return response()->json(['warning' => unauthorized()],200);
+            }
+        }
+        catch( Exception $e ){
+            return response()->json(['error' => $e->getMessage()],200);
+        }
+    }
+    //add function end
+
 }
