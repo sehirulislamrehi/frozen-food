@@ -43,7 +43,7 @@ function can($can){
 
     //unauthorized text start
     function unauthorized(){
-        return "You are not authorized for this";
+        return "You are not authorized for this request";
     }
     //unauthorized text end
 

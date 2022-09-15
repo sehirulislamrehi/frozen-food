@@ -72,14 +72,17 @@ div.dataTables_wrapper div.dataTables_processing {
     padding-bottom: 50px!important;
     transform: translate(-50%,-50%)
 }
+.chosen-container.chosen-container-single{
+    width: 100%!important;
+}
 .card{
     border-radius: 0!important;
 }
 .card-primary.card-outline {
-    border-top: 3px solid #2586df!important;
+    border-top: 3px solid #ff959a!important;
 }
 .breadcrumb-item a{
-    color: #2586df!important;
+    color: #ff959a!important;
 }
 .has-error .form-control{
     border: 1px solid red;
@@ -88,23 +91,23 @@ div.dataTables_wrapper div.dataTables_processing {
     background-color: #34393e!important;
 }
 .btn-primary {
-    background-color: #2586df!important;
+    background-color: #ff959a!important;
     border-color: #e13325!important;
 }
 .btn-primary:hover{
-    background-color: #2586df!important;
-    border-color: #2586df!important;
+    background-color: #ff959a!important;
+    border-color: #ff959a!important;
 }
 .nav-pills .nav-link.active, .nav-pills .show>.nav-link{
-    background-color: #2586df!important
+    background-color: #ff959a!important
     color: white!important;
 }
 .page-item.active .page-link {
-    background-color: #2586df!important;
-    border-color: #2586df!important;
+    background-color: #ff959a!important;
+    border-color: #ff959a!important;
 }
 .main-footer a{
-    color: #2586df!important;
+    color: #ff959a!important;
 }
 .require-span{
     color: red;

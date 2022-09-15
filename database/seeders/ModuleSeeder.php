@@ -29,6 +29,14 @@ class ModuleSeeder extends Seeder
                 'name' => 'Log Sheets',
                 'key' => 'log_sheets',
                 'icon' => 'fas fa-file',
+                'position' => 3,
+                'route' => null
+            ],
+            [
+                'id' => 3,
+                'name' => 'Location',
+                'key' => 'location_module',
+                'icon' => 'fas fa-map',
                 'position' => 2,
                 'route' => null
             ],

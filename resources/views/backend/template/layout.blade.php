@@ -86,6 +86,7 @@
             <h3>Error</h3>
             <p>{{ session()->get('error') }}</p>
         @endif
+
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>

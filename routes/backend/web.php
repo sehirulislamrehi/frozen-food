@@ -46,6 +46,13 @@ Route::group(['prefix' => 'admindashboard', 'middleware' => 'auth'], function ()
     });
     //user module routes end
 
+    //location module routes start
+    Route::group(['prefix' => 'location-module'], function(){
+        require_once 'location_module/company.php';
+        require_once 'location_module/location.php';
+    });
+    //location module routes end
+
     //log sheet module routes start
     Route::group(['prefix' => 'log-sheet'], function(){
         require_once 'log_sheet_module/temperature_log.php';

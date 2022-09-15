@@ -51,6 +51,26 @@ class SubModuleSeeder extends Seeder
             //module id 2 end
 
 
+            //module id 3 start
+            [
+                'id' => 5,
+                'name' => 'Company',
+                'key' => 'company',
+                'position' => 1,
+                'route' => 'company.all',
+                'module_id' => 3,
+            ],
+            [
+                'id' => 6,
+                'name' => 'Location',
+                'key' => 'location',
+                'position' => 2,
+                'route' => 'location.all',
+                'module_id' => 3,
+            ],
+            //module id 3 end
+
+            
             //module id 50 start
             [
                 'id' => 3,
@@ -64,6 +84,6 @@ class SubModuleSeeder extends Seeder
         
         ]);
 
-        //last id 4
+        //last id 6
     }
 }
