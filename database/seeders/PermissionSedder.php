@@ -162,6 +162,36 @@ class PermissionSedder extends Seeder
                 'display_name' => '-- Edit Roles',
                 'module_id' => 1,
             ],
+            [
+                'id' => 25,
+                'key' => 'production_module',
+                'display_name' => 'Production',
+                'module_id' => 5,
+            ],
+            [
+                'id' => 26,
+                'key' => 'freezer',
+                'display_name' => 'Freezer',
+                'module_id' => 5,
+            ],
+            [
+                'id' => 27,
+                'key' => 'add_freezer',
+                'display_name' => '-- Add Freezer',
+                'module_id' => 5,
+            ],
+            [
+                'id' => 28,
+                'key' => 'edit_freezer',
+                'display_name' => '-- Edit Freezer',
+                'module_id' => 5,
+            ],
+            [
+                'id' => 29,
+                'key' => 'delete_freezer',
+                'display_name' => '-- Delete Freezer',
+                'module_id' => 5,
+            ],
         ]);
     }
 }

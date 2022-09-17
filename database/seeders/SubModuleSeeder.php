@@ -93,9 +93,21 @@ class SubModuleSeeder extends Seeder
                 'module_id' => 4,
             ],
             //module id 4 end
+
+
+            //module id 5 start
+            [
+                'id' => 8,
+                'name' => 'Freezer',
+                'key' => 'freezer',
+                'position' => 1,
+                'route' => 'freezer.all',
+                'module_id' => 5
+            ],
+            //module id 5 end
         
         ]);
 
-        //last id 7
+        //last id 8
     }
 }

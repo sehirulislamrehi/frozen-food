@@ -49,6 +49,14 @@ class ModuleSeeder extends Seeder
                 'route' => null
             ],
             [
+                'id' => 5,
+                'name' => 'Production',
+                'key' => 'production_module',
+                'icon' => 'fab fa-product-hunt',
+                'position' => 4,
+                'route' => null
+            ],
+            [
                 'id' => 50,
                 'name' => 'Settings',
                 'key' => 'settings',
