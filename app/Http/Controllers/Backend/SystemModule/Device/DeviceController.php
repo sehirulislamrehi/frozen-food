@@ -16,7 +16,32 @@ class DeviceController extends Controller
         try{
             if( can("device") ){
 
-                $devices = Device::orderBy("id","desc")->with("group","company","location")->paginate(10);
+                if( auth('super_admin')->check() ){
+                    $devices = Device::orderBy("id","desc")->with("group","company","location")->paginate(10);
+                }
+                else{
+                    $auth = auth('web')->user();
+
+                    if( $auth->company_id && $auth->location_id ){
+                        $devices = Device::orderBy("id","desc")->with("group","company","location")
+                        ->where("group_id",$auth->group_id)
+                        ->where("company_id",$auth->company_id)
+                        ->where("location_id",$auth->location_id)
+                        ->paginate(10);
+                    }
+                    elseif( $auth->company_id ){
+                        $devices = Device::orderBy("id","desc")->with("group","company","location")
+                        ->where("group_id",$auth->group_id)
+                        ->where("company_id",$auth->company_id)
+                        ->paginate(10);
+                    }
+                    else{
+                        $devices = Device::orderBy("id","desc")->with("group","company","location")
+                        ->where("group_id",$auth->group_id)
+                        ->paginate(10);
+                    }
+                }
+                
 
                 return view("backend.modules.system_module.device.index", compact('devices'));
             }
@@ -37,10 +62,30 @@ class DeviceController extends Controller
             if( can("add_device") ){
 
                 if( auth('super_admin')->check() ){
-                    $groups = Location::where("type","Group")->select("id","name")->get();
+                    $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
+                    return view("backend.modules.system_module.device.modals.add",compact('groups'));
                 }
+                else{
+                    $auth = auth('web')->user();
 
-                return view("backend.modules.system_module.device.modals.add",compact('groups'));
+                    if( $auth->company_id == null && $auth->location_id == null ){
+                        $companies = Location::where("type","Company")->select("id","name")->where("location_id", $auth->group_id)->where("is_active", true)
+                        
+                        
+                        
+                        
+                        ->get();
+                        return view("backend.modules.system_module.device.modals.add",compact('companies','auth'));
+                    }
+                    elseif( $auth->location_id == null ){
+                        $locations = Location::where("type","Location")->select("id","name")->where("location_id", $auth->company_id)->get();
+                        return view("backend.modules.system_module.device.modals.add",compact('locations','auth'));
+                    }
+                    else{
+                        return view("backend.modules.system_module.device.modals.add",compact('auth'));
+                    }
+                }
+                
             }
             else{
                 return unauthorized();
@@ -57,12 +102,37 @@ class DeviceController extends Controller
     public function add(Request $request){
         try{
             if( can('add_device') ){
-                $validator = Validator::make($request->all(),[
-                    'group_id' => auth('super_admin')->check() ? 'required|integer|exists:locations,id' : '' ,
-                    'company_id' => auth('super_admin')->check() ? 'required|integer|exists:locations,id' : '' ,
-                    'location_id' => auth('super_admin')->check() ? 'required|integer|exists:locations,id' : '' ,
-                    'device_id' => 'required|unique:devices,device_id'
-                ]);
+
+                if( auth('super_admin')->check() ){
+                    $validator = Validator::make($request->all(),[
+                        'group_id' =>  'required|integer|exists:locations,id',
+                        'company_id' =>  'required|integer|exists:locations,id',
+                        'location_id' =>  'required|integer|exists:locations,id',
+                        'device_id' => 'required|unique:devices,device_id'
+                    ]);
+                }
+                else{
+                    $auth = auth('web')->user();
+
+                    if( $auth->company_id == null && $auth->location_id == null ){
+                        $validator = Validator::make($request->all(),[
+                            'company_id' =>  'required|integer|exists:locations,id',
+                            'location_id' =>  'required|integer|exists:locations,id',
+                            'device_id' => 'required|unique:devices,device_id'
+                        ]);
+                    }
+                    elseif( $auth->location_id == null ){
+                        $validator = Validator::make($request->all(),[
+                            'location_id' =>  'required|integer|exists:locations,id',
+                            'device_id' => 'required|unique:devices,device_id'
+                        ]);
+                    }
+                    else{
+                        $validator = Validator::make($request->all(),[
+                            'device_id' => 'required|unique:devices,device_id'
+                        ]);
+                    }
+                }
                 
     
                if( $validator->fails() ){
@@ -76,6 +146,25 @@ class DeviceController extends Controller
                         $device->group_id = $request->group_id;
                         $device->company_id = $request->company_id;
                         $device->location_id = $request->location_id;
+                    }
+                    else{
+                        $auth = auth('web')->user();
+
+                        if( $auth->company_id == null && $auth->location_id == null ){
+                            $device->group_id = $auth->group_id;
+                            $device->company_id = $request->company_id;
+                            $device->location_id = $request->location_id;
+                        }
+                        elseif( $auth->location_id == null ){
+                            $device->group_id = $auth->group_id;
+                            $device->company_id = $auth->company_id;
+                            $device->location_id = $request->location_id;
+                        }
+                        else{
+                            $device->group_id = $auth->group_id;
+                            $device->company_id = $auth->company_id;
+                            $device->location_id = $auth->location_id;
+                        }
                     }
 
                     $device->device_id = $request->device_id;
@@ -103,13 +192,30 @@ class DeviceController extends Controller
                 $device = Device::where("id", decrypt($id))->with("group","company","location")->first();
 
                 if( $device ){
-                    $groups = Location::where("type","Group")->select("id","name")->get();
-                    return view("backend.modules.system_module.device.modals.edit",compact('device','groups'));
+                    if( auth('super_admin')->check() ){
+                        $groups = Location::where("type","Group")->select("id","name")->get();
+                        return view("backend.modules.system_module.device.modals.edit",compact('groups','device'));
+                    }
+                    else{
+                        $auth = auth('web')->user();
+    
+                        if( $auth->company_id == null && $auth->location_id == null ){
+                            $companies = Location::where("type","Company")->select("id","name")->where("location_id", $auth->group_id)->get();
+                            return view("backend.modules.system_module.device.modals.edit",compact('companies','auth','device'));
+                        }
+                        elseif( $auth->location_id == null ){
+                            $locations = Location::where("type","Location")->select("id","name")->where("location_id", $auth->company_id)->get();
+                            return view("backend.modules.system_module.device.modals.edit",compact('locations','auth','device'));
+                        }
+                        else{
+                            return view("backend.modules.system_module.device.modals.edit",compact('auth','device'));
+                        }
+                    }
+                
                 }
                 else{
                     return "No device found";
                 }
-
                 
             }
             else{
@@ -123,7 +229,7 @@ class DeviceController extends Controller
     //edit_modal function end
 
 
-    //add function start
+    //edit function start
     public function update(Request $request, $id){
         try{
             if( can('edit_device') ){
@@ -142,14 +248,30 @@ class DeviceController extends Controller
 
                     if( $device ){
 
-                        if( $request->group_id && $request->company_id && $request->location_id ){
-                            if( auth('super_admin')->check() ){
+                        if( auth('super_admin')->check() ){
+                            if( $request->group_id && $request->company_id && $request->location_id ){
                                 $device->group_id = $request->group_id;
                                 $device->company_id = $request->company_id;
                                 $device->location_id = $request->location_id;
                             }
                         }
-                        
+                        else{
+                            $auth = auth('web')->user();
+
+                            if( $request->company_id && $request->location_id ){
+                                $device->group_id = $auth->group_id;
+                                $device->company_id = $request->company_id;
+                                $device->location_id = $request->location_id;
+                            }
+                            elseif( $request->location_id ){
+                                $device->group_id = $auth->group_id;
+                                $device->company_id = $auth->company_id;
+                                $device->location_id = $request->location_id;
+                            }
+                            else{
+                                return response()->json(['warning' => 'Please select company or location properly'], 200);
+                            }
+                        }
     
                         $device->device_id = $request->device_id;
                         
@@ -172,6 +294,61 @@ class DeviceController extends Controller
             return response()->json(['error' => $e->getMessage()],200);
         }
     }
-    //add function end
+    //edit function end
+
+
+    //delete_modal function start
+    public function delete_modal($id){
+        try{
+            if( can("delete_device") ){
+                $device = Device::where("id", decrypt($id))->select("id","device_id")->first();
+
+                if( $device ){
+                    return view("backend.modules.system_module.device.modals.delete",compact('device'));
+                }
+                else{
+                    return "No device found";
+                }
+
+                
+            }
+            else{
+                return unauthorized();
+            }
+        }
+        catch( Exception $e ){
+            return $e->getMessage();
+        }
+    }
+    //delete_modal function end
+
+
+    //delete function start
+    public function delete(Request $request, $id){
+        try{
+            if( can('delete_device') ){
+                $id = decrypt($id);
+
+                $device = Device::where("id",$id)->first();
+
+                if( $device ){
+                    if( $device->delete() ){
+                        return response()->json(['success' => 'Device deleted'], 200);
+                    }
+                }
+                else{
+                    return response()->json(['warning' => 'No device found'], 200);
+                }
+
+            }
+            else{
+                return response()->json(['warning' => unauthorized()],200);
+            }
+        }
+        catch( Exception $e ){
+            return response()->json(['error' => $e->getMessage()],200);
+        }
+    }
+    //delete function end
 
 }

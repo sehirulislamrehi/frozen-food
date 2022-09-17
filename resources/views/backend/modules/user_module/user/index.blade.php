@@ -3,6 +3,14 @@
 @section('per_page_css')
 <link href="{{ asset('backend/css/datatable/jquery.dataTables.min.css') }}" rel="stylesheet">
 <link href="{{ asset('backend/css/datatable/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<style>
+    .data-indicator ul{
+        padding-left: 15px;
+    }
+    .data-indicator ul li{
+        display: inline;
+    }
+</style>
 @endsection
 
 @section('body-content')
@@ -31,7 +39,8 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>User</th>
+                                    <th>Image</th>
+                                    <th>Name</th>
                                     <th>Role</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -71,6 +80,10 @@
             columns: [{
                     data: 'id',
                     name: 'id'
+                },
+                {
+                    data: 'image',
+                    name: 'image'
                 },
                 {
                     data: 'name',

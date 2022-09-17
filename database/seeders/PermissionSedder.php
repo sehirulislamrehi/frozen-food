@@ -144,6 +144,24 @@ class PermissionSedder extends Seeder
                 'display_name' => '-- Delete Device',
                 'module_id' => 4,
             ],
+            [
+                'id' => 22,
+                'key' => 'roles',
+                'display_name' => 'Roles',
+                'module_id' => 1,
+            ],
+            [
+                'id' => 23,
+                'key' => 'add_roles',
+                'display_name' => '-- Add Roles',
+                'module_id' => 1,
+            ],
+            [
+                'id' => 24,
+                'key' => 'edit_roles',
+                'display_name' => '-- Edit Roles',
+                'module_id' => 1,
+            ],
         ]);
     }
 }

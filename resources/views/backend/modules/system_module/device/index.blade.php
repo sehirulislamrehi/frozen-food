@@ -69,7 +69,7 @@
                                                 @endif
 
                                                 @if( can("delete_device") )
-                                                <a class="dropdown-item" href="#" data-content="" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                                                <a class="dropdown-item" href="#" data-content="{{ route('device.delete.modal', encrypt($device->id)) }}" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
                                                     <i class="fas fa-trash"></i>
                                                     Delete
                                                 </a>
@@ -81,7 +81,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6">No data found</td>
+                                    <td colspan="6" class="text-center">No data found</td>
                                 </tr>
                                 @endforelse
                             </tbody>

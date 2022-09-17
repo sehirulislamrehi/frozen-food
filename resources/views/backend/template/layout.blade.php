@@ -30,7 +30,7 @@
     <meta name="description" content="Premium Quality and Responsive UI for Dashboard.">
     <meta name="author" content="ThemePixels">
 
-    <title>Admin Panel</title>
+    <title>Frozen Food Software</title>
 
     @include("backend.includes.css")
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\UserModule\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\LocationModule\Location;
 use App\Models\UserModule\BuySell;
 use App\Models\PriceCoverage\Prefix;
 use App\Models\UserModule\Role;
@@ -31,27 +32,47 @@ class UserController extends Controller
     //data start
     public function data(){
         if( can('all_user') ){
+
             if( auth('super_admin')->check() ){
                 $user = User::orderBy('id', 'desc')->select("id","name","email","role_id","phone","is_active","image")->get();
-            }elseif( auth('web')->check() ){
-                $user = User::orderBy('id', 'desc')->where("id","!=",auth('web')->user()->id)->select("id","name","email","role_id","phone","is_active","image")->get();
             }
+            elseif( auth('web')->check() ){
+                $auth = auth('web')->user();
+
+                if( $auth->company_id && $auth->location_id ){
+                    $user = User::orderBy('id', 'desc')->where("id","!=",$auth->id)
+                    ->where("group_id",$auth->group_id)
+                    ->where("company_id",$auth->company_id)
+                    ->where("location_id",$auth->location_id)
+                    ->select("id","name","email","role_id","phone","is_active","image")->get();
+                }
+                elseif( $auth->company_id ){
+                    $user = User::orderBy('id', 'desc')->where("id","!=",$auth->id)
+                    ->where("group_id",$auth->group_id)
+                    ->where("company_id",$auth->company_id)
+                    ->select("id","name","email","role_id","phone","is_active","image")->get();
+                }
+                else{
+                    $user = User::orderBy('id', 'desc')->where("id","!=",$auth->id)
+                    ->where("group_id", $auth->group_id)
+                    ->select("id","name","email","role_id","phone","is_active","image")->get();
+                }
+            }
+
             return DataTables::of($user)
-            ->rawColumns(['action', 'is_active','permission','name','type'])
+            ->rawColumns(['action', 'is_active','permission','name','image','type'])
             ->editColumn('name', function(User $user){
+                return $user->name;
+            })
+            ->editColumn('image', function(User $user){
                 if( $user->image == null ){
                     $src = asset("images/profile/user.png");
                 }
                 else{
                     $src = asset("images/profile/".$user->image);
                 }
-
-                
                 return "
                     <img src='$src' width='50px' style='border-radius: 100%'>
-                    <p> <b>Name :</b> $user->name</p>
-                    <p><b>Email :</b> $user->email</p>
-                    <p><b>Phone :</b> $user->phone</p>
                 ";
             })
             ->editColumn('type', function (User $user) {
@@ -100,7 +121,10 @@ class UserController extends Controller
     //user add modal start
     public function add_modal(){
         if( can('add_user') ){
-            return view("backend.modules.user_module.user.modals.add");
+
+            $groups = Location::where("type","Group")->select("id","name")->get();
+
+            return view("backend.modules.user_module.user.modals.add", compact("groups"));
         }
         else{
             return unauthorized();
@@ -116,6 +140,9 @@ class UserController extends Controller
                 'phone' => 'required|numeric',
                 'role_id' => 'required|numeric',
                 'password' => 'required|confirmed',
+                'group_id' => 'required',
+                'company_id' => 'required',
+                'location_id' => 'required',
             ]);
             
 
@@ -131,8 +158,12 @@ class UserController extends Controller
                     $user->password = Hash::make($request->password);
                     $user->is_active = true;
                     
+                    $user->group_id = $request->group_id;
+                    $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
+                    $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
+                    
                     if( $user->save() ){
-                        return response()->json(['success' => 'New '.$user->role->name.' Created Successfully'], 200);
+                        return response()->json(['success' => 'New user created'], 200);
                     }
 
                 }catch( Exception $e ){
@@ -147,8 +178,10 @@ class UserController extends Controller
     //user edit modal start
     public function edit($id){
         if( can("edit_user") ){
-            $user = User::where("id",$id)->select("name","email","phone","role_id","is_active","id")->first();
-            return view("backend.modules.user_module.user.modals.edit", compact("user"));
+            $user = User::where("id",$id)->select("name","email","phone","role_id","is_active","id","group_id","company_id","location_id")->with("group","company","location")->first();
+            $groups = Location::where("type","Group")->select("id","name")->get();
+
+            return view("backend.modules.user_module.user.modals.edit", compact("user","groups"));
         }
         else{
             return unauthorized();
@@ -172,15 +205,30 @@ class UserController extends Controller
            }else{
                 try{
                     $user = User::find($id);
-                    $user->is_active = $request->is_active;
-                    $user->name = $request->name;
-                    $user->email  = $request->email;
-                    $user->phone = $request->phone;
-                    $user->role_id = $request->role_id;
 
-                    if( $user->save() ){
-                        return response()->json(['success' => $user->name . "'s Account Updated Successfully"], 200);
+                    if( $user ){
+                        $user->is_active = $request->is_active;
+                        $user->name = $request->name;
+                        $user->email  = $request->email;
+                        $user->phone = $request->phone;
+                        $user->role_id = $request->role_id;
+
+                        if( $request->group_id && $request->company_id && $request->location_id ){
+                            if( auth('super_admin')->check() ){
+                                $user->group_id = $request->group_id;
+                                $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
+                                $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
+                            }
+                        }
+    
+                        if( $user->save() ){
+                            return response()->json(['success' => "User Updated"], 200);
+                        }
                     }
+                    else{
+                        return response()->json(['warning' => 'No user found'],200);
+                    }
+                    
                 }catch( Exception $e ){
                     return response()->json(['error' => $e->getMessage()],200);
                 }

@@ -63,10 +63,12 @@
             <div class="col-md-12">
                 <div class="card card-primary card-outline table-responsive">
                     <div class="card-header text-right">
+                        @if( can("add_roles") )
                         <button type="button" data-content="{{ route('role.add.modal') }}" data-target="#largeModal"
                             class="btn btn-outline-dark" data-toggle="modal">
                             Add
                         </button>
+                        @endif
                     </div>
                     <div class="card-body">
 

@@ -35,9 +35,12 @@ class RoleController extends Controller
             })
             ->addColumn('action', function (Role $role) {
                 return '
+                '.( can("edit_roles") ? '
                 <button type="button" data-content="'.route('role.edit',$role->id).'" data-target="#largeModal" class="btn btn-outline-dark" data-toggle="modal">
-                                Edit
+                    Edit
                 </button>
+                ': '') .'
+
                 ';
             })
             ->make(true);
@@ -49,12 +52,17 @@ class RoleController extends Controller
 
     //add modal
     public function add_modal(){
-        return view("backend.modules.user_module.role.modals.add");
+        if( can("add_roles") ){
+            return view("backend.modules.user_module.role.modals.add");
+        }
+        else{
+            return unauthorized();
+        }
     }
 
     //add start
     public function add(Request $request){
-        if( can('roles') ){
+        if( can('add_roles') ){
             
             $validator = Validator::make($request->all(), [
                 'name' => 'required|unique:roles,name',
@@ -84,25 +92,25 @@ class RoleController extends Controller
                 }
             }
         }else{
-            return view("errors.404");
+            return response()->json(['warning' => unauthorized()], 200);
         }
         
     }
 
     //role edit modal
     public function edit($id){
-        if( can('roles') ){
+        if( can('edit_roles') ){
             $role = Role::where("id",$id)->select("name","is_active","id")->first();
             return view("backend.modules.user_module.role.modals.edit", compact('role'));
         }else{
-            return view("errors.404");
+            return unauthorized();
         }
         
     }
 
     //update start
     public function update(Request $request, $id){
-        if( can('roles') ){
+        if( can('edit_roles') ){
             $validator = Validator::make($request->all(), [
                 'name' => 'required|unique:roles,name,'. $id,
             ]);
@@ -131,8 +139,9 @@ class RoleController extends Controller
                     return response()->json(['error' => $e->getMessage()], 200);
                 }
             }
-        }else{
-            return view("errors.404");
+        }
+        else{
+            return response()->json(['warning' => unauthorized()], 200);
         }
     }
 }

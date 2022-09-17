@@ -6,6 +6,20 @@
 </div>
 
 <div class="modal-body">
+
+    <div class="row data-indicator">
+        <ul>
+            <li>
+                <strong>User access :</strong>
+            </li>
+            <li>{{ $user->group->name }}</li>
+            <li>></li>
+            <li>{{ $user->company_id ? $user->company->name : "All" }}</li>
+            <li>></li>
+            <li>{{ $user->location_id ? $user->location->name : "All" }}</li>
+        </ul>
+    </div>
+
     <form class="ajax-form" method="post" action="{{ route('user.update', $user->id) }}">
         @csrf
 
@@ -42,6 +56,37 @@
                 </select>
             </div>
 
+            <!-- select group -->
+            <div class="col-md-6 col-12 form-group">
+                <label>Select Group</label><span class="require-span">*</span>
+                <select name="group_id" class="form-control chosen" onchange="groupChange(this)">
+                    <option value="" disabled selected>Select group</option>
+                    @foreach( $groups as $group )
+                    <option value="{{ $group->id }}">{{ $group->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- select company -->
+            <div class="col-md-6 col-12 form-group select-company">
+                <label>Select company</label><span class="require-span">*</span>
+                <div class="company-block">
+                    <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">
+                        <option value="" selected disabled>Select company</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- select location -->
+            <div class="col-md-6 col-12 form-group select-location">
+                <label>Select location</label><span class="require-span">*</span>
+                <div class="location-block">
+                    <select name="location_id" class="form-control location_id chosen">
+                        <option value="" selected disabled>Select location</option>
+                    </select>
+                </div>
+            </div>
+
             <!-- user status -->
             <div class="col-md-12 col-12 form-group">
                 <label>User Status</label>
@@ -74,4 +119,83 @@
     $(document).ready(function domReady() {
         $(".chosen").chosen();
     });
+</script>
+
+
+<script>
+    function groupChange(e){
+        let group_id = e.value
+        $.ajax({
+            type : "GET",
+            url : "{{ route('group.wise.company') }}",
+            data: {
+                group_id : group_id,
+            },
+            success: function(response){
+                if( response.status == "success" ){
+                    $(".company-block").remove();
+                    $(".select-company").append(`
+                        <div class="company-block">
+                            <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">>
+                                <option value="All">All</option>
+                            </select>
+                        </div>
+                    `);
+
+                    $(".location-block").remove();
+                    $(".select-location").append(`
+                        <div class="location-block">
+                            <select name="location_id" class="form-control location_id chosen">
+                                <option value="All">All</option>
+                            </select>
+                        </div>
+                    `);
+                    
+                    $.each(response.data, function(key, value){
+                        $(".company_id").append(`
+                            <option value="${value.id}">${value.name}</option>
+                        `);
+                    })
+
+                    $(".chosen").chosen();
+                }
+            },
+            error: function(response){
+
+            },
+        })
+    }
+    function companyChange(e){
+        let company_id = e.value
+        $.ajax({
+            type : "GET",
+            url : "{{ route('company.wise.location') }}",
+            data: {
+                company_id : company_id,
+            },
+            success: function(response){
+                if( response.status == "success" ){
+                    $(".location-block").remove();
+                    $(".select-location").append(`
+                        <div class="location-block">
+                            <select name="location_id" class="form-control location_id chosen">
+                                <option value="All">All</option>
+                            </select>
+                        </div>
+                    `);
+                    
+                    $.each(response.data, function(key, value){
+                        $(".location_id").append(`
+                            <option value="${value.id}">${value.name}</option>
+                        `);
+                    })
+
+                    $(".chosen").chosen();
+                }
+            },
+            error: function(response){
+
+            },
+        })
+    }
 </script>

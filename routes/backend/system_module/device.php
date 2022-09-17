@@ -16,6 +16,10 @@ Route::group(['prefix' => 'device'], function(){
     Route::get("edit-modal/{id}",[DeviceController::class,"edit_modal"])->name("device.edit.modal");
     Route::post("edit/{id}",[DeviceController::class,"update"])->name("device.update");
 
+    //delete
+    Route::get("delete-modal/{id}",[DeviceController::class,"delete_modal"])->name("device.delete.modal");
+    Route::post("delete/{id}",[DeviceController::class,"delete"])->name("device.delete");
+
 });
 
 ?>
