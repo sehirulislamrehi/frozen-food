@@ -33,7 +33,28 @@ class LocationController extends Controller
     public function data(){
         if( can('location') ){
             
-            $location = Location::where("type","Location")->select("id","name","location_id","is_active")->with("group")->get();
+            if( auth('super_admin')->check() ){
+                $location = Location::where("type","Location")->select("id","name","location_id","is_active")->with("group")->get();
+            }
+            else{
+                $auth = auth('web')->user();
+
+                if( $auth->company_id == null ){
+                    $ids = Location::where("type","Company")->select("id")->where("location_id", $auth->group_id)->groupBy("id")->get();
+                    $location_id = [];
+
+                    foreach($ids as $id){
+                        array_push($location_id,$id->id);
+                    }
+
+                    $location = Location::where("type","Location")->select("id","name","location_id","is_active")->whereIn("location_id", $location_id)->with("group")->get();
+                }
+                else{
+                    $location = Location::where("type","Location")->select("id","name","location_id","is_active")->where("location_id", $auth->company_id)->with("group")->get();
+                }
+                
+            }
+            
 
             return DataTables::of($location)
             ->rawColumns(['action', 'is_active','location_id'])
@@ -80,7 +101,22 @@ class LocationController extends Controller
     public function add_modal(){
         try{
             if( can("add_location") ){
-                $companies = Location::where("type","Company")->select("id","name")->get();
+
+                if( auth('super_admin')->check() ){
+                    $companies = Location::where("type","Company")->select("id","name")->get();
+                }  
+                else{
+                    $auth = auth('web')->user();
+
+                    if( $auth->company_id ){
+                        $companies = Location::where("type","Company")->select("id","name")->where("id", $auth->company_id)->get();
+                    }
+                    else{
+                        $companies = Location::where("type","Company")->select("id","name")->where("location_id", $auth->group_id)->get();
+                    }
+                    
+                }
+                
 
                 return view("backend.modules.location_module.location.modals.add",compact('companies'));
             }
@@ -140,7 +176,19 @@ class LocationController extends Controller
                 $location = Location::where("id", decrypt($id))->first();
 
                 if( $location ){
-                    $companies = Location::where("type","Company")->select("id","name")->get();
+                    if( auth('super_admin')->check() ){
+                        $companies = Location::where("type","Company")->select("id","name")->get();
+                    }  
+                    else{
+                        $auth = auth('web')->user();
+    
+                        if( $auth->company_id ){
+                            $companies = Location::where("type","Company")->select("id","name")->where("id", $auth->company_id)->get();
+                        }
+                        else{
+                            $companies = Location::where("type","Company")->select("id","name")->where("location_id", $auth->group_id)->get();
+                        }
+                    }
                     return view("backend.modules.location_module.location.modals.edit",compact('location', 'companies'));
                 }
                 else{

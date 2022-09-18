@@ -32,7 +32,20 @@ class CompanyController extends Controller
     public function data(){
         if( can('company') ){
             
-            $company = Location::where("type","Company")->select("id","name","location_id","is_active")->with("group")->get();
+            if( auth('super_admin')->check() ){
+                $company = Location::where("type","Company")->select("id","name","location_id","is_active")->with("group")->get();
+            }
+            else{
+                $auth = auth('web')->user();
+
+                if( $auth->company_id ){
+                    $company = Location::where("type","Company")->select("id","name","location_id","is_active")->where("id", $auth->company_id)->with("group")->get();
+                }
+                else{
+                    $company = Location::where("type","Company")->select("id","name","location_id","is_active")->where("location_id", $auth->group_id)->with("group")->get();
+                }
+                
+            }
 
             return DataTables::of($company)
             ->rawColumns(['action', 'is_active','location_id'])
@@ -79,7 +92,15 @@ class CompanyController extends Controller
     public function add_modal(){
         try{
             if( can("add_company") ){
-                $groups = Location::where("type","Group")->select("id","name")->get();
+
+                if( auth('super_admin')->check() ){
+                    $groups = Location::where("type","Group")->select("id","name")->get();
+                }
+                else{
+                    $auth = auth('web')->user();
+                    $groups = Location::where("type","Group")->where("id",$auth->group_id )->select("id","name")->get();
+                }
+                
 
                 return view("backend.modules.location_module.company.modals.add",compact('groups'));
             }
@@ -139,7 +160,13 @@ class CompanyController extends Controller
                 $company = Location::where("id", decrypt($id))->first();
 
                 if( $company ){
-                    $groups = Location::where("type","Group")->select("id","name")->get();
+                    if( auth('super_admin')->check() ){
+                        $groups = Location::where("type","Group")->select("id","name")->get();
+                    }
+                    else{
+                        $auth = auth('web')->user();
+                        $groups = Location::where("type","Group")->where("id",$auth->group_id )->select("id","name")->get();
+                    }
                     return view("backend.modules.location_module.company.modals.edit",compact('company', 'groups'));
                 }
                 else{

@@ -122,7 +122,14 @@ class UserController extends Controller
     public function add_modal(){
         if( can('add_user') ){
 
-            $groups = Location::where("type","Group")->select("id","name")->get();
+            if( auth('super_admin')->check() ){
+                $groups = Location::where("type","Group")->select("id","name")->get();
+            }
+            else{
+                $auth = auth('web')->user();
+                $groups = Location::where("type","Group")->select("id","name")->where("id", $auth->group_id)->get();
+            }
+           
 
             return view("backend.modules.user_module.user.modals.add", compact("groups"));
         }
@@ -179,7 +186,14 @@ class UserController extends Controller
     public function edit($id){
         if( can("edit_user") ){
             $user = User::where("id",$id)->select("name","email","phone","role_id","is_active","id","group_id","company_id","location_id")->with("group","company","location")->first();
-            $groups = Location::where("type","Group")->select("id","name")->get();
+            
+            if( auth('super_admin')->check() ){
+                $groups = Location::where("type","Group")->select("id","name")->get();
+            }
+            else{
+                $auth = auth('web')->user();
+                $groups = Location::where("type","Group")->select("id","name")->where("id", $auth->group_id)->get();
+            }
 
             return view("backend.modules.user_module.user.modals.edit", compact("user","groups"));
         }
@@ -214,11 +228,11 @@ class UserController extends Controller
                         $user->role_id = $request->role_id;
 
                         if( $request->group_id && $request->company_id && $request->location_id ){
-                            if( auth('super_admin')->check() ){
-                                $user->group_id = $request->group_id;
-                                $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
-                                $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
-                            }
+                            
+                            $user->group_id = $request->group_id;
+                            $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
+                            $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
+                            
                         }
     
                         if( $user->save() ){

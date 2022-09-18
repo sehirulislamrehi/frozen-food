@@ -13,7 +13,7 @@ class LogoutController extends Controller
         if( auth('super_admin')->check() ){
             Auth::guard('super_admin')->logout();
         }elseif( auth('web')->check() ){
-            Auth::logout();
+            Auth::guard('web')->logout();
         }
 
         return redirect()->route('login.show');

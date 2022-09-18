@@ -13,7 +13,22 @@ class CommonController extends Controller
     //group_wise_company function start
     public function group_wise_company(Request $request){
         try{
-            $companies = Location::where("type","Company")->select("id","name")->where("location_id", $request->group_id)->get();
+
+            if( auth('super_admin')->check() ){
+                $companies = Location::where("type","Company")->select("id","name")->where("location_id", $request->group_id)->get();
+            }
+            else{
+                $auth = auth('web')->user();
+                
+                if( $auth->company_id ){
+                    $companies = Location::where("type","Company")->select("id","name")->where("id", $auth->company_id)->get();
+                }
+                else{
+                    $companies = Location::where("type","Company")->select("id","name")->where("location_id", $request->group_id)->get();
+                }
+
+            }
+            
 
             return response()->json([
                 'status' => 'success',
@@ -33,7 +48,22 @@ class CommonController extends Controller
     //company_wise_location function start
     public function company_wise_location(Request $request){
         try{
-            $locations = Location::where("type","Location")->select("id","name")->where("location_id", $request->company_id)->get();
+
+            if( auth('super_admin')->check() ){
+                $locations = Location::where("type","Location")->select("id","name")->where("location_id", $request->company_id)->get();
+            }
+            else{
+                $auth = auth('web')->user();
+                
+                if( $auth->location_id ){
+                    $locations = Location::where("type","Location")->select("id","name")->where("id", $auth->location_id)->get();
+                }
+                else{
+                    $locations = Location::where("type","Location")->select("id","name")->where("location_id", $request->company_id)->get();
+                }
+
+            }
+            
             
             return response()->json([
                 'status' => 'success',
