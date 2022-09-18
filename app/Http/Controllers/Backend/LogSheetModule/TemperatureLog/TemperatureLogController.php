@@ -32,7 +32,7 @@ class TemperatureLogController extends Controller
     //get_data function start
     public function get_data(Request $request){
         try{
-            if( can("get_data") ){
+            if( can("temperature_log") ){
                 $request->validate([
                     'from_date_time' => 'required',
                     'to_date_time' => 'required',
