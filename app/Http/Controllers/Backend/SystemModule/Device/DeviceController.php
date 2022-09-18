@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\SystemModule\Device;
 
 use App\Http\Controllers\Controller;
 use App\Models\LocationModule\Location;
+use App\Models\ProductionModule\FreezerDetails;
 use App\Models\SystemModule\Device;
 use Exception;
 use Illuminate\Http\Request;
@@ -70,10 +71,6 @@ class DeviceController extends Controller
 
                     if( $auth->company_id == null && $auth->location_id == null ){
                         $companies = Location::where("type","Company")->select("id","name")->where("location_id", $auth->group_id)->where("is_active", true)
-                        
-                        
-                        
-                        
                         ->get();
                         return view("backend.modules.system_module.device.modals.add",compact('companies','auth'));
                     }
@@ -108,7 +105,8 @@ class DeviceController extends Controller
                         'group_id' =>  'required|integer|exists:locations,id',
                         'company_id' =>  'required|integer|exists:locations,id',
                         'location_id' =>  'required|integer|exists:locations,id',
-                        'device_id' => 'required|unique:devices,device_id'
+                        'device_number' => 'required|unique:devices,device_number',
+                        'device_manual_id' => 'required|unique:devices,device_manual_id'
                     ]);
                 }
                 else{
@@ -118,18 +116,21 @@ class DeviceController extends Controller
                         $validator = Validator::make($request->all(),[
                             'company_id' =>  'required|integer|exists:locations,id',
                             'location_id' =>  'required|integer|exists:locations,id',
-                            'device_id' => 'required|unique:devices,device_id'
+                            'device_number' => 'required|unique:devices,device_number',
+                            'device_manual_id' => 'required|unique:devices,device_manual_id'
                         ]);
                     }
                     elseif( $auth->location_id == null ){
                         $validator = Validator::make($request->all(),[
                             'location_id' =>  'required|integer|exists:locations,id',
-                            'device_id' => 'required|unique:devices,device_id'
+                            'device_number' => 'required|unique:devices,device_number',
+                            'device_manual_id' => 'required|unique:devices,device_manual_id'
                         ]);
                     }
                     else{
                         $validator = Validator::make($request->all(),[
-                            'device_id' => 'required|unique:devices,device_id'
+                            'device_number' => 'required|unique:devices,device_number',
+                            'device_manual_id' => 'required|unique:devices,device_manual_id'
                         ]);
                     }
                 }
@@ -167,7 +168,8 @@ class DeviceController extends Controller
                         }
                     }
 
-                    $device->device_id = $request->device_id;
+                    $device->device_number = $request->device_number;
+                    $device->device_manual_id = $request->device_manual_id;
                     
                     if( $device->save() ){
                         return response()->json(['success' => 'New device created'], 200);
@@ -236,7 +238,8 @@ class DeviceController extends Controller
                 $id = decrypt($id);
 
                 $validator = Validator::make($request->all(),[
-                    'device_id' => 'required|unique:devices,device_id,'. $id
+                    'device_number' => 'required|unique:devices,device_number,'. $id,
+                    'device_manual_id' => 'required|unique:devices,device_manual_id,'. $id
                 ]);
     
                if( $validator->fails() ){
@@ -268,14 +271,21 @@ class DeviceController extends Controller
                                 $device->company_id = $auth->company_id;
                                 $device->location_id = $request->location_id;
                             }
-                            else{
-                                return response()->json(['warning' => 'Please select company or location properly'], 200);
-                            }
                         }
     
-                        $device->device_id = $request->device_id;
+                        $device->device_number = $request->device_number;
+                        $device->device_manual_id = $request->device_manual_id;
                         
                         if( $device->save() ){
+
+                            $freezer_details = FreezerDetails::where("device_id", $device->id)->first();
+
+                            if( $freezer_details ){
+                                $freezer_details->device_manual_id = $device->device_manual_id;
+                                $freezer_details->save();
+                            }
+                            
+
                             return response()->json(['success' => 'Device updated'], 200);
                         }
                     }
@@ -301,7 +311,7 @@ class DeviceController extends Controller
     public function delete_modal($id){
         try{
             if( can("delete_device") ){
-                $device = Device::where("id", decrypt($id))->select("id","device_id")->first();
+                $device = Device::where("id", decrypt($id))->select("id","device_number")->first();
 
                 if( $device ){
                     return view("backend.modules.system_module.device.modals.delete",compact('device'));

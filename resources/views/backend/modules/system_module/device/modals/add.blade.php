@@ -19,10 +19,16 @@
             @endif
 
 
-            <!-- Device id -->
+            <!-- Device number -->
             <div class="col-md-12 col-12 form-group">
-                <label>Device id</label><span class="require-span">*</span>
-                <input type="text" name="device_id" class="form-control">                
+                <label>Device number</label><span class="require-span">*</span>
+                <input type="text" name="device_number" class="form-control">                
+            </div>
+
+            <!-- Device manual id -->
+            <div class="col-md-12 col-12 form-group">
+                <label>Device manual id</label><span class="require-span">*</span>
+                <input type="text" name="device_manual_id" class="form-control">                
             </div>
 
             <div class="col-md-12 form-group text-right">

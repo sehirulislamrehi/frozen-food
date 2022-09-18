@@ -16,7 +16,8 @@ class CreateDevicesTable extends Migration
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
             
-            $table->integer("device_id")->unique();
+            $table->integer("device_number")->unique();
+            $table->integer("device_manual_id")->unique();
             $table->unsignedBigInteger("group_id");
             $table->unsignedBigInteger("company_id");
             $table->unsignedBigInteger("location_id");

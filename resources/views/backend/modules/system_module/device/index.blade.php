@@ -39,7 +39,7 @@
                             <thead>
                                 <tr>
                                     <th>S.ID</th>
-                                    <th>Device ID</th>
+                                    <th>Device number</th>
                                     <th>Group</th>
                                     <th>Company</th>
                                     <th>Location</th>
@@ -50,7 +50,7 @@
                                 @forelse( $devices as $key => $device )
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $device->device_id }}</td>
+                                    <td>{{ $device->device_number }}</td>
                                     <td>{{ $device->group->name }}</td>
                                     <td>{{ $device->company->name }}</td>
                                     <td>{{ $device->location->name }}</td>

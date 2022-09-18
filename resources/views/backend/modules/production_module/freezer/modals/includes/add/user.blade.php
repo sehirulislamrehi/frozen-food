@@ -1,6 +1,7 @@
 
 @if( $auth->company_id == null && $auth->location_id == null )
 
+
 <div class="col-md-12 data-indicator">
     <ul>
         <li>{{ $auth->group->name }}</li>
@@ -44,7 +45,7 @@
 <div class="col-md-12 col-12 form-group select-location">
     <label>Select location</label><span class="require-span">*</span>
     <div class="location-block">
-        <select name="location_id" class="form-control location_id chosen">
+        <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
             <option value="" selected disabled>Select location</option>
             @foreach( $locations as $location )
             <option value="{{ $location->id }}">{{ $location->name }}</option>

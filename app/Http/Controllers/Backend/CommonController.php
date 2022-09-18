@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\LocationModule\Location;
+use App\Models\SystemModule\Device;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -47,4 +48,25 @@ class CommonController extends Controller
         }
     }
     //company_wise_location function end
+
+
+    //location_wise_device function start
+    public function location_wise_device(Request $request){
+        try{
+            
+            $device = Device::where("location_id",$request->location_id)->select("id","device_number")->get();
+            
+            return response()->json([
+                'status' => 'success',
+                'data' => $device
+            ], 200);
+        }
+        catch( Exception $e ){
+            return response()->json([
+                'status' => 'error',
+                'data' => $e->getMessage()
+            ], 200);
+        }
+    }
+    //location_wise_device function end
 }

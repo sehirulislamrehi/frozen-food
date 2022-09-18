@@ -4,10 +4,11 @@
 <link href="{{ asset('backend/css/datatable/jquery.dataTables.min.css') }}" rel="stylesheet">
 <link href="{{ asset('backend/css/datatable/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <style>
-    .data-indicator ul{
+    .data-indicator ul {
         padding-left: 15px;
     }
-    .data-indicator ul li{
+
+    .data-indicator ul li {
         display: inline;
     }
 </style>
@@ -29,7 +30,7 @@
                 <div class="card card-primary card-outline table-responsive">
                     <div class="card-header text-right">
                         @if( can('add_freezer') )
-                        <button type="button" data-content="{{ route('device.add.modal') }}" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                        <button type="button" data-content="{{ route('freezer.add.modal') }}" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
                             Add
                         </button>
                         @endif
@@ -39,7 +40,7 @@
                             <thead>
                                 <tr>
                                     <th>S.ID</th>
-                                    <th>Device ID</th>
+                                    <th>Freezer</th>
                                     <th>Group</th>
                                     <th>Company</th>
                                     <th>Location</th>
@@ -47,9 +48,44 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @forelse( $freezers as $key => $freezer)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $freezer->name }}</td>
+                                    <td>{{ $freezer->group->name }}</td>
+                                    <td>{{ $freezer->company->name }}</td>
+                                    <td>{{ $freezer->location->name }}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-{{ $key }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdown-{{ $key }}">
+
+                                                @if( can("edit_freezer") )
+                                                <a class="dropdown-item" href="#" data-content="{{ route('freezer.edit.modal', encrypt($freezer->id)) }}" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                                                    <i class="fas fa-edit"></i>
+                                                    Edit
+                                                </a>
+                                                @endif
+
+                                                @if( can("delete_freezer") )
+                                                <a class="dropdown-item" href="#" data-content="{{ route('freezer.delete.modal', encrypt($freezer->id)) }}" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                                                    <i class="fas fa-trash"></i>
+                                                    Delete
+                                                </a>
+                                                @endif
+
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                @empty
                                 <tr>
                                     <td colspan="6" class="text-center">No data found</td>
                                 </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

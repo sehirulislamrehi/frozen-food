@@ -1,48 +1,46 @@
 <div class="modal-header">
-      <h5 class="modal-title" id="exampleModalLabel">{{ $device->device_number }}</h5>
+      <h5 class="modal-title" id="exampleModalLabel">Add New Freezer</h5>
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
            <span aria-hidden="true">&times;</span>
       </button>
  </div>
 
-<div class="modal-body">    
-
-    <div class="row data-indicator">
-        <ul>
-            <li>{{ $device->group->name }}</li>
-            <li>></li>
-            <li>{{ $device->company->name }}</li>
-            <li>></li>
-            <li>{{ $device->location->name }}</li>
-        </ul>
-    </div>
-
-    <form class="ajax-form" method="post" action="{{ route('device.update', encrypt($device->id)) }}">
+<div class="modal-body">
+    <form class="ajax-form" method="post" action="{{ route('freezer.add') }}">
         @csrf
 
         <div class="row">
 
             @if( auth('super_admin')->check() )
-                @include("backend.modules.system_module.device.modals.includes.edit.super_admin")
+                @include("backend.modules.production_module.freezer.modals.includes.add.super_admin")
             @else
-                @include("backend.modules.system_module.device.modals.includes.edit.user")
+                @include("backend.modules.production_module.freezer.modals.includes.add.user")
             @endif
 
-            <!-- Device number -->
+            <!-- Name -->
             <div class="col-md-12 col-12 form-group">
-                <label>Device number</label><span class="require-span">*</span>
-                <input type="text" name="device_number" class="form-control" value="{{ $device->device_number }}">                
+                <label>Name</label><span class="require-span">*</span>
+                <input type="text" name="name" class="form-control">                
             </div>
 
-            <!-- Device manual id -->
-            <div class="col-md-12 col-12 form-group">
-                <label>Device manual id</label><span class="require-span">*</span>
-                <input type="text" name="device_manual_id" class="form-control" value="{{ $device->device_manual_id }}">                
+            <!-- Select Device -->
+            <div class="col-md-12 col-12 form-group select-device">
+                <label>Select Device</label><span class="require-span">*</span>
+                <div class="device-block">
+                    <select name="device_ids[]" multiple class="form-control device_id chosen">
+                        <option value="" selected disabled>Select device</option>
+                        @if(isset($devices))
+                            @foreach( $devices as $device )
+                            <option value="{{ $device->id }}">{{ $device->device_number }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
             </div>
 
             <div class="col-md-12 form-group text-right">
                 <button type="submit" class="btn btn-outline-dark">
-                    Update
+                    Add
                 </button>
             </div>
 
@@ -62,6 +60,7 @@
         $(".chosen").chosen();
     });
 </script>
+
 
 
 <script>
@@ -87,7 +86,7 @@
                     $(".location-block").remove();
                     $(".select-location").append(`
                         <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen">
+                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
                                 <option value="" selected disabled>Select location</option>
                             </select>
                         </div>
@@ -120,7 +119,7 @@
                     $(".location-block").remove();
                     $(".select-location").append(`
                         <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen">
+                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
                                 <option value="" selected disabled>Select location</option>
                             </select>
                         </div>
@@ -140,6 +139,38 @@
             },
         })
     }
+
+    function locationChange(e){
+        let location_id = e.value
+        $.ajax({
+            type : "GET",
+            url : "{{ route('location.wise.device') }}",
+            data: {
+                location_id : location_id,
+            },
+            success: function(response){
+                if( response.status == "success" ){
+                    $(".device-block").remove();
+                    $(".select-device").append(`
+                        <div class="device-block">
+                            <select name="device_ids[]" multiple class="form-control device_id chosen">
+                                <option value="" selected disabled>Select device</option>
+                            </select>
+                        </div>
+                    `);
+
+                    $.each(response.data, function(key, value){
+                        $(".device_id").append(`
+                            <option value="${value.id}">${value.device_number}</option>
+                        `);
+                    })
+
+                    $(".chosen").chosen();
+                }
+            },
+            error: function(response){
+
+            },
+        })
+    }
 </script>
-
-
