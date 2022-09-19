@@ -21,7 +21,7 @@
                 <div class="card card-primary card-outline">
                     <div class="card-body box-profile">
                         <div class="text-center">
-                            <img class="profile-user-img img-fluid img-circle" alt="User profile picture" @if(auth('super_admin')->check())
+                            <img class="profile-user-img img-fluid img-circle" style="width: 20%;" alt="User profile picture" @if(auth('super_admin')->check())
 
                             @if(auth('super_admin')->user()->image == null )
                             src="{{ asset('images/profile/user.png') }}"

@@ -11,7 +11,6 @@ class DashboardController extends Controller
     public function index()
     {
         if( auth('super_admin')->check() || auth('web')->check() ){
-            
             return view('backend.dashboard');
         }
         else{

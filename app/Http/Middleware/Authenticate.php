@@ -21,8 +21,8 @@ class Authenticate
         if (auth('super_admin')->check()) {
             return $next($request);
         } 
-        elseif( auth('web')->check()  ){
-            if(auth('web')->user()->role->is_active == true){
+        elseif( auth('web')->check() ){
+            if( auth('web')->user()->is_active == true && auth('web')->user()->role->is_active == true ){
                 return $next($request);
             }
             else {

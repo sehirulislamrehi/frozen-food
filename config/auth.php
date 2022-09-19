@@ -12,14 +12,11 @@ return [
     |
     */
 
-    // 'defaults' => [
-    //     'guard' => 'web',
-    //     'passwords' => 'users',
-    // ],
     'defaults' => [
-        'guard' => 'api',
-        'passwords' => 'customers',
+        'guard' => 'web',
+        'passwords' => 'users',
     ],
+   
 
     /*
     |--------------------------------------------------------------------------
@@ -52,15 +49,6 @@ return [
             'driver' => 'session',
             'provider' => 'super_admins',
         ],
-        'admin-api' => [
-            'driver' => 'session',
-            'provider' => 'users',
-            'hash' => false,
-        ],
-        'api' => [
-            'driver' => 'jwt',
-            'provider' => 'customers',
-        ],
     ],
 
     /*
@@ -88,10 +76,6 @@ return [
         'super_admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\UserModule\SuperAdmin::class,
-        ],
-        'customers' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\CustomerModule\Customer::class,
         ],
         // 'users' => [
         //     'driver' => 'database',
@@ -123,12 +107,6 @@ return [
         ],
         'super_admins' => [
             'provider' => 'super_admins',
-            'table' => 'password_resets',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-        'customers' => [
-            'provider' => 'customers',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

@@ -41,8 +41,7 @@ class FreezerController extends Controller
                     }
                     else{
                         $freezers = Freezer::orderBy("id","desc")->select("id","name","group_id","company_id","location_id")
-                        ->where("company_id",$auth->company_id)
-                        ->where("location_id",$auth->location_id)
+                        ->where("group_id",$auth->group_id)
                         ->with("group","company","location")->paginate(10);
                     }
                 }
@@ -239,7 +238,6 @@ class FreezerController extends Controller
                     return "No freezer found";
                 }
                 
-
             }
             else{
                 return unauthorized();
@@ -292,7 +290,6 @@ class FreezerController extends Controller
                             }
                             
                         }
-                        
                         
                         $freezer->name = $request->name;
     
@@ -387,4 +384,5 @@ class FreezerController extends Controller
         }
     }
     //delete function end
+
 }
