@@ -19,7 +19,7 @@ class CreateFreezersTable extends Migration
             $table->unsignedBigInteger("group_id");
             $table->unsignedBigInteger("company_id");
             $table->unsignedBigInteger("location_id");
-            $table->string("name")->unique();
+            $table->string("name");
 
             $table->foreign("group_id")->references("id")->on("locations")->onDelete("cascade");
             $table->foreign("company_id")->references("id")->on("locations")->onDelete("cascade");

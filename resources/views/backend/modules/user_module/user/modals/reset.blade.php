@@ -11,16 +11,20 @@
 
         <div class="row">
 
-            <!-- password -->
-            <div class="col-md-6 col-12 form-group">
-                <label>Password</label>
-                <input type="password" class="form-control" name="password">
+            <!-- confirm password -->
+            <div class="col-md-6 col-12 form-group password-box">
+                <i class="fas fa-eye show-password"></i>
+                <i class="fas fa-eye-slash hide-password"></i>
+                <label>Password</label><span class="require-span">*</span>
+                <input type="password" class="form-control" name="password" id="password-field">
             </div>
 
-            <!-- password confirmation -->
-            <div class="col-md-6 col-12 form-group">
-                <label>Password Confirmation</label>
-                <input type="password" class="form-control" name="password_confirmation">
+            <!-- confirm password -->
+            <div class="col-md-6 col-12 form-group password-box">
+                <i class="fas fa-eye show-password"></i>
+                <i class="fas fa-eye-slash hide-password"></i>
+                <label>Confirm Password</label><span class="require-span">*</span>
+                <input type="password" class="form-control" name="password_confirmation" id="password-field">
             </div>
 
             <div class="col-md-12 form-group text-right">
@@ -35,3 +39,21 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 </div>
+
+
+
+<script>
+    $(".show-password").click(function() {
+        let $this = $(this)
+        $this.closest(".password-box").find("#password-field").attr("type", "text")
+        $this.closest(".password-box").find(".show-password").hide()
+        $this.closest(".password-box").find(".hide-password").show()
+    })
+
+    $(".hide-password").click(function() {
+        let $this = $(this)
+        $this.closest(".password-box").find("#password-field").attr("type", "password")
+        $this.closest(".password-box").find(".show-password").show()
+        $this.closest(".password-box").find(".hide-password").hide()
+    })
+</script>

@@ -1,9 +1,9 @@
 <div class="modal-header">
-      <h5 class="modal-title" id="exampleModalLabel">Add New Device</h5>
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-           <span aria-hidden="true">&times;</span>
-      </button>
- </div>
+    <h5 class="modal-title" id="exampleModalLabel">Add New Device</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
 <div class="modal-body">
     <form class="ajax-form" method="post" action="{{ route('device.add') }}">
@@ -13,22 +13,16 @@
 
 
             @if( auth('super_admin')->check() )
-                @include("backend.modules.system_module.device.modals.includes.add.super_admin")
+            @include("backend.modules.system_module.device.modals.includes.add.super_admin")
             @else
-                @include("backend.modules.system_module.device.modals.includes.add.user")
+            @include("backend.modules.system_module.device.modals.includes.add.user")
             @endif
 
 
             <!-- Device number -->
             <div class="col-md-12 col-12 form-group">
                 <label>Device number</label><span class="require-span">*</span>
-                <input type="text" name="device_number" class="form-control">                
-            </div>
-
-            <!-- Device manual id -->
-            <div class="col-md-12 col-12 form-group">
-                <label>Device manual id</label><span class="require-span">*</span>
-                <input type="text" name="device_manual_id" class="form-control">                
+                <input type="text" name="device_number" class="form-control">
             </div>
 
             <div class="col-md-12 form-group text-right">
@@ -41,8 +35,8 @@
     </form>
 </div>
 <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
- </div>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+</div>
 
 
 <link href="{{ asset('backend/css/chosen/choosen.min.css') }}" rel="stylesheet">
@@ -56,16 +50,16 @@
 
 
 <script>
-    function groupChange(e){
+    function groupChange(e) {
         let group_id = e.value
         $.ajax({
-            type : "GET",
-            url : "{{ route('group.wise.company') }}",
+            type: "GET",
+            url: "{{ route('group.wise.company') }}",
             data: {
-                group_id : group_id,
+                group_id: group_id,
             },
-            success: function(response){
-                if( response.status == "success" ){
+            success: function(response) {
+                if (response.status == "success") {
                     $(".company-block").remove();
                     $(".select-company").append(`
                         <div class="company-block">
@@ -83,8 +77,8 @@
                             </select>
                         </div>
                     `);
-                    
-                    $.each(response.data, function(key, value){
+
+                    $.each(response.data, function(key, value) {
                         $(".company_id").append(`
                             <option value="${value.id}">${value.name}</option>
                         `);
@@ -93,21 +87,22 @@
                     $(".chosen").chosen();
                 }
             },
-            error: function(response){
+            error: function(response) {
 
             },
         })
     }
-    function companyChange(e){
+
+    function companyChange(e) {
         let company_id = e.value
         $.ajax({
-            type : "GET",
-            url : "{{ route('company.wise.location') }}",
+            type: "GET",
+            url: "{{ route('company.wise.location') }}",
             data: {
-                company_id : company_id,
+                company_id: company_id,
             },
-            success: function(response){
-                if( response.status == "success" ){
+            success: function(response) {
+                if (response.status == "success") {
                     $(".location-block").remove();
                     $(".select-location").append(`
                         <div class="location-block">
@@ -116,8 +111,8 @@
                             </select>
                         </div>
                     `);
-                    
-                    $.each(response.data, function(key, value){
+
+                    $.each(response.data, function(key, value) {
                         $(".location_id").append(`
                             <option value="${value.id}">${value.name}</option>
                         `);
@@ -126,11 +121,10 @@
                     $(".chosen").chosen();
                 }
             },
-            error: function(response){
+            error: function(response) {
 
             },
         })
     }
 </script>
-
 

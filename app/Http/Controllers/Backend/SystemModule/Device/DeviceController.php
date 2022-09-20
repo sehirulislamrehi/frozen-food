@@ -106,7 +106,6 @@ class DeviceController extends Controller
                         'company_id' =>  'required|integer|exists:locations,id',
                         'location_id' =>  'required|integer|exists:locations,id',
                         'device_number' => 'required|unique:devices,device_number',
-                        'device_manual_id' => 'required|unique:devices,device_manual_id'
                     ]);
                 }
                 else{
@@ -117,20 +116,17 @@ class DeviceController extends Controller
                             'company_id' =>  'required|integer|exists:locations,id',
                             'location_id' =>  'required|integer|exists:locations,id',
                             'device_number' => 'required|unique:devices,device_number',
-                            'device_manual_id' => 'required|unique:devices,device_manual_id'
                         ]);
                     }
                     elseif( $auth->location_id == null ){
                         $validator = Validator::make($request->all(),[
                             'location_id' =>  'required|integer|exists:locations,id',
                             'device_number' => 'required|unique:devices,device_number',
-                            'device_manual_id' => 'required|unique:devices,device_manual_id'
                         ]);
                     }
                     else{
                         $validator = Validator::make($request->all(),[
                             'device_number' => 'required|unique:devices,device_number',
-                            'device_manual_id' => 'required|unique:devices,device_manual_id'
                         ]);
                     }
                 }
@@ -140,7 +136,7 @@ class DeviceController extends Controller
                    return response()->json(['errors' => $validator->errors()] ,422);
                }
                else{
-
+                
                     $device = new Device();
 
                     if( auth('super_admin')->check() ){
@@ -169,10 +165,19 @@ class DeviceController extends Controller
                     }
 
                     $device->device_number = $request->device_number;
-                    $device->device_manual_id = $request->device_manual_id;
+
+                    $id_address = explode(".",$request->ip());
                     
-                    if( $device->save() ){
-                        return response()->json(['success' => 'New device created'], 200);
+                    if( isset($id_address[0]) && isset($id_address[1]) ){
+                        $device_manual_id = $id_address[0] .''. $id_address[1] .''. $request->device_number;
+                        $device->device_manual_id = $device_manual_id;
+                        
+                        if( $device->save() ){
+                            return response()->json(['success' => 'New device created'], 200);
+                        }
+                    }
+                    else{
+                        return response()->json(['warning' => 'Invalid IP address found.'],200);
                     }
                }
             }

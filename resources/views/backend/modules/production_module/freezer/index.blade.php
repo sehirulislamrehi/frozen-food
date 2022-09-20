@@ -87,6 +87,9 @@
                                 </tr>
                                 @endforelse
                             </tbody>
+                            <tfoot>
+                                {{$freezers->links()}}
+                            </tfoot>
                         </table>
                     </div>
                 </div>

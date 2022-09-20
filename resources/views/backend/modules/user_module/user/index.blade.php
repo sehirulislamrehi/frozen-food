@@ -10,6 +10,23 @@
     .data-indicator ul li{
         display: inline;
     }
+    .password-box {
+        position: relative;
+    }
+
+    .password-box .hide-password {
+        display: none;
+    }
+
+    .password-box .fas {
+        position: absolute;
+        top: 60%;
+        right: 30px;
+        z-index: 10;
+        cursor: pointer;
+        color: #000;
+    }
+
 </style>
 @endsection
 
@@ -106,4 +123,6 @@
         });
     });
 </script>
+
+
 @endsection

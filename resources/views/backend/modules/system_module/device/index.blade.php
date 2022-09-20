@@ -87,6 +87,9 @@
                                 </tr>
                                 @endforelse
                             </tbody>
+                            <tfoot>
+                                {{$devices->links()}}
+                            </tfoot>
                         </table>
                     </div>
                 </div>
