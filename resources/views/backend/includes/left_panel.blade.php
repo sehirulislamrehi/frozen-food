@@ -71,6 +71,7 @@
                                    </a>
                                    <ul class="br-menu-sub">
                                         @foreach( $module->sub_module->sortBy('position',false) as $sub_module )
+                                             @if( can($sub_module->key) )
                                              <li class="sub-item">
                                                   <a href="{{ route($sub_module->route) }}" 
                                                   @if(  Route::currentRouteName() == $sub_module->route )
@@ -80,6 +81,7 @@
                                                   @endif
                                                   >{{ $sub_module->name }} </a>
                                              </li>
+                                             @endif
                                         @endforeach
                                    </ul>
                               </li>

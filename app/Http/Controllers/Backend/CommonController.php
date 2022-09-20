@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\LocationModule\Location;
 use App\Models\SystemModule\Device;
+use App\Models\UserModule\Role;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -29,7 +30,6 @@ class CommonController extends Controller
 
             }
             
-
             return response()->json([
                 'status' => 'success',
                 'data' => $companies
@@ -61,9 +61,7 @@ class CommonController extends Controller
                 else{
                     $locations = Location::where("type","Location")->select("id","name")->where("location_id", $request->company_id)->get();
                 }
-
             }
-            
             
             return response()->json([
                 'status' => 'success',
@@ -90,6 +88,7 @@ class CommonController extends Controller
                 'status' => 'success',
                 'data' => $device
             ], 200);
+
         }
         catch( Exception $e ){
             return response()->json([
@@ -99,4 +98,27 @@ class CommonController extends Controller
         }
     }
     //location_wise_device function end
+
+
+    //location_wise_role function start
+    public function location_wise_role(Request $request){
+        try{
+            
+            $role = Role::where("location_id",$request->location_id)->select("id","name")->get();
+            
+            return response()->json([
+                'status' => 'success',
+                'data' => $role
+            ], 200);
+
+        }
+        catch( Exception $e ){
+            return response()->json([
+                'status' => 'error',
+                'data' => $e->getMessage()
+            ], 200);
+        }
+    }
+    //location_wise_role function end
+
 }

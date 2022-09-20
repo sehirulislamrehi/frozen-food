@@ -42,6 +42,7 @@ class TemperatureLogController extends Controller
                 $to = $request->to_date_time;
 
                 $year = date('Y', strtotime($from));
+                
                 $month = date('m', strtotime($from));
                 $table_name = "temperature_" . $year . "_" . $month;
 

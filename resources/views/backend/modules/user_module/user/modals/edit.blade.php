@@ -10,7 +10,7 @@
     <div class="row data-indicator">
         <ul>
             <li>
-                <strong>User access :</strong>
+                <strong>User for :</strong>
             </li>
             <li>{{ $user->group->name }}</li>
             <li>></li>
@@ -40,20 +40,6 @@
             <div class="col-md-6 col-12 form-group">
                 <label for="phone">Phone</label>
                 <input id="phone" type="text" class="form-control" name="phone" value="{{ $user->phone }}">
-            </div>
-
-            <!-- select role -->
-            <div class="col-md-6 col-12 form-group">
-            <label>Please select a user role</label>
-                <select name="role_id" class="form-control chosen">
-                    @foreach( App\Models\UserModule\Role::where("is_active", true)->get() as $role )
-                    <option value="{{ $role->id }}"
-                    @if( $user->role->id == $role->id )
-                    selected
-                    @endif
-                    >{{ $role->name }}</option>
-                    @endforeach
-                </select>
             </div>
 
             <!-- select group -->
@@ -87,6 +73,16 @@
                 </div>
             </div>
 
+            <!-- select role -->
+            <div class="col-md-6 col-12 form-group select-role">
+                <label>Please select a user role</label><span class="require-span">*</span>
+                <div class="role-block">
+                    <select name="role_id" class="form-control role_id chosen">
+                        <option value="" selected disabled>Select role</option>
+                    </select>
+                </div>
+            </div>
+            
             <!-- user status -->
             <div class="col-md-12 col-12 form-group">
                 <label>User Status</label>
@@ -122,6 +118,7 @@
 </script>
 
 
+
 <script>
     function groupChange(e){
         let group_id = e.value
@@ -137,7 +134,7 @@
                     $(".select-company").append(`
                         <div class="company-block">
                             <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">>
-                                <option value="All">All</option>
+                                <option value="" selected disabled>Select company</option>
                             </select>
                         </div>
                     `);
@@ -145,8 +142,8 @@
                     $(".location-block").remove();
                     $(".select-location").append(`
                         <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen">
-                                <option value="All">All</option>
+                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
+                                <option value="" selected disabled>Select location</option>
                             </select>
                         </div>
                     `);
@@ -178,14 +175,47 @@
                     $(".location-block").remove();
                     $(".select-location").append(`
                         <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen">
-                                <option value="All">All</option>
+                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
+                                <option value="" selected disabled>Select location</option>
                             </select>
                         </div>
                     `);
                     
                     $.each(response.data, function(key, value){
                         $(".location_id").append(`
+                            <option value="${value.id}">${value.name}</option>
+                        `);
+                    })
+
+                    $(".chosen").chosen();
+                }
+            },
+            error: function(response){
+
+            },
+        })
+    }
+    function locationChange(e){
+        let location_id = e.value
+        $.ajax({
+            type : "GET",
+            url : "{{ route('location.wise.role') }}",
+            data: {
+                location_id : location_id,
+            },
+            success: function(response){
+                if( response.status == "success" ){
+                    $(".role-block").remove();
+                    $(".select-role").append(`
+                        <div class="role-block">
+                            <select name="role_id" class="form-control role_id chosen">
+                                <option value="" selected disabled>Select role</option>
+                            </select>
+                        </div>
+                    `);
+
+                    $.each(response.data, function(key, value){
+                        $(".role_id").append(`
                             <option value="${value.id}">${value.name}</option>
                         `);
                     })

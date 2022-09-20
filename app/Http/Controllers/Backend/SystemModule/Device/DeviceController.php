@@ -319,7 +319,6 @@ class DeviceController extends Controller
                 else{
                     return "No device found";
                 }
-
                 
             }
             else{

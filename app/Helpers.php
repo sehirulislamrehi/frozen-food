@@ -6,7 +6,7 @@ use App\Models\UserModule\SuperAdmin;
 use App\Models\UserModule\User;
 use App\Models\LocationModule\Location;
 
-function can($can){
+    function can($can){
         if( auth('web')->check() ){
             foreach( auth('web')->user()->role->permission as $permission ){
                 if( $permission->key == $can ){
@@ -16,7 +16,6 @@ function can($can){
             return false;
         }
         return back();
-        
     }
     //check user access permission function end
 

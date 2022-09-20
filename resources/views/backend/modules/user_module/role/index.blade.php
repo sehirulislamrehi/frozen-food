@@ -25,6 +25,12 @@
         column-gap : 0;
         margin: 0 15px;
     }
+    .data-indicator ul{
+        padding-left: 15px;
+    }
+    .data-indicator ul li{
+        display: inline;
+    }
 
     @media ( min-width : 320px ) and ( max-width : 768px ){
         .main-group{
@@ -78,6 +84,9 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Role</th>
+                                    <th>Group</th>
+                                    <th>Company</th>
+                                    <th>Location</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -121,6 +130,18 @@
                 {
                     data: 'name',
                     name: 'name'
+                },
+                {
+                    data: 'group',
+                    name: 'group'
+                },
+                {
+                    data: 'company',
+                    name: 'company'
+                },
+                {
+                    data: 'location',
+                    name: 'location'
                 },
                 {
                     data: 'is_active',
