@@ -124,14 +124,15 @@ class UserController extends Controller
 
             if( auth('super_admin')->check() ){
                 $groups = Location::where("type","Group")->select("id","name")->get();
+                return view("backend.modules.user_module.user.modals.add", compact("groups"));
             }
             else{
                 $auth = auth('web')->user();
-                $groups = Location::where("type","Group")->select("id","name")->where("id", $auth->group_id)->get();
+                $roles = Role::where("location_id",$auth->location_id)->select("id","name")->get();
+                return view("backend.modules.user_module.user.modals.add", compact("auth","roles"));
             }
            
 
-            return view("backend.modules.user_module.user.modals.add", compact("groups"));
         }
         else{
             return unauthorized();
@@ -145,11 +146,11 @@ class UserController extends Controller
                 'name' => 'required',
                 'email' => 'required|unique:users,email,',
                 'phone' => 'required|numeric',
-                'role_id' => 'required|numeric',
+                'role_id' => 'required|integer|exists:roles,id',
                 'password' => 'required|confirmed',
-                'group_id' => 'required',
-                'company_id' => 'required',
-                'location_id' => 'required',
+                'group_id' => auth('super_admin')->check() ? 'required' : '',
+                'company_id' => auth('super_admin')->check() ? 'required' : '',
+                'location_id' => auth('super_admin')->check() ? 'required' : '',
             ]);
             
 
@@ -165,9 +166,18 @@ class UserController extends Controller
                     $user->password = Hash::make($request->password);
                     $user->is_active = true;
                     
-                    $user->group_id = $request->group_id;
-                    $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
-                    $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
+                    if( auth('super_admin')->check() ){
+                        $user->group_id = $request->group_id;
+                        $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
+                        $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
+                    }
+                    else{
+                        $auth = auth('web')->user();
+                        $user->group_id = $auth->group_id;
+                        $user->company_id = $auth->company_id;
+                        $user->location_id = $auth->location_id;
+                    }
+                    
                     
                     if( $user->save() ){
                         return response()->json(['success' => 'New user created'], 200);
@@ -189,13 +199,15 @@ class UserController extends Controller
             
             if( auth('super_admin')->check() ){
                 $groups = Location::where("type","Group")->select("id","name")->get();
+                return view("backend.modules.user_module.user.modals.edit", compact("user","groups"));
             }
             else{
                 $auth = auth('web')->user();
-                $groups = Location::where("type","Group")->select("id","name")->where("id", $auth->group_id)->get();
+                $roles = Role::where("location_id",$auth->location_id)->select("id","name")->get();
+                return view("backend.modules.user_module.user.modals.edit", compact("user","roles","auth"));
             }
 
-            return view("backend.modules.user_module.user.modals.edit", compact("user","groups"));
+            
         }
         else{
             return unauthorized();
@@ -211,7 +223,7 @@ class UserController extends Controller
                 'name' => 'required',
                 'email' => 'required|unique:users,email,'. $id,
                 'phone' => 'required|numeric',
-                'role_id' => 'required|numeric',
+                'role_id' => 'integer',
            ]);
 
            if( $validator->fails() ){
@@ -227,12 +239,18 @@ class UserController extends Controller
                         $user->phone = $request->phone;
                         $user->role_id = $request->role_id;
 
-                        if( $request->group_id && $request->company_id && $request->location_id ){
-                            
-                            $user->group_id = $request->group_id;
-                            $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
-                            $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
-                            
+                        if( auth('super_admin')->check() ){
+                            if( $request->group_id && $request->company_id && $request->location_id ){
+                                $user->group_id = $request->group_id;
+                                $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
+                                $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
+                            }
+                        }
+                        else{
+                            $auth = auth('web')->user();
+                            $user->group_id = $auth->group_id;
+                            $user->company_id = $auth->company_id;
+                            $user->location_id = $auth->location_id;
                         }
     
                         if( $user->save() ){
