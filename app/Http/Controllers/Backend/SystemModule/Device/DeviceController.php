@@ -166,18 +166,11 @@ class DeviceController extends Controller
 
                     $device->device_number = $request->device_number;
 
-                    $id_address = explode(".",$request->ip());
+                    $device_manual_id = '10465' . $request->device_number;
+                    $device->device_manual_id = $device_manual_id;
                     
-                    if( isset($id_address[0]) && isset($id_address[1]) ){
-                        $device_manual_id = $id_address[0] .''. $id_address[1] .''. $request->device_number;
-                        $device->device_manual_id = $device_manual_id;
-                        
-                        if( $device->save() ){
-                            return response()->json(['success' => 'New device created'], 200);
-                        }
-                    }
-                    else{
-                        return response()->json(['warning' => 'Invalid IP address found.'],200);
+                    if( $device->save() ){
+                        return response()->json(['success' => 'New device created'], 200);
                     }
                }
             }

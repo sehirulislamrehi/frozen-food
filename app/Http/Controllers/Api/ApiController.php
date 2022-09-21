@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class ApiController extends Controller
@@ -21,6 +22,17 @@ class ApiController extends Controller
 
             if( Schema::hasTable($table_name) ) {
 
+                $data = [];
+                foreach( $request['data'] as $data ){
+                    array_push($data,[
+                        'temperature' => $data->temperature, 
+                        'date_time' => $data->date_time, 
+                        'device_manual_id' => "10465". $data->device_manual_id,
+                    ]);
+                }
+
+                DB::table($table_name)->insert($data);
+                
             }
             else{
                 Schema::connection('mysql')->create($table_name, function($table)
@@ -30,6 +42,17 @@ class ApiController extends Controller
                     $table->dateTime("date_time");
                     $table->integer("device_manual_id");
                 });
+
+                $data = [];
+                foreach( $request['data'] as $data ){
+                    array_push($data,[
+                        'temperature' => $data->temperature, 
+                        'date_time' => $data->date_time, 
+                        'device_manual_id' => "10465". $data->device_manual_id,
+                    ]);
+                }
+
+                DB::table($table_name)->insert($data);
             }
         }
         catch( Exception $e ){

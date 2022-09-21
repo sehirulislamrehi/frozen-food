@@ -97,6 +97,7 @@ class RoleController extends Controller
     //add start
     public function add(Request $request){
         if( can('add_roles') ){
+
             
             $validator = Validator::make($request->all(), [
                 'group_id' =>  auth('super_admin')->check() ? 'required' : '',
