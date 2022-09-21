@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend\LogSheetModule\TemperatureLog;
 
 use App\Http\Controllers\Controller;
+use App\Models\LocationModule\Location;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -16,7 +17,12 @@ class TemperatureLogController extends Controller
     public function index(){
         try{
             if( can("temperature_log") ){
-                return view("backend.modules.log_sheet_module.temperature_log.index");
+
+                if( auth('super_admin')->check() ){
+                    $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
+                }
+
+                return view("backend.modules.log_sheet_module.temperature_log.index", compact("groups"));
             }
             else{
                 return view("errors.403");

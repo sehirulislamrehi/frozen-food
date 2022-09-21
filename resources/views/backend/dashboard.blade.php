@@ -94,7 +94,7 @@
 @endsection
 
 @section("per_page_js")
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="{{ asset('backend/js/apexcharts/apexcharts.js') }}"></script>
 <script>
 
     $.ajax({

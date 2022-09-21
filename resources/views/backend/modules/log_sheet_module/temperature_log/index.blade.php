@@ -1,8 +1,7 @@
 @extends("backend.template.layout")
 
 @section('per_page_css')
-<link href="{{ asset('backend/css/datatable/jquery.dataTables.min.css') }}" rel="stylesheet">
-<link href="{{ asset('backend/css/datatable/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('backend/css/chosen/choosen.min.css') }}" rel="stylesheet">
 @endsection
 
 @section('body-content')
@@ -23,6 +22,12 @@
                         <form action="{{ route('temperature.get.data') }}" method="GET">
                             @csrf
                             <div class="row">
+
+                                @if( auth('super_admin')->check() )
+                                    @include('backend.modules.log_sheet_module.temperature_log.includes.super_admin')
+                                @else
+                                    @include('backend.modules.log_sheet_module.temperature_log.includes.user')
+                                @endif
 
                                 <!-- from date time -->
                                 <div class="col-md-6">
@@ -102,4 +107,90 @@
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{ asset('backend/js/custom-script.min.js') }}"></script>
 <script src="{{  asset('backend/js/ajax_form_submit.js') }}"></script>
+
+<script src="{{ asset('backend/js/chosen/choosen.min.js') }}"></script>
+<script>
+    $(document).ready(function domReady() {
+        $(".chosen").chosen();
+    });
+</script>
+
+<script>
+    function groupChange(e) {
+        let group_id = e.value
+        $.ajax({
+            type: "GET",
+            url: "{{ route('group.wise.company') }}",
+            data: {
+                group_id: group_id,
+            },
+            success: function(response) {
+                if (response.status == "success") {
+                    $(".company-block").remove();
+                    $(".select-company").append(`
+                        <div class="company-block">
+                            <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">>
+                                <option value="" selected disabled>Select company</option>
+                            </select>
+                        </div>
+                    `);
+
+                    $(".location-block").remove();
+                    $(".select-location").append(`
+                        <div class="location-block">
+                            <select name="location_id" class="form-control location_id chosen">
+                                <option value="" selected disabled>Select location</option>
+                            </select>
+                        </div>
+                    `);
+
+                    $.each(response.data, function(key, value) {
+                        $(".company_id").append(`
+                            <option value="${value.id}">${value.name}</option>
+                        `);
+                    })
+
+                    $(".chosen").chosen();
+                }
+            },
+            error: function(response) {
+
+            },
+        })
+    }
+
+    function companyChange(e) {
+        let company_id = e.value
+        $.ajax({
+            type: "GET",
+            url: "{{ route('company.wise.location') }}",
+            data: {
+                company_id: company_id,
+            },
+            success: function(response) {
+                if (response.status == "success") {
+                    $(".location-block").remove();
+                    $(".select-location").append(`
+                        <div class="location-block">
+                            <select name="location_id" class="form-control location_id chosen">
+                                <option value="" selected disabled>Select location</option>
+                            </select>
+                        </div>
+                    `);
+
+                    $.each(response.data, function(key, value) {
+                        $(".location_id").append(`
+                            <option value="${value.id}">${value.name}</option>
+                        `);
+                    })
+
+                    $(".chosen").chosen();
+                }
+            },
+            error: function(response) {
+
+            },
+        })
+    }
+</script>
 @endsection

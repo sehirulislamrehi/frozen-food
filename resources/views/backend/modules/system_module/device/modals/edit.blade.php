@@ -40,6 +40,15 @@
                 <input type="text" name="device_manual_id" class="form-control" value="{{ $device->device_manual_id }}">                
             </div>
 
+            <!-- Device type -->
+            <div class="col-md-12 col-12 form-group">
+                <label>Device type</label><span class="require-span">*</span>
+                <select name="type" class="form-control">
+                    <option value="Blast Freeze" @if( $device->type == "Blast Freeze" ) selected @endif >Blast Freeze</option>
+                    <option value="Pre Cooler" @if( $device->type == "Pre Cooler" ) selected @endif >Pre Cooler</option>
+                </select>
+            </div>
+
             <div class="col-md-12 form-group text-right">
                 <button type="submit" class="btn btn-outline-dark">
                     Update

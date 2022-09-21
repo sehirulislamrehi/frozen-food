@@ -50,16 +50,16 @@ class CommonController extends Controller
         try{
 
             if( auth('super_admin')->check() ){
-                $locations = Location::where("type","Location")->select("id","name")->where("location_id", $request->company_id)->get();
+                $locations = Location::where("type","Location")->select("id","name")->where("location_id", $request->company_id)->where("is_active", true)->get();
             }
             else{
                 $auth = auth('web')->user();
                 
                 if( $auth->location_id ){
-                    $locations = Location::where("type","Location")->select("id","name")->where("id", $auth->location_id)->get();
+                    $locations = Location::where("type","Location")->select("id","name")->where("id", $auth->location_id)->where("is_active", true)->get();
                 }
                 else{
-                    $locations = Location::where("type","Location")->select("id","name")->where("location_id", $request->company_id)->get();
+                    $locations = Location::where("type","Location")->select("id","name")->where("location_id", $request->company_id)->where("is_active", true)->get();
                 }
             }
             
@@ -104,7 +104,7 @@ class CommonController extends Controller
     public function location_wise_role(Request $request){
         try{
             
-            $role = Role::where("location_id",$request->location_id)->select("id","name")->get();
+            $role = Role::where("location_id",$request->location_id)->select("id","name")->where("is_active", true)->get();
             
             return response()->json([
                 'status' => 'success',

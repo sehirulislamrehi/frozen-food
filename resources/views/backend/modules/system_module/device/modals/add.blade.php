@@ -25,6 +25,15 @@
                 <input type="text" name="device_number" class="form-control">
             </div>
 
+            <!-- Device type -->
+            <div class="col-md-12 col-12 form-group">
+                <label>Device type</label><span class="require-span">*</span>
+                <select name="type" class="form-control">
+                    <option value="Blast Freeze">Blast Freeze</option>
+                    <option value="Pre Cooler">Pre Cooler</option>
+                </select>
+            </div>
+
             <div class="col-md-12 form-group text-right">
                 <button type="submit" class="btn btn-outline-dark">
                     Add

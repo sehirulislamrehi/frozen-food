@@ -17,7 +17,7 @@ class CreateTemperatureTable extends Migration
             $table->id();
             $table->double("temperature");
             $table->dateTime("date_time");
-            $table->integer("device_manual_id");
+            $table->bigInteger("device_manual_id");
         });
     }
 

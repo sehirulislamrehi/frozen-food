@@ -41,6 +41,7 @@
                                     <th>S.ID</th>
                                     <th>Device number</th>
                                     <th>Device Manual Id</th>
+                                    <th>Type</th>
                                     <th>Group</th>
                                     <th>Company</th>
                                     <th>Location</th>
@@ -53,6 +54,7 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $device->device_number }}</td>
                                     <td>{{ $device->device_manual_id }}</td>
+                                    <td>{{ $device->type }}</td>
                                     <td>{{ $device->group->name }}</td>
                                     <td>{{ $device->company->name }}</td>
                                     <td>{{ $device->location->name }}</td>

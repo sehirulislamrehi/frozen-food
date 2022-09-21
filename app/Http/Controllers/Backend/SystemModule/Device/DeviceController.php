@@ -106,6 +106,7 @@ class DeviceController extends Controller
                         'company_id' =>  'required|integer|exists:locations,id',
                         'location_id' =>  'required|integer|exists:locations,id',
                         'device_number' => 'required|unique:devices,device_number',
+                        'type' => 'required|in:Blast Freeze,Pre Cooler',
                     ]);
                 }
                 else{
@@ -116,17 +117,20 @@ class DeviceController extends Controller
                             'company_id' =>  'required|integer|exists:locations,id',
                             'location_id' =>  'required|integer|exists:locations,id',
                             'device_number' => 'required|unique:devices,device_number',
+                            'type' => 'required|in:Blast Freeze,Pre Cooler',
                         ]);
                     }
                     elseif( $auth->location_id == null ){
                         $validator = Validator::make($request->all(),[
                             'location_id' =>  'required|integer|exists:locations,id',
                             'device_number' => 'required|unique:devices,device_number',
+                            'type' => 'required|in:Blast Freeze,Pre Cooler',
                         ]);
                     }
                     else{
                         $validator = Validator::make($request->all(),[
                             'device_number' => 'required|unique:devices,device_number',
+                            'type' => 'required|in:Blast Freeze,Pre Cooler',
                         ]);
                     }
                 }
@@ -168,6 +172,7 @@ class DeviceController extends Controller
 
                     $device_manual_id = '10465' . $request->device_number;
                     $device->device_manual_id = $device_manual_id;
+                    $device->type = $request->type;
                     
                     if( $device->save() ){
                         return response()->json(['success' => 'New device created'], 200);
@@ -237,7 +242,8 @@ class DeviceController extends Controller
 
                 $validator = Validator::make($request->all(),[
                     'device_number' => 'required|unique:devices,device_number,'. $id,
-                    'device_manual_id' => 'required|unique:devices,device_manual_id,'. $id
+                    'device_manual_id' => 'required|unique:devices,device_manual_id,'. $id,
+                    'type' => 'required|in:Blast Freeze,Pre Cooler',
                 ]);
     
                if( $validator->fails() ){
@@ -273,6 +279,7 @@ class DeviceController extends Controller
     
                         $device->device_number = $request->device_number;
                         $device->device_manual_id = $request->device_manual_id;
+                        $device->type = $request->type;
                         
                         if( $device->save() ){
 

@@ -15,6 +15,7 @@ class ApiController extends Controller
     //store_temperature function start
     public function store_temperature(Request $request){
         try{
+
             $year = date('Y', strtotime(Carbon::now()));
             $month = date('m', strtotime(Carbon::now()));
             
@@ -22,17 +23,22 @@ class ApiController extends Controller
 
             if( Schema::hasTable($table_name) ) {
 
-                $data = [];
+                $final = [];
+
                 foreach( $request['data'] as $data ){
-                    array_push($data,[
-                        'temperature' => $data->temperature, 
-                        'date_time' => $data->date_time, 
-                        'device_manual_id' => "10465". $data->device_manual_id,
+                    array_push($final,[
+                        'temperature' => $data['temperature'], 
+                        'date_time' => $data['date_time'], 
+                        'device_manual_id' => $data['device_manual_id'],
                     ]);
                 }
 
-                DB::table($table_name)->insert($data);
+                DB::table($table_name)->insert($final);
                 
+                return response()->json([
+                    'status' => 'success',
+                    'data' => 'Data inserted'
+                ],200);
             }
             else{
                 Schema::connection('mysql')->create($table_name, function($table)
@@ -40,19 +46,25 @@ class ApiController extends Controller
                     $table->id();
                     $table->double("temperature");
                     $table->dateTime("date_time");
-                    $table->integer("device_manual_id");
+                    $table->bigInteger("device_manual_id");
                 });
 
-                $data = [];
+                $final = [];
+
                 foreach( $request['data'] as $data ){
-                    array_push($data,[
-                        'temperature' => $data->temperature, 
-                        'date_time' => $data->date_time, 
-                        'device_manual_id' => "10465". $data->device_manual_id,
+                    array_push($final,[
+                        'temperature' => $data['temperature'], 
+                        'date_time' => $data['date_time'], 
+                        'device_manual_id' => $data['device_manual_id'],
                     ]);
                 }
 
-                DB::table($table_name)->insert($data);
+                DB::table($table_name)->insert($final);
+                
+                return response()->json([
+                    'status' => 'success',
+                    'data' => 'Data inserted'
+                ],200);
             }
         }
         catch( Exception $e ){
