@@ -43,12 +43,6 @@ class PermissionSedder extends Seeder
                 'module_id' => 1,
             ],
             [
-                'id' => 5,
-                'key' => 'reset_password',
-                'display_name' => '-- Reset Password',
-                'module_id' => 1,
-            ],
-            [
                 'id' => 6,
                 'key' => 'settings',
                 'display_name' => 'Setting Module',

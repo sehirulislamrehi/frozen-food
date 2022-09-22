@@ -32,13 +32,13 @@
 
             <!-- email -->
             <div class="col-md-6 col-12 form-group">
-                <label for="email">Email</label>
+                <label for="email">Email</label><span class="require-span">*</span>
                 <input id="email" type="email" class="form-control" name="email" value="{{ $user->email }}">
             </div>
 
             <!-- phone number -->
             <div class="col-md-6 col-12 form-group">
-                <label for="phone">Phone</label>
+                <label for="phone">Phone</label><span class="require-span">*</span>
                 <input id="phone" type="text" class="form-control" name="phone" value="{{ $user->phone }}">
             </div>
 

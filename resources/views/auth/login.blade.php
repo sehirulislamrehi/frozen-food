@@ -111,8 +111,8 @@
 
                 <div class="row">
                     <div class="form-group col-md-12">
-                        <label>Email Address</label>
-                        <input id="email" type="text" name="email" class="form-control" placeholder="Email Address">
+                        <label>Staff ID</label>
+                        <input type="text" name="staff_id" class="form-control" placeholder="Staff ID">
                     </div>
                 </div>
 
@@ -127,7 +127,7 @@
 
                 <div class="row">
                     <div class="form-group col-md-12 login-text">
-                        <input type="checkbox" id="remember-me" name="remember" />
+                        <input type="checkbox" id="remember-me" name="remember" checked />
                         <label for="remember-me">Remember me</label>
                     </div>
                 </div>

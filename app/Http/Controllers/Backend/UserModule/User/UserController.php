@@ -92,18 +92,11 @@ class UserController extends Controller
                         Action
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdown'.$user->id.'">
-                    
-                        '.( can("reset_password") ? '
-                        <a class="dropdown-item" href="#" data-content="'.route('user.reset.modal',$user->id).'" data-target="#myModal" data-toggle="modal">
-                            <i class="fas fa-key"></i>
-                            Reset Password
-                        </a>
-                        ': '') .'
 
                         '.( can("edit_user") ? '
                         <a class="dropdown-item" href="#" data-content="'.route('user.edit',$user->id).'" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
                             <i class="fas fa-edit"></i>
-                            Edit User
+                            Edit
                         </a>
                         ': '') .'
 
@@ -143,11 +136,8 @@ class UserController extends Controller
     public function add(Request $request){
         if( can('add_user') ){
             $validator = Validator::make($request->all(),[
-                'name' => 'required',
-                'email' => 'required|unique:users,email,',
-                'phone' => 'required|numeric',
+                'staff_id' => 'required|integer',
                 'role_id' => 'required|integer|exists:roles,id',
-                'password' => 'required|confirmed',
                 'group_id' => auth('super_admin')->check() ? 'required' : '',
                 'company_id' => auth('super_admin')->check() ? 'required' : '',
                 'location_id' => auth('super_admin')->check() ? 'required' : '',
@@ -158,32 +148,42 @@ class UserController extends Controller
                return response()->json(['errors' => $validator->errors()] ,422);
            }else{
                 try{
-                    $user = new User();
-                    $user->name = $request->name;
-                    $user->email  = $request->email;
-                    $user->phone = $request->phone;
-                    $user->role_id = $request->role_id;
-                    $user->password = Hash::make($request->password);
-                    $user->is_active = true;
-                    
-                    if( auth('super_admin')->check() ){
-                        $user->group_id = $request->group_id;
-                        $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
-                        $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
+
+                    $user_info = UserInfo($request->staff_id);
+
+                    if( $user_info && $user_info->status == "Active" ){
+
+                        $user = new User();
+                        $user->staff_id = $request->staff_id;                        
+                        $user->name = $user_info->staffname;                        
+                        $user->email  = $user_info->email ?? null;
+                        $user->phone = $user_info->contactno ?? null;                        
+                        $user->role_id = $request->role_id;
+                        $user->is_active = true;
+                        
+                        if( auth('super_admin')->check() ){
+                            $user->group_id = $request->group_id;
+                            $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
+                            $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
+                        }
+                        else{
+                            $auth = auth('web')->user();
+                            $user->group_id = $auth->group_id;
+                            $user->company_id = $auth->company_id;
+                            $user->location_id = $auth->location_id;
+                        }
+                        
+                        
+                        if( $user->save() ){
+                            return response()->json(['success' => 'New user created'], 200);
+                        }
                     }
                     else{
-                        $auth = auth('web')->user();
-                        $user->group_id = $auth->group_id;
-                        $user->company_id = $auth->company_id;
-                        $user->location_id = $auth->location_id;
-                    }
-                    
-                    
-                    if( $user->save() ){
-                        return response()->json(['success' => 'New user created'], 200);
+                        return response()->json(['warning' => 'Invalid user found in your staff id.'],200);
                     }
 
-                }catch( Exception $e ){
+                }
+                catch( Exception $e ){
                     return response()->json(['error' => $e->getMessage()],200);
                 }
            }
@@ -221,14 +221,15 @@ class UserController extends Controller
             $validator = Validator::make($request->all(),[
                 'is_active' => 'required',
                 'name' => 'required',
-                'email' => 'required|unique:users,email,'. $id,
+                'email' => 'required',
                 'phone' => 'required|numeric',
                 'role_id' => 'integer',
            ]);
 
            if( $validator->fails() ){
                return response()->json(['errors' => $validator->errors()] ,422);
-           }else{
+           }
+           else{
                 try{
                     $user = User::find($id);
 
@@ -237,7 +238,11 @@ class UserController extends Controller
                         $user->name = $request->name;
                         $user->email  = $request->email;
                         $user->phone = $request->phone;
-                        $user->role_id = $request->role_id;
+
+                        if( $request->role_id ){
+                            $user->role_id = $request->role_id;
+                        }
+                        
 
                         if( auth('super_admin')->check() ){
                             if( $request->group_id && $request->company_id && $request->location_id ){
@@ -265,45 +270,6 @@ class UserController extends Controller
                     return response()->json(['error' => $e->getMessage()],200);
                 }
            }
-        }else{
-            return response()->json(['warning' => unauthorized()],200);
-        }
-    }
-
-    //user reset modal start
-    public function reset_modal($id){
-        if( can("reset_password") ){
-            $user = User::find($id);
-            return view("backend.modules.user_module.user.modals.reset", compact("user"));
-        }
-        else{
-            return unauthorized();
-        }
-    }
-
-    //user reset start
-    public function reset($id, Request $request){
-        if( can("reset_password") ){
-            $validator = Validator::make($request->all(),[
-                'password' => 'required|confirmed|min:6',
-           ]);
-
-           if( $validator->fails() ){
-               return response()->json(['errors' => $validator->errors()] ,422);
-           }
-           else{
-               try{
-                    $user = User::find($id);
-                    $user->password = Hash::make($request->password);
-                    if( $user->save() ){
-                        return response()->json(['success' => 'Password Reset Successfully'], 200);
-                    }
-               }
-               catch( Exception $e ){
-                return response()->json(['error' => $e->getMessage()],200);
-                }
-           }
-            
         }
         else{
             return response()->json(['warning' => unauthorized()],200);
