@@ -28,3 +28,13 @@
         </select>
     </div>
 </div>
+
+<!-- Select Freezer/Room -->
+<div class="col-md-3 select-freezer">
+    <label>Select Freezer/Room</label><span class="require-span">*</span>
+    <div class="freezer-block">
+        <select name="freezer_id" class="form-control freezer_id" required>
+            <option value="" selected disabled>Select freezer/room</option>
+        </select>
+    </div>
+</div>

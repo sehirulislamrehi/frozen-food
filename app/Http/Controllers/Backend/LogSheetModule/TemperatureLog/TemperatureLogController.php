@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\LogSheetModule\TemperatureLog;
 
 use App\Http\Controllers\Controller;
 use App\Models\LocationModule\Location;
+use App\Models\ProductionModule\Freezer;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -20,9 +21,16 @@ class TemperatureLogController extends Controller
 
                 if( auth('super_admin')->check() ){
                     $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
+                    return view("backend.modules.log_sheet_module.temperature_log.index", compact("groups"));
+                }
+                else{
+                    $auth = auth('web')->user();
+                    $freezers = Freezer::where("group_id", $auth->group_id)->where("company_id",$auth->company_id)->where("location_id",$auth->location_id)->select("id","name")->get();
+
+                    return view("backend.modules.log_sheet_module.temperature_log.index", compact("freezers","auth"));
                 }
 
-                return view("backend.modules.log_sheet_module.temperature_log.index", compact("groups"));
+                
             }
             else{
                 return view("errors.403");
@@ -78,9 +86,15 @@ class TemperatureLogController extends Controller
     
                         if( auth('super_admin')->check() ){
                             $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
+                            return view("backend.modules.log_sheet_module.temperature_log.index", compact('temperature_logs','from','to','groups'));
+                        }
+                        else{
+                            $auth = auth('web')->user();
+                            $freezers = Freezer::where("group_id", $auth->group_id)->where("company_id",$auth->company_id)->where("location_id",$auth->location_id)->select("id","name")->get();
+                            return view("backend.modules.log_sheet_module.temperature_log.index", compact('temperature_logs','from','to','auth','freezers'));
                         }
     
-                        return view("backend.modules.log_sheet_module.temperature_log.index", compact('temperature_logs','from','to','groups'));
+                        
     
                     }
                     else{

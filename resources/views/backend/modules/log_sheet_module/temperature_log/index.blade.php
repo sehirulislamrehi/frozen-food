@@ -2,6 +2,14 @@
 
 @section('per_page_css')
 <link href="{{ asset('backend/css/chosen/choosen.min.css') }}" rel="stylesheet">
+<style>
+    .data-indicator ul{
+        padding-left: 15px;
+    }
+    .data-indicator ul li{
+        display: inline;
+    }
+</style>
 @endsection
 
 @section('body-content')
@@ -28,16 +36,6 @@
                                 @else
                                     @include('backend.modules.log_sheet_module.temperature_log.includes.user')
                                 @endif
-
-                                <!-- Select Freezer/Room -->
-                                <div class="col-md-3 select-freezer">
-                                    <label>Select Freezer/Room</label><span class="require-span">*</span>
-                                    <div class="freezer-block">
-                                        <select name="freezer_id" class="form-control freezer_id" required>
-                                            <option value="" selected disabled>Select freezer/room</option>
-                                        </select>
-                                    </div>
-                                </div>
 
                                 <!-- Device type -->
                                 <div class="col-md-3">
