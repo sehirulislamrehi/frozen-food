@@ -17,7 +17,7 @@
     <div class="br-pagebody">
         <div class="row">
             <div class="col-md-12">
-                <div class="card card-primary card-outline table-responsive">
+                <div class="card card-primary card-outline">
                     <div class="card-header">
                         <form action="{{ route('temperature.get.data') }}" method="GET">
                             @csrf
@@ -29,16 +29,36 @@
                                     @include('backend.modules.log_sheet_module.temperature_log.includes.user')
                                 @endif
 
+                                <!-- Select Freezer/Room -->
+                                <div class="col-md-3 select-freezer">
+                                    <label>Select Freezer/Room</label><span class="require-span">*</span>
+                                    <div class="freezer-block">
+                                        <select name="freezer_id" class="form-control freezer_id" required>
+                                            <option value="" selected disabled>Select freezer/room</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Device type -->
+                                <div class="col-md-3">
+                                    <label>Device type</label><span class="require-span">*</span>
+                                    <select name="type" class="form-control">
+                                        <option value="All">All</option>
+                                        <option value="Blast Freeze">Blast Freeze</option>
+                                        <option value="Pre Cooler">Pre Cooler</option>
+                                    </select>
+                                </div>
+
                                 <!-- from date time -->
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label>From Date</label><span class="require-span">*</span>
-                                    <input type="datetime-local" class="form-control" name="from_date_time" required>
+                                    <input type="datetime-local" class="form-control" name="from_date_time" @if( isset($from) ) value="{{ $from }}" @endif required>
                                 </div>
 
                                 <!-- to date time -->
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <label>To Date</label><span class="require-span">*</span>
-                                    <input type="datetime-local" class="form-control" name="to_date_time" required>
+                                    <input type="datetime-local" class="form-control" name="to_date_time" @if( isset($to) ) value="{{ $to }}" @endif required>
                                 </div>
 
                                 <div class="col-md-12 text-right">
@@ -72,6 +92,7 @@
                                             <th>Temperature (°C)</th>
                                             <th>Date & Time</th>
                                             <th>Device Manual Id</th>
+                                            <th>Type</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -82,6 +103,7 @@
                                                 <td>{{ $temperature_log->temperature }}</td>
                                                 <td>{{ $temperature_log->date_time }}</td>
                                                 <td>{{ $temperature_log->device_manual_id }}</td>
+                                                <td>{{ $temperature_log->type }}</td>
                                             </tr>
                                             @empty
                                             <tr>
@@ -129,7 +151,7 @@
                     $(".company-block").remove();
                     $(".select-company").append(`
                         <div class="company-block">
-                            <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">>
+                            <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)" required>
                                 <option value="" selected disabled>Select company</option>
                             </select>
                         </div>
@@ -138,7 +160,7 @@
                     $(".location-block").remove();
                     $(".select-location").append(`
                         <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen">
+                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)" required>
                                 <option value="" selected disabled>Select location</option>
                             </select>
                         </div>
@@ -172,7 +194,7 @@
                     $(".location-block").remove();
                     $(".select-location").append(`
                         <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen">
+                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)" required>
                                 <option value="" selected disabled>Select location</option>
                             </select>
                         </div>
@@ -180,6 +202,42 @@
 
                     $.each(response.data, function(key, value) {
                         $(".location_id").append(`
+                            <option value="${value.id}">${value.name}</option>
+                        `);
+                    })
+
+                    $(".chosen").chosen();
+                }
+            },
+            error: function(response) {
+
+            },
+        })
+    }
+
+
+    function locationChange(e){
+        let location_id = e.value
+
+        $.ajax({
+            type: "GET",
+            url: "{{ route('location.wise.freezer') }}",
+            data: {
+                location_id: location_id,
+            },
+            success: function(response) {
+                if (response.status == "success") {
+                    $(".freezer-block").remove();
+                    $(".select-freezer").append(`
+                        <div class="freezer-block">
+                            <select name="freezer_id" class="form-control freezer_id chosen">
+                                <option value="" selected disabled>Select freezer</option>
+                            </select>
+                        </div>
+                    `);
+
+                    $.each(response.data, function(key, value) {
+                        $(".freezer_id").append(`
                             <option value="${value.id}">${value.name}</option>
                         `);
                     })

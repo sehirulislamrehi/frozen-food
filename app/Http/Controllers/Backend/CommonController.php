@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\LocationModule\Location;
+use App\Models\ProductionModule\Freezer;
 use App\Models\SystemModule\Device;
 use App\Models\UserModule\Role;
 use Exception;
@@ -120,5 +121,27 @@ class CommonController extends Controller
         }
     }
     //location_wise_role function end
+
+
+    //location_wise_freezer function start
+    public function location_wise_freezer(Request $request){
+        try{
+            
+            $freezer = Freezer::where("location_id",$request->location_id)->select("id","name")->get();
+            
+            return response()->json([
+                'status' => 'success',
+                'data' => $freezer
+            ], 200);
+
+        }
+        catch( Exception $e ){
+            return response()->json([
+                'status' => 'error',
+                'data' => $e->getMessage()
+            ], 200);
+        }
+    }
+    //location_wise_freezer function end
 
 }

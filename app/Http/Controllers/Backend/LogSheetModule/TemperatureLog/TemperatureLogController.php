@@ -44,25 +44,51 @@ class TemperatureLogController extends Controller
                     'to_date_time' => 'required',
                 ]);
 
-                $from = $request->from_date_time;
-                $to = $request->to_date_time;
+                if( $request->freezer_id ){
+                    $from = $request->from_date_time;
+                    $to = $request->to_date_time;
+                    $freezer_id = $request->freezer_id;
+                    $year = date('Y', strtotime($from));
+                    $type = $request->type;
+                    $month = date('m', strtotime($from));
+                    $table_name = "temperature_" . $year . "_" . $month;
+    
+                    if( Schema::hasTable($table_name) ) {
+                        $from = date('Y-m-d H:i:01', strtotime($request->from_date_time));
+                        $to = date('Y-m-d H:i:59', strtotime($request->to_date_time));
+                        $temperature = $table_name . '.temperature';
+                        $date_time = $table_name . '.date_time';
+                        $device_manual_id = $table_name . '.device_manual_id';
 
-                $year = date('Y', strtotime($from));
-                
-                $month = date('m', strtotime($from));
-                $table_name = "temperature_" . $year . "_" . $month;
-
-                if( Schema::hasTable($table_name) ) {
-                    $from = date('Y-m-d H:i:01', strtotime($request->from_date_time));
-                    $to = date('Y-m-d H:i:59', strtotime($request->to_date_time));
-                    $temperature_logs = DB::select("SELECT temperature, date_time, device_manual_id FROM $table_name 
-                    WHERE date_time BETWEEN '$from' AND '$to' ");
-
-                    return view("backend.modules.log_sheet_module.temperature_log.index", compact('temperature_logs','from','to'));
-
+                        if( $type == "All" ){
+                            $temperature_logs = DB::select("SELECT freezer_details.freezer_id, freezer_details.device_manual_id, $temperature, $date_time, $device_manual_id, devices.type FROM freezer_details
+                                LEFT JOIN $table_name ON freezer_details.device_manual_id = $device_manual_id
+                                LEFT JOIN devices ON freezer_details.device_manual_id = devices.device_manual_id
+                                WHERE freezer_details.freezer_id = $freezer_id AND $date_time BETWEEN '$from' AND '$to'
+                            ");
+                        }
+                        else{
+                            $temperature_logs = DB::select("SELECT freezer_details.freezer_id, freezer_details.device_manual_id, $temperature, $date_time, $device_manual_id, devices.type FROM freezer_details
+                                LEFT JOIN $table_name ON freezer_details.device_manual_id = $device_manual_id
+                                LEFT JOIN devices ON freezer_details.device_manual_id = devices.device_manual_id
+                                WHERE freezer_details.freezer_id = $freezer_id AND devices.type = '$type' AND $date_time BETWEEN '$from' AND '$to' 
+                            ");
+                        }
+                        
+    
+                        if( auth('super_admin')->check() ){
+                            $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
+                        }
+    
+                        return view("backend.modules.log_sheet_module.temperature_log.index", compact('temperature_logs','from','to','groups'));
+    
+                    }
+                    else{
+                        return back()->with('warning', "No data found in your request");
+                    }
                 }
                 else{
-                    return back()->with('warning', "No data found in your request");
+                    return back()->with('warning', "Please select freezer");
                 }
 
             }
