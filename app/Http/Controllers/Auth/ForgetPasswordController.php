@@ -42,19 +42,7 @@ class ForgetPasswordController extends Controller
                 return response()->json(['success' => 'We send you a password reset link in your given email address'], 200);
     
             }
-            elseif( User::where('email', $request->email)->first() ){
-                $token = Str::random(60);
-                DB::table('password_resets')->insert(
-                    ['email' => $request->email, 'token' => $token, 'created_at' => Carbon::now()]
-                );
-                $email = $request->email;
-                Mail::send('auth.verify', ['token' => $token, 'email' => $email], function ($message) use ($request) {
-                    $message->from(mail_from());
-                    $message->to($request->email);
-                    $message->subject('Reset Password Notification');
-                });
-                return response()->json(['success' => 'We send you a password reset link in your given email address'], 200); 
-            }else{
+            else{
                 return response()->json(['error' => 'Invalid Email Address'], 200);
             }
         }
