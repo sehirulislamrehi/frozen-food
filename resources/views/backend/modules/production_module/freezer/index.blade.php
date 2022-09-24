@@ -36,7 +36,7 @@
                         @endif
                     </div>
                     <div class="card-body">
-                        <table class="table table-striped dataTable dtr-inline">
+                        <table class="table table-bordered table-striped dataTable dtr-inline user-datatable" id="datatable">
                             <thead>
                                 <tr>
                                     <th>S.ID</th>
@@ -47,7 +47,7 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            {{--<tbody>
                                 @forelse( $freezers as $key => $freezer)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
@@ -89,7 +89,7 @@
                             </tbody>
                             <tfoot>
                                 {{$freezers->links()}}
-                            </tfoot>
+                            </tfoot>--}}
                         </table>
                     </div>
                 </div>
@@ -106,4 +106,49 @@
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{ asset('backend/js/custom-script.min.js') }}"></script>
 <script src="{{  asset('backend/js/ajax_form_submit.js') }}"></script>
+
+<script src="{{ asset('backend/js/datatable/jquery.validate.js') }}"></script>
+<script src="{{ asset('backend/js/datatable/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('backend/js/datatable/dataTables.bootstrap4.min.js') }}"></script>
+
+<script>
+    $(function() {
+        $('.user-datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('freezer.data') }}",
+            order: [
+                [0, 'Desc']
+            ],
+            columns: [{ 
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false 
+                },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'group',
+                    name: 'group'
+                },
+                {
+                    data: 'company',
+                    name: 'company'
+                },
+                {
+                    data: 'location',
+                    name: 'location'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                },
+            ]
+        });
+    });
+</script>
 @endsection

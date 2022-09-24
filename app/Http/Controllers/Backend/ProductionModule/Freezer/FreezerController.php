@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class FreezerController extends Controller
 {
@@ -19,34 +20,7 @@ class FreezerController extends Controller
         try{
             if( can("freezer") ){
 
-                if( auth('super_admin')->check() ){
-                    $freezers = Freezer::orderBy("id","desc")->select("id","name","group_id","company_id","location_id")
-                    ->with("group","company","location")->paginate(10);
-                }
-                else{
-                    $auth = auth('web')->user();
-
-                    if( $auth->company_id && $auth->location_id ){
-                        $freezers = Freezer::orderBy("id","desc")->select("id","name","group_id","company_id","location_id")
-                        ->where("group_id",$auth->group_id)
-                        ->where("company_id",$auth->company_id)
-                        ->where("location_id",$auth->location_id)
-                        ->with("group","company","location")->paginate(10);
-                    }
-                    elseif( $auth->company_id ){
-                        $freezers = Freezer::orderBy("id","desc")->select("id","name","group_id","company_id","location_id")
-                        ->where("group_id",$auth->group_id)
-                        ->where("company_id",$auth->company_id)
-                        ->with("group","company","location")->paginate(10);
-                    }
-                    else{
-                        $freezers = Freezer::orderBy("id","desc")->select("id","name","group_id","company_id","location_id")
-                        ->where("group_id",$auth->group_id)
-                        ->with("group","company","location")->paginate(10);
-                    }
-                }
-
-                return view("backend.modules.production_module.freezer.index", compact("freezers"));
+                return view("backend.modules.production_module.freezer.index");
             }
             else{
                 return view("errors.403");
@@ -59,6 +33,70 @@ class FreezerController extends Controller
     //index function end
 
 
+    //data start
+    public function data(){
+        if( can('freezer') ){
+
+            if( auth('super_admin')->check() ){
+                $freezers = Freezer::orderBy("id","desc")->select("id","name","group_id","company_id","location_id")
+                ->with("group","company","location")->get();
+            }
+            else{
+                $auth = auth('web')->user();
+                $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
+
+                $freezers = Freezer::orderBy("id","desc")->select("id","name","group_id","company_id","location_id")
+                ->whereIn("location_id",$user_location)
+                    ->with("group","company","location")->get();
+
+            }
+
+            return DataTables::of($freezers)
+            ->rawColumns(['action', 'group','company','location'])
+            ->editColumn('group', function (Freezer $freezers) {
+                return $freezers->group->name;
+            })
+            ->editColumn('company', function (Freezer $freezers) {
+                return $freezers->company->name;
+            })
+            ->editColumn('location', function (Freezer $freezers) {
+                return $freezers->location->name;
+            })
+            ->addColumn('action', function (Freezer $freezers) {
+                return '
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown'.$freezers->id.'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Action
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdown'.$freezers->id.'">
+
+                        '.( can("edit_freezer") ? '
+                        <a class="dropdown-item" href="#" data-content="'.route('freezer.edit.modal',encrypt($freezers->id)).'" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                            <i class="fas fa-edit"></i>
+                            Edit
+                        </a>
+                        ': '') .'
+
+                        '.( can("delete_freezer") ? '
+                        <a class="dropdown-item" href="#" data-content="'.route('freezer.delete.modal',encrypt($freezers->id)).'" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                            <i class="fas fa-trash"></i>
+                            Delete
+                        </a>
+                        ': '') .'
+
+                    </div>
+                </div>
+                ';
+            })
+            ->addIndexColumn()
+            ->make(true);
+        }else{
+            return unauthorized();
+        }
+    }
+    //data end
+
+
     //add_modal function start
     public function add_modal(){
         try{
@@ -66,25 +104,14 @@ class FreezerController extends Controller
 
                 if( auth('super_admin')->check() ){
                     $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
-                    return view("backend.modules.production_module.freezer.modals.add", compact('groups'));
                 }
                 else{
                     $auth = auth('web')->user();
-
-                    if( $auth->company_id == null && $auth->location_id == null ){
-                        $companies = Location::where("type","Company")->select("id","name")->where("location_id", $auth->group_id)->where("is_active", true)
-                        ->get();
-                        return view("backend.modules.production_module.freezer.modals.add", compact('companies','auth'));
-                    }
-                    elseif( $auth->location_id == null ){
-                        $locations = Location::where("type","Location")->select("id","name")->where("location_id", $auth->company_id)->get();
-                        return view("backend.modules.production_module.freezer.modals.add", compact('locations','auth'));
-                    }
-                    else{
-                        $devices = Device::where("location_id",$auth->location_id)->select("id","device_number")->get();
-                        return view("backend.modules.production_module.freezer.modals.add", compact('auth','devices'));
-                    }
+                    $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                    $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
                 }
+
+                return view("backend.modules.production_module.freezer.modals.add", compact('groups'));
                 
             }
             else{
@@ -103,40 +130,14 @@ class FreezerController extends Controller
         try{
             if( can("add_freezer") ){
 
-                if( auth('super_admin')->check() ){
-                    $validator = Validator::make($request->all(),[
-                        'group_id' =>  'required|integer|exists:locations,id',
-                        'company_id' =>  'required|integer|exists:locations,id',
-                        'location_id' =>  'required|integer|exists:locations,id',
-                        'name' => 'required',
-                        'device_ids' => 'required',
-                    ]);
-                }
-                else{
-                    $auth = auth('web')->user();
-
-                    if( $auth->company_id == null && $auth->location_id == null ){
-                        $validator = Validator::make($request->all(),[
-                            'company_id' =>  'required|integer|exists:locations,id',
-                            'location_id' =>  'required|integer|exists:locations,id',
-                            'name' => 'required',
-                            'device_ids' => 'required',
-                        ]);
-                    }
-                    elseif( $auth->location_id == null ){
-                        $validator = Validator::make($request->all(),[
-                            'location_id' =>  'required|integer|exists:locations,id',
-                            'name' => 'required',
-                            'device_ids' => 'required',
-                        ]);
-                    }
-                    else{
-                        $validator = Validator::make($request->all(),[
-                            'name' => 'required',
-                            'device_ids' => 'required',
-                        ]);
-                    }
-                }
+                $validator = Validator::make($request->all(),[
+                    'group_id' =>  'required|integer|exists:locations,id',
+                    'company_id' =>  'required|integer|exists:locations,id',
+                    'location_id' =>  'required|integer|exists:locations,id',
+                    'name' => 'required',
+                    'device_ids' => 'required',
+                ]);
+                
 
                 if( $validator->fails() ){
                     return response()->json(['errors' => $validator->errors()],422);
@@ -144,43 +145,22 @@ class FreezerController extends Controller
                 else{
                     $freezer = new Freezer();
 
-                    if( auth('super_admin')->check() ){
-                        $freezer->group_id = $request->group_id;
-                        $freezer->company_id = $request->company_id;
-                        $freezer->location_id = $request->location_id;
-                    }
-                    else{
-                        $auth = auth('web')->user();
-
-                        if( $auth->company_id == null && $auth->location_id == null ){
-                            $freezer->group_id = $auth->group_id;
-                            $freezer->company_id = $request->company_id;
-                            $freezer->location_id = $request->location_id;
-                        }
-                        elseif( $auth->location_id == null ){
-                            $freezer->group_id = $auth->group_id;
-                            $freezer->company_id = $auth->company_id;
-                            $freezer->location_id = $request->location_id;
-                        }
-                        else{
-                            $freezer->group_id = $auth->group_id;
-                            $freezer->company_id = $auth->company_id;
-                            $freezer->location_id = $auth->location_id;
-                        }
-                    }
+                    $freezer->group_id = $request->group_id;
+                    $freezer->company_id = $request->company_id;
+                    $freezer->location_id = $request->location_id;
 
                     $freezer->name = $request->name;
 
                     if( $freezer->save() ){
 
                         if( $request->device_ids ){
-                            $devices = Device::whereIn("id",$request->device_ids)->select("id","device_manual_id")->get();
+                            $freezers = Device::whereIn("id",$request->device_ids)->select("id","device_manual_id")->get();
     
                             foreach( $request->device_ids as $key => $device_id ){
                                 $freezer_details = new FreezerDetails();
                                 $freezer_details->freezer_id = $freezer->id;
                                 $freezer_details->device_id = $device_id;
-                                $freezer_details->device_manual_id = $devices[$key]['device_manual_id'];
+                                $freezer_details->device_manual_id = $freezers[$key]['device_manual_id'];
                                 $freezer_details->save();
                             }
                         }
@@ -214,25 +194,14 @@ class FreezerController extends Controller
 
                     if( auth('super_admin')->check() ){
                         $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
-                        return view("backend.modules.production_module.freezer.modals.edit", compact('groups','freezer'));
                     }
                     else{
                         $auth = auth('web')->user();
-    
-                        if( $auth->company_id == null && $auth->location_id == null ){
-                            $companies = Location::where("type","Company")->select("id","name")->where("location_id", $auth->group_id)->where("is_active", true)
-                            ->get();
-                            return view("backend.modules.production_module.freezer.modals.edit", compact('companies','auth','freezer'));
-                        }
-                        elseif( $auth->location_id == null ){
-                            $locations = Location::where("type","Location")->select("id","name")->where("location_id", $auth->company_id)->get();
-                            return view("backend.modules.production_module.freezer.modals.edit", compact('locations','auth','freezer'));
-                        }
-                        else{
-                            $devices = Device::where("location_id",$auth->location_id)->select("id","device_number")->get();
-                            return view("backend.modules.production_module.freezer.modals.edit", compact('auth','devices','freezer'));
-                        }
+                        $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                        $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
                     }
+
+                    return view("backend.modules.production_module.freezer.modals.edit", compact('groups','freezer'));
                 }
                 else{
                     return "No freezer found";
@@ -268,27 +237,10 @@ class FreezerController extends Controller
 
                     if( $freezer ){
 
-                        if( auth('super_admin')->check() ){
-                            if( $request->group_id && $request->groupcompany_id_id && $request->location_id ){
-                                $freezer->group_id = $request->group_id;
-                                $freezer->company_id = $request->company_id;
-                                $freezer->location_id = $request->location_id;
-                            }
-                        }
-                        else{
-                            $auth = auth('web')->user();
-
-                            if( $request->company_id && $request->location_id ){
-                                $freezer->group_id = $auth->group_id;
-                                $freezer->company_id = $request->company_id;
-                                $freezer->location_id = $request->location_id;
-                            }
-                            elseif( $request->location_id ){
-                                $freezer->group_id = $auth->group_id;
-                                $freezer->company_id = $auth->company_id;
-                                $freezer->location_id = $request->location_id;
-                            }
-                            
+                        if( $request->group_id && $request->company_id && $request->location_id ){
+                            $freezer->group_id = $request->group_id;
+                            $freezer->company_id = $request->company_id;
+                            $freezer->location_id = $request->location_id;
                         }
                         
                         $freezer->name = $request->name;
@@ -299,13 +251,13 @@ class FreezerController extends Controller
 
                                 DB::statement("DELETE FROM freezer_details WHERE freezer_id = $freezer->id");
 
-                                $devices = Device::whereIn("id",$request->device_ids)->select("id","device_manual_id")->get();
+                                $freezers = Device::whereIn("id",$request->device_ids)->select("id","device_manual_id")->get();
         
                                 foreach( $request->device_ids as $key => $device_id ){
                                     $freezer_details = new FreezerDetails();
                                     $freezer_details->freezer_id = $freezer->id;
                                     $freezer_details->device_id = $device_id;
-                                    $freezer_details->device_manual_id = $devices[$key]['device_manual_id'];
+                                    $freezer_details->device_manual_id = $freezers[$key]['device_manual_id'];
                                     $freezer_details->save();
                                 }
                             }

@@ -8,6 +8,9 @@ Route::group(['prefix' => 'freezer'], function(){
     //index
     Route::get("",[FreezerController::class,"index"])->name("freezer.all");
 
+    //data
+    Route::get("data",[FreezerController::class,"data"])->name("freezer.data");
+
     //add
     Route::get("add-modal",[FreezerController::class,"add_modal"])->name("freezer.add.modal");
     Route::post("add",[FreezerController::class,"add"])->name("freezer.add");
