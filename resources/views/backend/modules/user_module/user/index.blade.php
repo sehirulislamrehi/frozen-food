@@ -57,6 +57,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Image</th>
+                                    <th>Staff ID</th>
                                     <th>Name</th>
                                     <th>Role</th>
                                     <th>Status</th>
@@ -101,6 +102,10 @@
                 {
                     data: 'image',
                     name: 'image'
+                },
+                {
+                    data: 'staff_id',
+                    name: 'staff_id'
                 },
                 {
                     data: 'name',

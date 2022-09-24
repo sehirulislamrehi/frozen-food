@@ -36,7 +36,7 @@ class UserController extends Controller
         if( can('all_user') ){
 
             if( auth('super_admin')->check() ){
-                $user = User::orderBy('id', 'desc')->select("id","name","email","role_id","phone","is_active","image")->get();
+                $user = User::orderBy('id', 'desc')->select("id","name","email","role_id","phone","is_active","image","staff_id")->get();
             }
             elseif( auth('web')->check() ){
                 $auth = auth('web')->user();
@@ -47,7 +47,7 @@ class UserController extends Controller
                 ->whereHas('user_location', function ($query) use ($user_location) {
                     $query->whereIn('location_id', $user_location);
                 })    
-                ->select("id","name","email","role_id","phone","is_active","image")->get();
+                ->select("id","name","email","role_id","phone","is_active","image","staff_id")->get();
                 
             }
 
