@@ -21,15 +21,14 @@ class TemperatureLogController extends Controller
 
                 if( auth('super_admin')->check() ){
                     $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
-                    return view("backend.modules.log_sheet_module.temperature_log.index", compact("groups"));
                 }
                 else{
                     $auth = auth('web')->user();
-                    $freezers = Freezer::where("group_id", $auth->group_id)->where("company_id",$auth->company_id)->where("location_id",$auth->location_id)->select("id","name")->get();
-
-                    return view("backend.modules.log_sheet_module.temperature_log.index", compact("freezers","auth"));
+                    $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                    $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
                 }
 
+                return view("backend.modules.log_sheet_module.temperature_log.index", compact("groups"));
                 
             }
             else{

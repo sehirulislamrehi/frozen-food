@@ -180,12 +180,14 @@
     }
 
     function companyChange(e) {
-        let company_id = e.value
+        let company_id = Array();
+        company_id.push(e.value)
+
         $.ajax({
             type: "GET",
             url: "{{ route('company.wise.location') }}",
             data: {
-                company_id: company_id,
+                company_ids: company_id,
             },
             success: function(response) {
                 if (response.status == "success") {
