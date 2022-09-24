@@ -9,6 +9,7 @@ use App\Models\SystemModule\Device;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class DeviceController extends Controller
 {
@@ -16,35 +17,7 @@ class DeviceController extends Controller
     public function index(){
         try{
             if( can("device") ){
-
-                if( auth('super_admin')->check() ){
-                    $devices = Device::orderBy("id","desc")->with("group","company","location")->paginate(10);
-                }
-                else{
-                    $auth = auth('web')->user();
-
-                    if( $auth->company_id && $auth->location_id ){
-                        $devices = Device::orderBy("id","desc")->with("group","company","location")
-                        ->where("group_id",$auth->group_id)
-                        ->where("company_id",$auth->company_id)
-                        ->where("location_id",$auth->location_id)
-                        ->paginate(10);
-                    }
-                    elseif( $auth->company_id ){
-                        $devices = Device::orderBy("id","desc")->with("group","company","location")
-                        ->where("group_id",$auth->group_id)
-                        ->where("company_id",$auth->company_id)
-                        ->paginate(10);
-                    }
-                    else{
-                        $devices = Device::orderBy("id","desc")->with("group","company","location")
-                        ->where("group_id",$auth->group_id)
-                        ->paginate(10);
-                    }
-                }
-                
-
-                return view("backend.modules.system_module.device.index", compact('devices'));
+                return view("backend.modules.system_module.device.index");
             }
             else{
                 return view("errors.403");
@@ -57,6 +30,69 @@ class DeviceController extends Controller
     //index function end
 
 
+    //data start
+    public function data(){
+        if( can('device') ){
+
+            if( auth('super_admin')->check() ){
+                $devices = Device::orderBy("id","desc")->with("group","company","location")->get();
+            }
+            else{
+                $auth = auth('web')->user();
+                $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
+
+                $devices = Device::orderBy("id","desc")->with("group","company","location")
+                ->whereIn("location_id",$user_location)
+                ->get();
+                
+            }
+
+            return DataTables::of($devices)
+            ->rawColumns(['action', 'group','company','location'])
+            ->editColumn('group', function (Device $devices) {
+                return $devices->group->name;
+            })
+            ->editColumn('company', function (Device $devices) {
+                return $devices->company->name;
+            })
+            ->editColumn('location', function (Device $devices) {
+                return $devices->location->name;
+            })
+            ->addColumn('action', function (Device $devices) {
+                return '
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown'.$devices->id.'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Action
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdown'.$devices->id.'">
+
+                        '.( can("edit_device") ? '
+                        <a class="dropdown-item" href="#" data-content="'.route('device.edit.modal',encrypt($devices->id)).'" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                            <i class="fas fa-edit"></i>
+                            Edit
+                        </a>
+                        ': '') .'
+
+                        '.( can("delete_device") ? '
+                        <a class="dropdown-item" href="#" data-content="'.route('device.delete.modal',encrypt($devices->id)).'" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                            <i class="fas fa-trash"></i>
+                            Delete
+                        </a>
+                        ': '') .'
+
+                    </div>
+                </div>
+                ';
+            })
+            ->addIndexColumn()
+            ->make(true);
+        }else{
+            return unauthorized();
+        }
+    }
+    //data end
+
+
     //add_modal function start
     public function add_modal(){
         try{
@@ -64,25 +100,14 @@ class DeviceController extends Controller
 
                 if( auth('super_admin')->check() ){
                     $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
-                    return view("backend.modules.system_module.device.modals.add",compact('groups'));
                 }
                 else{
                     $auth = auth('web')->user();
-
-                    if( $auth->company_id == null && $auth->location_id == null ){
-                        $companies = Location::where("type","Company")->select("id","name")->where("location_id", $auth->group_id)->where("is_active", true)
-                        ->get();
-                        return view("backend.modules.system_module.device.modals.add",compact('companies','auth'));
-                    }
-                    elseif( $auth->location_id == null ){
-                        $locations = Location::where("type","Location")->select("id","name")->where("location_id", $auth->company_id)->get();
-                        return view("backend.modules.system_module.device.modals.add",compact('locations','auth'));
-                    }
-                    else{
-                        return view("backend.modules.system_module.device.modals.add",compact('auth'));
-                    }
+                    $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                    $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
                 }
-                
+
+                return view("backend.modules.system_module.device.modals.add",compact('groups'));
             }
             else{
                 return unauthorized();
@@ -100,40 +125,13 @@ class DeviceController extends Controller
         try{
             if( can('add_device') ){
 
-                if( auth('super_admin')->check() ){
-                    $validator = Validator::make($request->all(),[
-                        'group_id' =>  'required|integer|exists:locations,id',
-                        'company_id' =>  'required|integer|exists:locations,id',
-                        'location_id' =>  'required|integer|exists:locations,id',
-                        'device_number' => 'required|unique:devices,device_number',
-                        'type' => 'required|in:Blast Freeze,Pre Cooler',
-                    ]);
-                }
-                else{
-                    $auth = auth('web')->user();
-
-                    if( $auth->company_id == null && $auth->location_id == null ){
-                        $validator = Validator::make($request->all(),[
-                            'company_id' =>  'required|integer|exists:locations,id',
-                            'location_id' =>  'required|integer|exists:locations,id',
-                            'device_number' => 'required|unique:devices,device_number',
-                            'type' => 'required|in:Blast Freeze,Pre Cooler',
-                        ]);
-                    }
-                    elseif( $auth->location_id == null ){
-                        $validator = Validator::make($request->all(),[
-                            'location_id' =>  'required|integer|exists:locations,id',
-                            'device_number' => 'required|unique:devices,device_number',
-                            'type' => 'required|in:Blast Freeze,Pre Cooler',
-                        ]);
-                    }
-                    else{
-                        $validator = Validator::make($request->all(),[
-                            'device_number' => 'required|unique:devices,device_number',
-                            'type' => 'required|in:Blast Freeze,Pre Cooler',
-                        ]);
-                    }
-                }
+                $validator = Validator::make($request->all(),[
+                    'group_id' =>  'required|integer|exists:locations,id',
+                    'company_id' =>  'required|integer|exists:locations,id',
+                    'location_id' =>  'required|integer|exists:locations,id',
+                    'device_number' => 'required|unique:devices,device_number',
+                    'type' => 'required|in:Blast Freeze,Pre Cooler',
+                ]);
                 
     
                if( $validator->fails() ){
@@ -143,34 +141,11 @@ class DeviceController extends Controller
                 
                     $device = new Device();
 
-                    if( auth('super_admin')->check() ){
-                        $device->group_id = $request->group_id;
-                        $device->company_id = $request->company_id;
-                        $device->location_id = $request->location_id;
-                    }
-                    else{
-                        $auth = auth('web')->user();
-
-                        if( $auth->company_id == null && $auth->location_id == null ){
-                            $device->group_id = $auth->group_id;
-                            $device->company_id = $request->company_id;
-                            $device->location_id = $request->location_id;
-                        }
-                        elseif( $auth->location_id == null ){
-                            $device->group_id = $auth->group_id;
-                            $device->company_id = $auth->company_id;
-                            $device->location_id = $request->location_id;
-                        }
-                        else{
-                            $device->group_id = $auth->group_id;
-                            $device->company_id = $auth->company_id;
-                            $device->location_id = $auth->location_id;
-                        }
-                    }
-
+                    $device->group_id = $request->group_id;
+                    $device->company_id = $request->company_id;
+                    $device->location_id = $request->location_id;
                     $device->device_number = $request->device_number;
-
-                    $device_manual_id = '10465' . $request->device_number;
+                    $device_manual_id = ip() . $request->device_number;
                     $device->device_manual_id = $device_manual_id;
                     $device->type = $request->type;
                     
@@ -199,23 +174,15 @@ class DeviceController extends Controller
                 if( $device ){
                     if( auth('super_admin')->check() ){
                         $groups = Location::where("type","Group")->select("id","name")->get();
-                        return view("backend.modules.system_module.device.modals.edit",compact('groups','device'));
+                        
                     }
                     else{
                         $auth = auth('web')->user();
-    
-                        if( $auth->company_id == null && $auth->location_id == null ){
-                            $companies = Location::where("type","Company")->select("id","name")->where("location_id", $auth->group_id)->get();
-                            return view("backend.modules.system_module.device.modals.edit",compact('companies','auth','device'));
-                        }
-                        elseif( $auth->location_id == null ){
-                            $locations = Location::where("type","Location")->select("id","name")->where("location_id", $auth->company_id)->get();
-                            return view("backend.modules.system_module.device.modals.edit",compact('locations','auth','device'));
-                        }
-                        else{
-                            return view("backend.modules.system_module.device.modals.edit",compact('auth','device'));
-                        }
+                        $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                        $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
                     }
+
+                    return view("backend.modules.system_module.device.modals.edit",compact('groups','device'));
                 
                 }
                 else{
@@ -242,7 +209,6 @@ class DeviceController extends Controller
 
                 $validator = Validator::make($request->all(),[
                     'device_number' => 'required|unique:devices,device_number,'. $id,
-                    'device_manual_id' => 'required|unique:devices,device_manual_id,'. $id,
                     'type' => 'required|in:Blast Freeze,Pre Cooler',
                 ]);
     
@@ -255,30 +221,14 @@ class DeviceController extends Controller
 
                     if( $device ){
 
-                        if( auth('super_admin')->check() ){
-                            if( $request->group_id && $request->company_id && $request->location_id ){
-                                $device->group_id = $request->group_id;
-                                $device->company_id = $request->company_id;
-                                $device->location_id = $request->location_id;
-                            }
-                        }
-                        else{
-                            $auth = auth('web')->user();
-
-                            if( $request->company_id && $request->location_id ){
-                                $device->group_id = $auth->group_id;
-                                $device->company_id = $request->company_id;
-                                $device->location_id = $request->location_id;
-                            }
-                            elseif( $request->location_id ){
-                                $device->group_id = $auth->group_id;
-                                $device->company_id = $auth->company_id;
-                                $device->location_id = $request->location_id;
-                            }
+                        if( $request->group_id && $request->company_id && $request->location_id ){
+                            $device->group_id = $request->group_id;
+                            $device->company_id = $request->company_id;
+                            $device->location_id = $request->location_id;
                         }
     
                         $device->device_number = $request->device_number;
-                        $device->device_manual_id = $request->device_manual_id;
+                        $device_manual_id = ip() . $request->device_number;
                         $device->type = $request->type;
                         
                         if( $device->save() ){

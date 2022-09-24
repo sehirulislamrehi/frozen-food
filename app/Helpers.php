@@ -103,4 +103,9 @@ use App\Models\LocationModule\Location;
     }
 
 
+    function ip(){
+        return "10465";
+    }
+
+
 ?>

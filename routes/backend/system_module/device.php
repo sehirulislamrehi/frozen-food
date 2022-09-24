@@ -8,6 +8,9 @@ Route::group(['prefix' => 'device'], function(){
     //index
     Route::get("",[DeviceController::class,"index"])->name("device.all");
 
+    //data
+    Route::get("data",[DeviceController::class,"data"])->name("device.data");
+
     //add
     Route::get("add-modal",[DeviceController::class,"add_modal"])->name("device.add.modal");
     Route::post("add",[DeviceController::class,"add"])->name("device.add");
