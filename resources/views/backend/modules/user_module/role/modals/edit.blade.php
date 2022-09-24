@@ -8,16 +8,42 @@
 <div class="modal-body">
 
     <div class="row data-indicator">
-        <ul>
-            <li>
-                <strong>Role for :</strong>
-            </li>
-            <li>{{ $role->group->name }}</li>
-            <li>></li>
-            <li>{{ $role->company_id ? $role->company->name : "All" }}</li>
-            <li>></li>
-            <li>{{ $role->location_id ? $role->location->name : "All" }}</li>
-        </ul>
+        <div class="col-md-12">
+            <ul>
+                <li>
+                    <strong>Group :</strong>
+                </li>
+                @foreach( $role->role_location->where("type","Group") as $group )
+                <li>
+                    {{ $group->location->name }}
+                </li>
+                @endforeach
+            </ul>
+        </div>
+        <div class="col-md-12">
+            <ul>
+                <li>
+                    <strong>Company :</strong>
+                </li>
+                @foreach( $role->role_location->where("type","Company") as $company )
+                <li>
+                    {{ $company->location->name }},
+                </li>
+                @endforeach
+            </ul>
+        </div>
+        <div class="col-md-12">
+            <ul>
+                <li>
+                    <strong>Location :</strong>
+                </li>
+                @foreach( $role->role_location->where("type","Location") as $location )
+                <li>
+                    {{ $location->location->name }},
+                </li>
+                @endforeach
+            </ul>
+        </div>
     </div>
 
     <form class="ajax-form" method="post" action="{{ route('role.update', $role->id) }}">
@@ -30,11 +56,37 @@
                 <input type="text" class="form-control" name="name" value="{{ $role->name }}">
             </div>
 
-            @if( auth('super_admin')->check() )
-                @include("backend.modules.user_module.role.modals.includes.edit.super_admin")
-            @else
-                @include("backend.modules.user_module.role.modals.includes.edit.user")
-            @endif
+            <!-- select group -->
+            <div class="col-md-4 col-12 form-group">
+                <label>Select Group</label><span class="require-span">*</span>
+                <select name="group_id" class="form-control chosen" onchange="groupChange(this)">
+                    <option value="" disabled selected>Select group</option>
+                    @foreach( $groups as $group )
+                    <option value="{{ $group->id }}">{{ $group->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- select company -->
+            <div class="col-md-4 col-12 form-group select-company">
+                <label>Select company</label><span class="require-span">*</span>
+                <div class="company-block">
+                    <select name="company_id[]" class="form-control company_id chosen" multiple onchange="companyChange(this)">
+                        <option value="" selected disabled>Select company</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- select location -->
+            <div class="col-md-4 col-12 form-group select-location">
+                <label>Select location</label><span class="require-span">*</span>
+                <div class="location-block">
+                    <select name="location_id[]" class="form-control location_id chosen" multiple>
+                        <option value="" selected disabled>Select location</option>
+                    </select>
+                </div>
+            </div>
+
 
             <!-- status -->
             <div class="col-md-12 col-12 form-group" >
@@ -149,7 +201,6 @@
     });
 </script>
 
-
 <script>
     function groupChange(e){
         let group_id = e.value
@@ -164,7 +215,7 @@
                     $(".company-block").remove();
                     $(".select-company").append(`
                         <div class="company-block">
-                            <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">>
+                            <select name="company_id[]" class="form-control company_id chosen" multiple onchange="companyChange(this)">>
                                 <option value="" selected disabled>Select company</option>
                             </select>
                         </div>
@@ -173,7 +224,7 @@
                     $(".location-block").remove();
                     $(".select-location").append(`
                         <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen">
+                            <select name="location_id[]" class="form-control location_id chosen" multiple>
                                 <option value="" selected disabled>Select location</option>
                             </select>
                         </div>
@@ -194,19 +245,28 @@
         })
     }
     function companyChange(e){
-        let company_id = e.value
+        
+        let company_ids = Array();
+        for( let i = 1 ; i <= e.length ; i++ ){
+            if(e[i]){
+                if( e[i].selected == true ){
+                    company_ids.push(e[i].value)
+                }
+            }
+        }
+
         $.ajax({
             type : "GET",
             url : "{{ route('company.wise.location') }}",
             data: {
-                company_id : company_id,
+                company_ids : company_ids,
             },
             success: function(response){
                 if( response.status == "success" ){
                     $(".location-block").remove();
                     $(".select-location").append(`
                         <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen">
+                            <select name="location_id[]" class="form-control location_id chosen" multiple>
                                 <option value="" selected disabled>Select location</option>
                             </select>
                         </div>

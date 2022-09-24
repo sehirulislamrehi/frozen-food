@@ -27,7 +27,7 @@ class ApiController extends Controller
 
                 foreach( $request['data'] as $data ){
                     array_push($final,[
-                        'temperature' => $data['temperature'], 
+                        'temperature' => number_format((float)$data['temperature'], 2, '.', ''), 
                         'date_time' => $data['date_time'], 
                         'device_manual_id' => $data['device_manual_id'],
                     ]);
@@ -53,7 +53,7 @@ class ApiController extends Controller
 
                 foreach( $request['data'] as $data ){
                     array_push($final,[
-                        'temperature' => $data['temperature'], 
+                        'temperature' => number_format((float)$data['temperature'], 2, '.', ''), 
                         'date_time' => $data['date_time'], 
                         'device_manual_id' => $data['device_manual_id'],
                     ]);

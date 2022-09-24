@@ -40,7 +40,7 @@
                                         @if( auth('super_admin')->check() )
                                              href="{{ route('profile.show',auth('super_admin')->user()->email) }}"
                                         @elseif( auth('web')->check() )
-                                             href="{{ route('profile.show',auth('web')->user()->email) }}"
+                                             href="{{ route('profile.show',auth('web')->user()->staff_id) }}"
                                         @endif
                                    >
                                    <i class="icon ion-ios-person"></i> Edit Profile</a>

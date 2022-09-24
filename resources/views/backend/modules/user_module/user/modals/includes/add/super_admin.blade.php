@@ -13,7 +13,7 @@
 <div class="col-md-6 col-12 form-group select-company">
     <label>Select company</label><span class="require-span">*</span>
     <div class="company-block">
-        <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">
+        <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)" multiple>
             <option value="" selected disabled>Select company</option>
         </select>
     </div>
@@ -23,7 +23,7 @@
 <div class="col-md-6 col-12 form-group select-location">
     <label>Select location</label><span class="require-span">*</span>
     <div class="location-block">
-        <select name="location_id" class="form-control location_id chosen">
+        <select name="location_id" class="form-control location_id chosen" multiple>
             <option value="" selected disabled>Select location</option>
         </select>
     </div>

@@ -17,14 +17,6 @@ class CreateRolesTable extends Migration
             $table->id();
             $table->string('name');
             $table->boolean('is_active')->default(false);
-
-            $table->unsignedBigInteger("group_id");
-            $table->unsignedBigInteger("company_id")->nullable();
-            $table->unsignedBigInteger("location_id")->nullable();
-
-            $table->foreign("group_id")->references("id")->on("locations")->onDelete("cascade");
-            $table->foreign("company_id")->references("id")->on("locations")->onDelete("cascade");
-            $table->foreign("location_id")->references("id")->on("locations")->onDelete("cascade");
             
             $table->timestamps();
         });

@@ -9,10 +9,12 @@ use App\Models\PriceCoverage\Prefix;
 use App\Models\UserModule\Role;
 use App\Models\Reports\Transaction;
 use App\Models\UserModule\User;
+use App\Models\UserModule\UserLocation;
 use App\Models\UserModule\Validity;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -39,24 +41,14 @@ class UserController extends Controller
             elseif( auth('web')->check() ){
                 $auth = auth('web')->user();
 
-                if( $auth->company_id && $auth->location_id ){
-                    $user = User::orderBy('id', 'desc')->where("id","!=",$auth->id)
-                    ->where("group_id",$auth->group_id)
-                    ->where("company_id",$auth->company_id)
-                    ->where("location_id",$auth->location_id)
-                    ->select("id","name","email","role_id","phone","is_active","image")->get();
-                }
-                elseif( $auth->company_id ){
-                    $user = User::orderBy('id', 'desc')->where("id","!=",$auth->id)
-                    ->where("group_id",$auth->group_id)
-                    ->where("company_id",$auth->company_id)
-                    ->select("id","name","email","role_id","phone","is_active","image")->get();
-                }
-                else{
-                    $user = User::orderBy('id', 'desc')->where("id","!=",$auth->id)
-                    ->where("group_id", $auth->group_id)
-                    ->select("id","name","email","role_id","phone","is_active","image")->get();
-                }
+                $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
+
+                $user = User::orderBy('id', 'desc')->where("id","!=",$auth->id)
+                ->whereHas('user_location', function ($query) use ($user_location) {
+                    $query->whereIn('location_id', $user_location);
+                })    
+                ->select("id","name","email","role_id","phone","is_active","image")->get();
+                
             }
 
             return DataTables::of($user)
@@ -121,8 +113,15 @@ class UserController extends Controller
             }
             else{
                 $auth = auth('web')->user();
-                $roles = Role::where("location_id",$auth->location_id)->select("id","name")->get();
-                return view("backend.modules.user_module.user.modals.add", compact("auth","roles"));
+                $user_group = $auth->user_location->where("type","Group");
+
+                if( isset($user_group[0]) ){
+                    $groups = Location::where("type","Group")->select("id","name")->where("id", $user_group[0]->location_id)->get();
+                    return view("backend.modules.user_module.user.modals.add", compact("auth","groups"));
+                }
+                else{
+                    return "Please assign a group to the user";
+                }
             }
            
 
@@ -138,9 +137,9 @@ class UserController extends Controller
             $validator = Validator::make($request->all(),[
                 'staff_id' => 'required|integer',
                 'role_id' => 'required|integer|exists:roles,id',
-                'group_id' => auth('super_admin')->check() ? 'required' : '',
-                'company_id' => auth('super_admin')->check() ? 'required' : '',
-                'location_id' => auth('super_admin')->check() ? 'required' : '',
+                'group_id' => 'required',
+                'company_id' => 'required',
+                'location_id' => 'required',
             ]);
             
 
@@ -161,20 +160,37 @@ class UserController extends Controller
                         $user->role_id = $request->role_id;
                         $user->is_active = true;
                         
-                        if( auth('super_admin')->check() ){
-                            $user->group_id = $request->group_id;
-                            $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
-                            $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
-                        }
-                        else{
-                            $auth = auth('web')->user();
-                            $user->group_id = $auth->group_id;
-                            $user->company_id = $auth->company_id;
-                            $user->location_id = $auth->location_id;
-                        }
-                        
-                        
                         if( $user->save() ){
+
+                            //group create
+                            $user_location = new UserLocation();
+                            $user_location->user_id = $user->id;
+                            $user_location->location_id = $request->group_id;
+                            $user_location->type = "Group";
+                            $user_location->save();
+
+                            //company create
+                            if( $request->company_id ){
+                                foreach( $request->company_id as $company_id ){
+                                    $user_location = new UserLocation();
+                                    $user_location->user_id = $user->id;
+                                    $user_location->location_id = $company_id;
+                                    $user_location->type = "Company";
+                                    $user_location->save();
+                                }
+                            }
+                            
+                            //location create
+                            if( $request->location_id ){
+                                foreach( $request->location_id as $location_id ){
+                                    $user_location = new UserLocation();
+                                    $user_location->user_id = $user->id;
+                                    $user_location->location_id = $location_id;
+                                    $user_location->type = "Location";
+                                    $user_location->save();
+                                }
+                            }
+
                             return response()->json(['success' => 'New user created'], 200);
                         }
                     }
@@ -195,7 +211,7 @@ class UserController extends Controller
     //user edit modal start
     public function edit($id){
         if( can("edit_user") ){
-            $user = User::where("id",$id)->select("name","email","phone","role_id","is_active","id","group_id","company_id","location_id")->with("group","company","location")->first();
+            $user = User::where("id",$id)->with("user_location")->first();
             
             if( auth('super_admin')->check() ){
                 $groups = Location::where("type","Group")->select("id","name")->get();
@@ -242,23 +258,39 @@ class UserController extends Controller
                         if( $request->role_id ){
                             $user->role_id = $request->role_id;
                         }
-                        
-
-                        if( auth('super_admin')->check() ){
-                            if( $request->group_id && $request->company_id && $request->location_id ){
-                                $user->group_id = $request->group_id;
-                                $user->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
-                                $user->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
-                            }
-                        }
-                        else{
-                            $auth = auth('web')->user();
-                            $user->group_id = $auth->group_id;
-                            $user->company_id = $auth->company_id;
-                            $user->location_id = $auth->location_id;
-                        }
     
                         if( $user->save() ){
+
+                            if( $request->group_id && $request->company_id && $request->location_id ){
+                                DB::statement("DELETE FROM user_locations WHERE user_id = $user->id");
+
+                                //group create
+                                $user_location = new UserLocation();
+                                $user_location->user_id = $user->id;
+                                $user_location->location_id = $request->group_id;
+                                $user_location->type = "Group";
+                                $user_location->save();
+
+                                //company create
+                                foreach( $request->company_id as $company_id ){
+                                    $user_location = new UserLocation();
+                                    $user_location->user_id = $user->id;
+                                    $user_location->location_id = $company_id;
+                                    $user_location->type = "Company";
+                                    $user_location->save();
+                                }
+                                
+                                //location create
+                                foreach( $request->location_id as $location_id ){
+                                    $user_location = new UserLocation();
+                                    $user_location->user_id = $user->id;
+                                    $user_location->location_id = $location_id;
+                                    $user_location->type = "Location";
+                                    $user_location->save();
+                                }
+                                
+                            }
+
                             return response()->json(['success' => "User Updated"], 200);
                         }
                     }

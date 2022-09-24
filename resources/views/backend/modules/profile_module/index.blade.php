@@ -80,11 +80,6 @@
                                     Basic Information
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#change_password" data-toggle="tab">
-                                    Change Password
-                                </a>
-                            </li>
                         </ul>
                     </div><!-- /.card-header -->
                     <div class="card-body">

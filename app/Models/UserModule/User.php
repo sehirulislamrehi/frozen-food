@@ -49,16 +49,8 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function group(){
-        return $this->belongsTo(Location::class,"group_id", "id");
-    }
-
-    public function company(){
-        return $this->belongsTo(Location::class,"company_id", "id");
-    }
-
-    public function location(){
-        return $this->belongsTo(Location::class,"location_id", "id");
+    public function user_location(){
+        return $this->hasMany(UserLocation::class,"user_id", "id");
     }
 
 }

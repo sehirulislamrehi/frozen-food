@@ -7,8 +7,10 @@ use App\Models\LocationModule\Location;
 use App\Models\ProductionModule\Freezer;
 use App\Models\SystemModule\Device;
 use App\Models\UserModule\Role;
+use App\Models\UserModule\RoleLocation;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CommonController extends Controller
 {
@@ -21,14 +23,10 @@ class CommonController extends Controller
             }
             else{
                 $auth = auth('web')->user();
-                
-                if( $auth->company_id ){
-                    $companies = Location::where("type","Company")->select("id","name")->where("id", $auth->company_id)->get();
-                }
-                else{
-                    $companies = Location::where("type","Company")->select("id","name")->where("location_id", $request->group_id)->get();
-                }
-
+                $group = Location::where("id", $request->group_id)->where("type","Group")->select("id","name")->first();
+                $company_ids = $group->company->pluck("id");
+                $user_location = $auth->user_location->where("type","Company")->whereIn("location_id",$company_ids)->pluck("location_id");
+                $companies = Location::where("type","Company")->select("id","name")->whereIn("id", $user_location)->get();
             }
             
             return response()->json([
@@ -51,17 +49,45 @@ class CommonController extends Controller
         try{
 
             if( auth('super_admin')->check() ){
-                $locations = Location::where("type","Location")->select("id","name")->where("location_id", $request->company_id)->where("is_active", true)->get();
-            }
-            else{
-                $auth = auth('web')->user();
-                
-                if( $auth->location_id ){
-                    $locations = Location::where("type","Location")->select("id","name")->where("id", $auth->location_id)->where("is_active", true)->get();
+                if( $request->company_ids ){
+                    $locations = Location::where("type","Location")->select("id","name")->whereIn("location_id", $request->company_ids)->where("is_active", true)->get();
                 }
                 else{
-                    $locations = Location::where("type","Location")->select("id","name")->where("location_id", $request->company_id)->where("is_active", true)->get();
+                    $locations = [];
                 }
+                
+            }
+            else{
+                
+                if( $request->company_ids ){
+                    $auth = auth('web')->user();
+                    $data = [];
+
+                    $company = Location::whereIn("id", $request->company_ids)->where("type","Company")->select("id","name")->with("location")->get();
+
+                    $location_ids = '';
+
+                    foreach( $company as $c ){
+                        foreach( $c->location->pluck("id") as $id ){
+                            $location_ids .= $id . ',';
+                        }
+                    } 
+                    
+                    $all_id = [];
+                    foreach( explode(",",$location_ids) as $id ){
+                        if( $id ){
+                            array_push($all_id,$id);
+                        }
+                    }
+
+                    $user_location = $auth->user_location->where("type","Location")->whereIn("location_id",$all_id)->pluck("location_id");
+                    $locations = Location::where("type","Location")->select("id","name")->whereIn("id", $user_location)->get();
+                   
+                }
+                else{
+                    $locations = [];
+                }
+
             }
             
             return response()->json([
@@ -105,7 +131,14 @@ class CommonController extends Controller
     public function location_wise_role(Request $request){
         try{
             
-            $role = Role::where("location_id",$request->location_id)->select("id","name")->where("is_active", true)->get();
+            if( $request->location_ids ){
+                $role = RoleLocation::whereIn("location_id",$request->location_ids)->where("type","Location")->with("role")->select("role_id")->groupBy("role_id")->get();
+                
+            }
+            else{
+                $role = [];
+            }
+            
             
             return response()->json([
                 'status' => 'success',

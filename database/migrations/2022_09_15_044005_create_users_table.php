@@ -23,14 +23,7 @@ class CreateUsersTable extends Migration
             $table->unsignedBigInteger('role_id');
             $table->boolean('is_active')->default(true);
             $table->timestamp('email_verified_at')->nullable();
-
-            $table->unsignedBigInteger("group_id");
-            $table->unsignedBigInteger("company_id")->nullable();
-            $table->unsignedBigInteger("location_id")->nullable();
-
-            $table->foreign("group_id")->references("id")->on("locations")->onDelete("cascade");
-            $table->foreign("company_id")->references("id")->on("locations")->onDelete("cascade");
-            $table->foreign("location_id")->references("id")->on("locations")->onDelete("cascade");
+            
             $table->foreign("role_id")->references("id")->on("roles")->onDelete("cascade");
 
             $table->rememberToken();

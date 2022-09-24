@@ -8,16 +8,42 @@
 <div class="modal-body">
 
     <div class="row data-indicator">
-        <ul>
-            <li>
-                <strong>User for :</strong>
-            </li>
-            <li>{{ $user->group->name }}</li>
-            <li>></li>
-            <li>{{ $user->company_id ? $user->company->name : "All" }}</li>
-            <li>></li>
-            <li>{{ $user->location_id ? $user->location->name : "All" }}</li>
-        </ul>
+    <div class="col-md-12">
+            <ul>
+                <li>
+                    <strong>Group :</strong>
+                </li>
+                @foreach( $user->user_location->where("type","Group") as $group )
+                <li>
+                    {{ $group->location->name }}
+                </li>
+                @endforeach
+            </ul>
+        </div>
+        <div class="col-md-12">
+            <ul>
+                <li>
+                    <strong>Company :</strong>
+                </li>
+                @foreach( $user->user_location->where("type","Company") as $company )
+                <li>
+                    {{ $company->location->name }},
+                </li>
+                @endforeach
+            </ul>
+        </div>
+        <div class="col-md-12">
+            <ul>
+                <li>
+                    <strong>Location :</strong>
+                </li>
+                @foreach( $user->user_location->where("type","Location") as $location )
+                <li>
+                    {{ $location->location->name }},
+                </li>
+                @endforeach
+            </ul>
+        </div>
     </div>
 
     <form class="ajax-form" method="post" action="{{ route('user.update', $user->id) }}">
@@ -54,9 +80,9 @@
                 <div class="role-block">
                     <select name="role_id" class="form-control role_id chosen">
                         <option value="" selected disabled>Select role</option>
-                        @if( isset($roles) )
-                            @foreach( $roles as $role )
-                            <option value="{{ $role->id }}" @if( $user->role_id == $role->id ) selected @endif >{{ $role->name }}</option>
+                        @if( isset($users) )
+                            @foreach( $users as $user )
+                            <option value="{{ $user->id }}" @if( $user->role_id == $user->id ) selected @endif >{{ $user->name }}</option>
                             @endforeach
                         @endif
                     </select>
@@ -113,7 +139,7 @@
                     $(".company-block").remove();
                     $(".select-company").append(`
                         <div class="company-block">
-                            <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">>
+                            <select name="company_id[]" class="form-control company_id chosen" multiple onchange="companyChange(this)">>
                                 <option value="" selected disabled>Select company</option>
                             </select>
                         </div>
@@ -122,7 +148,7 @@
                     $(".location-block").remove();
                     $(".select-location").append(`
                         <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
+                            <select name="location_id[]" class="form-control location_id chosen" multiple onchange="locationChange(this)">
                                 <option value="" selected disabled>Select location</option>
                             </select>
                         </div>
@@ -134,6 +160,15 @@
                         `);
                     })
 
+                    $(".role-block").remove();
+                    $(".select-role").append(`
+                        <div class="role-block">
+                            <select name="role_id" class="form-control role_id chosen">
+                                <option value="" selected disabled>Select role</option>
+                            </select>
+                        </div>
+                    `);
+
                     $(".chosen").chosen();
                 }
             },
@@ -143,19 +178,28 @@
         })
     }
     function companyChange(e){
-        let company_id = e.value
+        
+        let company_ids = Array();
+        for( let i = 1 ; i <= e.length ; i++ ){
+            if(e[i]){
+                if( e[i].selected == true ){
+                    company_ids.push(e[i].value)
+                }
+            }
+        }
+
         $.ajax({
             type : "GET",
             url : "{{ route('company.wise.location') }}",
             data: {
-                company_id : company_id,
+                company_ids : company_ids,
             },
             success: function(response){
                 if( response.status == "success" ){
                     $(".location-block").remove();
                     $(".select-location").append(`
                         <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
+                            <select name="location_id[]" class="form-control location_id chosen" multiple onchange="locationChange(this)">
                                 <option value="" selected disabled>Select location</option>
                             </select>
                         </div>
@@ -167,6 +211,15 @@
                         `);
                     })
 
+                    $(".role-block").remove();
+                    $(".select-role").append(`
+                        <div class="role-block">
+                            <select name="role_id" class="form-control role_id chosen">
+                                <option value="" selected disabled>Select role</option>
+                            </select>
+                        </div>
+                    `);
+
                     $(".chosen").chosen();
                 }
             },
@@ -176,12 +229,21 @@
         })
     }
     function locationChange(e){
-        let location_id = e.value
+
+        let location_ids = Array();
+        for( let i = 1 ; i <= e.length ; i++ ){
+            if(e[i]){
+                if( e[i].selected == true ){
+                    location_ids.push(e[i].value)
+                }
+            }
+        }
+
         $.ajax({
             type : "GET",
             url : "{{ route('location.wise.role') }}",
             data: {
-                location_id : location_id,
+                location_ids : location_ids,
             },
             success: function(response){
                 if( response.status == "success" ){
@@ -195,9 +257,11 @@
                     `);
 
                     $.each(response.data, function(key, value){
-                        $(".role_id").append(`
-                            <option value="${value.id}">${value.name}</option>
-                        `);
+                        if( value.role.is_active == true ){
+                            $(".role_id").append(`
+                                <option value="${value.role.id}">${value.role.name}</option>
+                            `);
+                        }
                     })
 
                     $(".chosen").chosen();

@@ -1,68 +1,30 @@
-
-@if( $auth->company_id == null && $auth->location_id == null )
-
-<div class="col-md-12 data-indicator">
-    <ul>
-        <li>{{ $auth->group->name }}</li>
-    </ul>
+<!-- select group -->
+<div class="col-md-6 col-12 form-group">
+    <label>Select Group</label><span class="require-span">*</span>
+    <select name="group_id" class="form-control chosen" onchange="groupChange(this)">
+        <option value="" disabled selected>Select group</option>
+        @foreach( $groups as $group )
+        <option value="{{ $group->id }}">{{ $group->name }}</option>
+        @endforeach
+    </select>
 </div>
 
 <!-- select company -->
-<div class="col-md-12 col-12 form-group select-company">
+<div class="col-md-6 col-12 form-group select-company">
     <label>Select company</label><span class="require-span">*</span>
     <div class="company-block">
-        <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">
+        <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)" multiple>
             <option value="" selected disabled>Select company</option>
-            @foreach( $companies as $company )
-            <option value="{{ $company->id }}">{{ $company->name }}</option>
-            @endforeach
         </select>
     </div>
 </div>
 
 <!-- select location -->
-<div class="col-md-12 col-12 form-group select-location">
+<div class="col-md-6 col-12 form-group select-location">
     <label>Select location</label><span class="require-span">*</span>
     <div class="location-block">
-        <select name="location_id" class="form-control location_id chosen">
+        <select name="location_id" class="form-control location_id chosen" multiple>
             <option value="" selected disabled>Select location</option>
         </select>
     </div>
 </div>
-
-@elseif( $auth->location_id == null )
-
-<div class="col-md-12 data-indicator">
-    <ul>
-        <li>{{ $auth->group->name }}</li>
-        <li>></li>
-        <li>{{ $auth->company->name }}</li>
-    </ul>
-</div>
-
-<!-- select location -->
-<div class="col-md-12 col-12 form-group select-location">
-    <label>Select location</label><span class="require-span">*</span>
-    <div class="location-block">
-        <select name="location_id" class="form-control location_id chosen">
-            <option value="" selected disabled>Select location</option>
-            @foreach( $locations as $location )
-            <option value="{{ $location->id }}">{{ $location->name }}</option>
-            @endforeach
-        </select>
-    </div>
-</div>
-
-@else
-
-<div class="col-md-12 data-indicator">
-    <ul>
-        <li>{{ $auth->group->name }}</li>
-        <li>></li>
-        <li>{{ $auth->company->name }}</li>
-        <li>></li>
-        <li>{{ $auth->location->name }}</li>
-    </ul>
-</div>
-
-@endif

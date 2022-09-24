@@ -14,15 +14,8 @@ class Role extends Model
         return $this->belongsToMany(Permission::class);
     }
 
-    public function group(){
-        return $this->belongsTo(Location::class,"group_id", "id");
+    public function role_location(){
+        return $this->hasMany(RoleLocation::class,"role_id", "id");
     }
 
-    public function company(){
-        return $this->belongsTo(Location::class,"company_id", "id");
-    }
-
-    public function location(){
-        return $this->belongsTo(Location::class,"location_id", "id");
-    }
 }

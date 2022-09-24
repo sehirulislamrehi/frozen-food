@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\UserModule\Role;
 use App\Http\Controllers\Controller;
 use App\Models\LocationModule\Location;
 use App\Models\UserModule\Role;
+use App\Models\UserModule\RoleLocation;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -28,29 +29,23 @@ class RoleController extends Controller
         if( can('roles') ){
 
             if( auth('super_admin')->check() ){
-                $role = Role::select("id","name","is_active","group_id","company_id","location_id")->with("group","company","location")->get();
+                $role = Role::select("id","name","is_active")->get();
             }
             else{
+
                 $auth = auth('web')->user();
-                $role = Role::select("id","name","is_active","group_id","company_id","location_id")
-                        ->where("group_id", $auth->group_id)
-                        ->where("company_id", $auth->company_id)
-                        ->where("location_id", $auth->location_id)
-                        ->where("id","!=",$auth->role_id)
-                        ->with("group","company","location")->get();
+
+                $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
+
+                $role = Role::orderBy('id', 'desc')->where("id","!=",$auth->role_id)
+                ->whereHas('role_location', function ($query) use ($user_location) {
+                    $query->whereIn('location_id', $user_location);
+                })    
+                ->select("id","name","is_active")->get();
             }
             
             return DataTables::of($role)
-            ->rawColumns(['action', 'is_active','group','company','location'])
-            ->editColumn('group', function (Role $role) {
-                return $role->group ? $role->group->name : 'All';
-            })
-            ->editColumn('company', function (Role $role) {
-                return $role->company ? $role->company->name : 'All';
-            })
-            ->editColumn('location', function (Role $role) {
-                return $role->location ? $role->location->name : 'All';
-            })
+            ->rawColumns(['action', 'is_active'])
             ->editColumn('is_active', function (Role $role) {
                 if ($role->is_active == true) {
                     return '<p class="badge badge-success">Active</p>';
@@ -85,7 +80,10 @@ class RoleController extends Controller
             }
             else{
                 $auth = auth('web')->user();
-                return view("backend.modules.user_module.role.modals.add", compact('auth'));
+                $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
+
+                return view("backend.modules.user_module.role.modals.add", compact('groups'));
             }
 
         }
@@ -100,9 +98,9 @@ class RoleController extends Controller
 
             
             $validator = Validator::make($request->all(), [
-                'group_id' =>  auth('super_admin')->check() ? 'required' : '',
-                'company_id' =>  auth('super_admin')->check() ? 'required' : '',
-                'location_id' =>  auth('super_admin')->check() ? 'required' : '',
+                'group_id' => 'required|exists:locations,id',
+                'company_id' => 'required|exists:locations,id',
+                'location_id' => 'required|exists:locations,id',
                 'name' => 'required',
             ]);
     
@@ -115,19 +113,36 @@ class RoleController extends Controller
                         $role->name = $request->name;
                         $role->is_active = true;
 
-                        if( auth('super_admin')->check() ){
-                            $role->group_id = $request->group_id;
-                            $role->company_id = ( $request->company_id == "All" ) ? null : $request->company_id;
-                            $role->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
-                        }
-                        else{
-                            $auth = auth('web')->user();
-                            $role->group_id = $auth->group_id;
-                            $role->company_id = $auth->company_id;
-                            $role->location_id = $auth->location_id;
-                        }
-
                         if( $role->save() ){
+
+
+                            if( $request->group_id && $request->company_id && $request->location_id ){
+
+                                //group create  
+                                $role_location = new RoleLocation();
+                                $role_location->role_id = $role->id;
+                                $role_location->location_id = $request->group_id;
+                                $role_location->type = "Group";
+                                $role_location->save();
+
+                                //company create
+                                foreach( $request->company_id as $company_id ){
+                                    $role_location = new RoleLocation();
+                                    $role_location->role_id = $role->id;
+                                    $role_location->location_id = $company_id;
+                                    $role_location->type = "Company";
+                                    $role_location->save();
+                                }
+                                
+                                //location create
+                                foreach( $request->location_id as $location_id ){
+                                    $role_location = new RoleLocation();
+                                    $role_location->role_id = $role->id;
+                                    $role_location->location_id = $location_id;
+                                    $role_location->type = "Location";
+                                    $role_location->save();
+                                }
+                            }
 
                             $data = [];
                             foreach( $request['permission'] as $permission ){
@@ -160,7 +175,7 @@ class RoleController extends Controller
     //role edit modal
     public function edit($id){
         if( can('edit_roles') ){
-            $role = Role::where("id",$id)->first();
+            $role = Role::where("id",$id)->with("role_location")->first();
 
             if( auth('super_admin')->check() ){
                 $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
@@ -168,7 +183,10 @@ class RoleController extends Controller
             }
             else{
                 $auth = auth('web')->user();
-                return view("backend.modules.user_module.role.modals.edit", compact('role', 'auth'));
+                $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
+
+                return view("backend.modules.user_module.role.modals.edit", compact('role', 'groups'));
             }
 
             
@@ -194,23 +212,37 @@ class RoleController extends Controller
                         $role->name = $request->name;
                         $role->is_active = $request->is_active;
 
-                        if( auth('super_admin')->check() ){
-                            if( $request->group_id && $request->company_id && $request->location_id ){
-                                $role->group_id = $request->group_id;
-                                $role->company_id = ( $request->company_id == "All" ) ? null : $request->company_id ;
-                                $role->location_id = ( $request->location_id == "All" ) ? null : $request->location_id;
-                            }
-                        }
-                        else{
-                            $auth = auth('web')->user();
-                            $role->group_id = $auth->group_id;
-                            $role->company_id = $auth->company_id;
-                            $role->location_id = $auth->location_id;
-                        }
-                        
-
                         if( $role->save() ){
-                            DB::statement("DELETE FROM permission_role WHERE role_id = $role->id");
+
+                            if( $request->group_id && $request->company_id && $request->location_id ){
+                                DB::statement("DELETE FROM role_locations WHERE role_id = $role->id");
+
+                                //group create
+                                $role_location = new RoleLocation();
+                                $role_location->role_id = $role->id;
+                                $role_location->location_id = $request->group_id;
+                                $role_location->type = "Group";
+                                $role_location->save();
+
+                                //company create
+                                foreach( $request->company_id as $company_id ){
+                                    $role_location = new RoleLocation();
+                                    $role_location->role_id = $role->id;
+                                    $role_location->location_id = $company_id;
+                                    $role_location->type = "Company";
+                                    $role_location->save();
+                                }
+                                
+                                //location create
+                                foreach( $request->location_id as $location_id ){
+                                    $role_location = new RoleLocation();
+                                    $role_location->role_id = $role->id;
+                                    $role_location->location_id = $location_id;
+                                    $role_location->type = "Location";
+                                    $role_location->save();
+                                }
+                                
+                            }
 
                             $data = [];
                             foreach( $request['permission'] as $permission ){
@@ -222,6 +254,7 @@ class RoleController extends Controller
                                 ]);
                             }
 
+                            DB::statement("DELETE FROM permission_role WHERE role_id = $role->id");
                             DB::table('permission_role')->insert($data);
 
                             return response()->json(['success' => 'Role Updated Successfully'], 200);

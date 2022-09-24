@@ -13,13 +13,13 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 class ProfileController extends Controller
 {
-    public function index($email)
+    public function index($staff_id)
     {
         if( auth('super_admin')->check() ){
-            $user = SuperAdmin::where('email', $email)->first();
+            $user = SuperAdmin::where('email', $staff_id)->first();
         }
         elseif( auth('web')->check() ){
-            $user = User::where('email', $email)->first();
+            $user = User::where('staff_id', $staff_id)->first();
         }
         return view('backend.modules.profile_module.index');
     }

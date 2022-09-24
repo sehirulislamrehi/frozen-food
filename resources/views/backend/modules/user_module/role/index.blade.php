@@ -84,9 +84,6 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Role</th>
-                                    <th>Group</th>
-                                    <th>Company</th>
-                                    <th>Location</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -130,18 +127,6 @@
                 {
                     data: 'name',
                     name: 'name'
-                },
-                {
-                    data: 'group',
-                    name: 'group'
-                },
-                {
-                    data: 'company',
-                    name: 'company'
-                },
-                {
-                    data: 'location',
-                    name: 'location'
                 },
                 {
                     data: 'is_active',
