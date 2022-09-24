@@ -33,24 +33,19 @@ class CompanyController extends Controller
         if( can('company') ){
             
             if( auth('super_admin')->check() ){
-                $company = Location::where("type","Company")->select("id","name","location_id","is_active")->with("group")->get();
+                $company = Location::where("type","Company")->select("id","name","location_id","is_active")->with("company_group")->get();
             }
             else{
                 $auth = auth('web')->user();
-
-                if( $auth->company_id ){
-                    $company = Location::where("type","Company")->select("id","name","location_id","is_active")->where("id", $auth->company_id)->with("group")->get();
-                }
-                else{
-                    $company = Location::where("type","Company")->select("id","name","location_id","is_active")->where("location_id", $auth->group_id)->with("group")->get();
-                }
+                $user_location = $auth->user_location->where("type","Company")->pluck("location_id");
+                $company = Location::where("type","Company")->select("id","name","location_id","is_active")->whereIn("id", $user_location)->with("company_group")->get();
                 
             }
 
             return DataTables::of($company)
             ->rawColumns(['action', 'is_active','location_id'])
             ->editColumn('location_id', function (Location $company) {
-                return $company->group->name;
+                return $company->company_group->name;
             })
             ->editColumn('is_active', function (Location $company) {
                 if ($company->is_active == true) {
@@ -98,9 +93,9 @@ class CompanyController extends Controller
                 }
                 else{
                     $auth = auth('web')->user();
-                    $groups = Location::where("type","Group")->where("id",$auth->group_id )->select("id","name")->get();
+                    $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                    $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
                 }
-                
 
                 return view("backend.modules.location_module.company.modals.add",compact('groups'));
             }

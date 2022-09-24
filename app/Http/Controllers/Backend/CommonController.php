@@ -19,14 +19,15 @@ class CommonController extends Controller
         try{
 
             if( auth('super_admin')->check() ){
-                $companies = Location::where("type","Company")->select("id","name")->where("location_id", $request->group_id)->get();
+                $companies = Location::where("type","Company")->select("id","name")->where("location_id", $request->group_id)->where("is_active", true)->get();
             }
             else{
                 $auth = auth('web')->user();
                 $group = Location::where("id", $request->group_id)->where("type","Group")->select("id","name")->first();
                 $company_ids = $group->company->pluck("id");
                 $user_location = $auth->user_location->where("type","Company")->whereIn("location_id",$company_ids)->pluck("location_id");
-                $companies = Location::where("type","Company")->select("id","name")->whereIn("id", $user_location)->get();
+
+                $companies = Location::where("type","Company")->select("id","name")->whereIn("id", $user_location)->where("is_active", true)->get();
             }
             
             return response()->json([
@@ -63,7 +64,7 @@ class CommonController extends Controller
                     $auth = auth('web')->user();
                     $data = [];
 
-                    $company = Location::whereIn("id", $request->company_ids)->where("type","Company")->select("id","name")->with("location")->get();
+                    $company = Location::whereIn("id", $request->company_ids)->where("type","Company")->select("id","name")->where("is_active", true)->with("location")->get();
 
                     $location_ids = '';
 
@@ -81,7 +82,7 @@ class CommonController extends Controller
                     }
 
                     $user_location = $auth->user_location->where("type","Location")->whereIn("location_id",$all_id)->pluck("location_id");
-                    $locations = Location::where("type","Location")->select("id","name")->whereIn("id", $user_location)->get();
+                    $locations = Location::where("type","Location")->select("id","name")->where("is_active", true)->whereIn("id", $user_location)->get();
                    
                 }
                 else{

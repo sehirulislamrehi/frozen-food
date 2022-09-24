@@ -34,24 +34,12 @@ class LocationController extends Controller
         if( can('location') ){
             
             if( auth('super_admin')->check() ){
-                $location = Location::where("type","Location")->select("id","name","location_id","is_active")->with("group")->get();
+                $location = Location::where("type","Location")->select("id","name","location_id","is_active")->with("location_company")->get();
             }
             else{
                 $auth = auth('web')->user();
-
-                if( $auth->company_id == null ){
-                    $ids = Location::where("type","Company")->select("id")->where("location_id", $auth->group_id)->groupBy("id")->get();
-                    $location_id = [];
-
-                    foreach($ids as $id){
-                        array_push($location_id,$id->id);
-                    }
-
-                    $location = Location::where("type","Location")->select("id","name","location_id","is_active")->whereIn("location_id", $location_id)->with("group")->get();
-                }
-                else{
-                    $location = Location::where("type","Location")->select("id","name","location_id","is_active")->where("location_id", $auth->company_id)->with("group")->get();
-                }
+                $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
+                $location = Location::where("type","Location")->select("id","name","location_id","is_active")->whereIn("location_id", $user_location)->with("location_company")->get();
                 
             }
             
@@ -59,7 +47,7 @@ class LocationController extends Controller
             return DataTables::of($location)
             ->rawColumns(['action', 'is_active','location_id'])
             ->editColumn('location_id', function (Location $location) {
-                return $location->company->name;
+                return $location->location_company->name;
             })
             ->editColumn('is_active', function (Location $location) {
                 if ($location->is_active == true) {

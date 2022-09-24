@@ -10,6 +10,16 @@ class Location extends Model
 {
     use HasFactory;
 
+    //company to group
+    public function company_group(){
+        return $this->belongsTo(Location::class, "location_id", "id");
+    }
+
+    //location to company
+    public function location_company(){
+        return $this->belongsTo(Location::class, "location_id", "id");
+    }
+
     //group to company
     public function company(){
         return $this->hasMany(Location::class, "location_id", "id");
