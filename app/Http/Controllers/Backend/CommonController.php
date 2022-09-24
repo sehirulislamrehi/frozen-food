@@ -133,7 +133,6 @@ class CommonController extends Controller
             
             if( $request->location_ids ){
                 $role = RoleLocation::whereIn("location_id",$request->location_ids)->where("type","Location")->with("role")->select("role_id")->groupBy("role_id")->get();
-                
             }
             else{
                 $role = [];

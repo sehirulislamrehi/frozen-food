@@ -113,15 +113,9 @@ class UserController extends Controller
             }
             else{
                 $auth = auth('web')->user();
-                $user_group = $auth->user_location->where("type","Group");
-
-                if( isset($user_group[0]) ){
-                    $groups = Location::where("type","Group")->select("id","name")->where("id", $user_group[0]->location_id)->get();
-                    return view("backend.modules.user_module.user.modals.add", compact("auth","groups"));
-                }
-                else{
-                    return "Please assign a group to the user";
-                }
+                $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
+                return view("backend.modules.user_module.user.modals.add", compact("auth","groups"));
             }
            
 
@@ -162,15 +156,16 @@ class UserController extends Controller
                         
                         if( $user->save() ){
 
-                            //group create
-                            $user_location = new UserLocation();
-                            $user_location->user_id = $user->id;
-                            $user_location->location_id = $request->group_id;
-                            $user_location->type = "Group";
-                            $user_location->save();
+                            if( $request->group_id && $request->company_id && $request->location_id ){
 
-                            //company create
-                            if( $request->company_id ){
+                                //group create
+                                $user_location = new UserLocation();
+                                $user_location->user_id = $user->id;
+                                $user_location->location_id = $request->group_id;
+                                $user_location->type = "Group";
+                                $user_location->save();
+
+                                //company create
                                 foreach( $request->company_id as $company_id ){
                                     $user_location = new UserLocation();
                                     $user_location->user_id = $user->id;
@@ -178,10 +173,8 @@ class UserController extends Controller
                                     $user_location->type = "Company";
                                     $user_location->save();
                                 }
-                            }
-                            
-                            //location create
-                            if( $request->location_id ){
+                                
+                                //location create
                                 foreach( $request->location_id as $location_id ){
                                     $user_location = new UserLocation();
                                     $user_location->user_id = $user->id;
@@ -189,6 +182,7 @@ class UserController extends Controller
                                     $user_location->type = "Location";
                                     $user_location->save();
                                 }
+                                
                             }
 
                             return response()->json(['success' => 'New user created'], 200);
@@ -219,8 +213,10 @@ class UserController extends Controller
             }
             else{
                 $auth = auth('web')->user();
-                $roles = Role::where("location_id",$auth->location_id)->select("id","name")->get();
-                return view("backend.modules.user_module.user.modals.edit", compact("user","roles","auth"));
+                $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
+
+                return view("backend.modules.user_module.user.modals.edit", compact("user","groups","auth"));
             }
 
             
