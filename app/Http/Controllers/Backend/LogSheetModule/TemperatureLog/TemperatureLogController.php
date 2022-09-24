@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\LogSheetModule\TemperatureLog;
 use App\Http\Controllers\Controller;
 use App\Models\LocationModule\Location;
 use App\Models\ProductionModule\Freezer;
+use App\Models\ProductionModule\FreezerDetails;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -27,8 +28,9 @@ class TemperatureLogController extends Controller
                     $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
                     $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
                 }
+                $total_freezer = 4;
 
-                return view("backend.modules.log_sheet_module.temperature_log.index", compact("groups"));
+                return view("backend.modules.log_sheet_module.temperature_log.index", compact("groups","total_freezer"));
                 
             }
             else{
@@ -66,6 +68,7 @@ class TemperatureLogController extends Controller
                         $temperature = $table_name . '.temperature';
                         $date_time = $table_name . '.date_time';
                         $device_manual_id = $table_name . '.device_manual_id';
+                        $total_freezer = DB::select("SELECT COUNT(id) as total_freezer FROM freezer_details WHERE freezer_id = $freezer_id")[0]->total_freezer;
 
                         if( $type == "All" ){
                             $temperature_logs = DB::select("SELECT freezer_details.freezer_id, freezer_details.device_manual_id, $temperature, $date_time, $device_manual_id, devices.type FROM freezer_details
@@ -91,7 +94,15 @@ class TemperatureLogController extends Controller
                             $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
                             $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
                         }
-                        return view("backend.modules.log_sheet_module.temperature_log.index", compact('temperature_logs','from','to','groups'));
+
+                        $result = array();
+                        foreach( $temperature_logs as $temperature_log ){
+                            $result[$temperature_log->date_time][] = $temperature_log;
+                        }
+
+                        $temperature_logs = $result;
+
+                        return view("backend.modules.log_sheet_module.temperature_log.index", compact('temperature_logs','from','to','groups','total_freezer'));
                         
     
                     }

@@ -9,6 +9,10 @@
     .data-indicator ul li{
         display: inline;
     }
+    td.even,
+    th.even{
+        background: whitesmoke;
+    }
 </style>
 @endsection
 
@@ -83,26 +87,40 @@
                         @endif
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered" style="border: 1px solid #dfe2e6;">
                                     <thead>
                                         <tr>
                                             <th>SId.</th>
-                                            <th>Temperature (°C)</th>
                                             <th>Date & Time</th>
-                                            <th>Device Manual Id</th>
-                                            <th>Type</th>
+
+                                            @for( $i = 0 ; $i < $total_freezer ; $i++ )
+                                            <th @if( ($i%2) == 0 ) class="even" @endif >Temp. (°C)</th>
+                                            <th @if( ($i%2) == 0 ) class="even" @endif >D. Manual Id</th>
+                                            <th @if( ($i%2) == 0 ) class="even" @endif >Type</th>
+                                            @endfor
+
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @if( isset($temperature_logs) )
+
+                                            @php
+                                                $i = 1;
+                                            @endphp
                                             @forelse( $temperature_logs as $key => $temperature_log )
                                             <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td>{{ $temperature_log->temperature }}</td>
-                                                <td>{{ $temperature_log->date_time }}</td>
-                                                <td>{{ $temperature_log->device_manual_id }}</td>
-                                                <td>{{ $temperature_log->type }}</td>
+                                                <td>{{ $i }}</td>
+                                                <td>{{ $key }}</td>
+
+                                                @foreach( $temperature_log as $key => $log )
+                                                <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->temperature }}</td>
+                                                <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->device_manual_id }}</td>
+                                                <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->type }}</td>
+                                                @endforeach
                                             </tr>
+                                                @php
+                                                    $i++;
+                                                @endphp
                                             @empty
                                             <tr>
                                                 <td colspan="4" class="text-center">No data found</td>
