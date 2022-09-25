@@ -80,6 +80,10 @@ Route::group(['prefix' => 'admindashboard', 'middleware' => 'auth'], function ()
     //common
     require_once 'common.php';
 
+    //database download
+    Route::get("database-download",[DashboardController::class,"database_download"])->name("db.download");
+
+
 });
 //backend route group end
 

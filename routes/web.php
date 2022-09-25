@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Route;
 
 //live server command route start
 Route::get('/db', function(){
-    Artisan::call("migrate");
-    // Artisan::call("db:seed");
+    // Artisan::call("migrate");
+    Artisan::call("db:seed");
     return "success";
 });
 Route::get('/cache', function(){

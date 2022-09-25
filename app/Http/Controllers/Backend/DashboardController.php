@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Response;
 
 class DashboardController extends Controller
 {
@@ -58,6 +59,34 @@ class DashboardController extends Controller
         }
     }
     //order_progress function end
+
+
+
+    // database_download function start
+    public function database_download(){
+        
+        try{
+            $username = "root";
+            $password = "";
+            $db_name = "frozen_food";
+            $name = Carbon::now()->toDateString() .'.sql';
+            $upload_path = public_path('database/');
+            $full_path = $upload_path.$name;
+            
+            exec("mysqldump -u$username -p$password $db_name > $full_path");
+            
+            $headers = array(
+                'Content-Type: application/sql',
+            );
+        
+            return Response::download($full_path,$name,$headers);
+        }
+        catch( \Exception $e ){
+            return back()->with('warning',$e->getMessage());
+        }
+        
+    }
+    // database_download function ends
 
 
 

@@ -186,6 +186,12 @@ class PermissionSedder extends Seeder
                 'display_name' => '-- Delete Freezer',
                 'module_id' => 5,
             ],
+            [
+                'id' => 30,
+                'key' => 'database_download',
+                'display_name' => 'Download Database',
+                'module_id' => 6,
+            ],
         ]);
     }
 }

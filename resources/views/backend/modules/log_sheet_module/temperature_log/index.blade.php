@@ -64,9 +64,8 @@
                                 </div>
 
                                 <div class="col-md-12 text-right">
-                                    <button class="btn btn-success mt-2">
-                                        Search
-                                    </button>
+                                    <input class="btn btn-info mt-2 mr-2" type="submit" name="submit" value="CSV Download" >
+                                    <input class="btn btn-success mt-2" type="submit" name="submit" value="Search">
                                 </div>
 
                             </div>

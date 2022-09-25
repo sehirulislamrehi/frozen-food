@@ -57,6 +57,14 @@ class ModuleSeeder extends Seeder
                 'route' => null
             ],
             [
+                'id' => 6,
+                'name' => 'Download Database',
+                'key' => 'database_download',
+                'icon' => 'fas fa-database',
+                'position' => 11,
+                'route' => "db.download",
+            ],
+            [
                 'id' => 50,
                 'name' => 'Settings',
                 'key' => 'settings',
