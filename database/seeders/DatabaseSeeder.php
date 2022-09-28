@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             // LocationSeeder::class,
             // SuperAdminSeeder::class,
             // AppInfoSeeder::class,
+            // UnitSeeder::class,
         ]);
     }
 }

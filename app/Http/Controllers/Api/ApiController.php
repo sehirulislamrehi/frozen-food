@@ -41,6 +41,7 @@ class ApiController extends Controller
                 ],200);
             }
             else{
+                
                 Schema::connection('mysql')->create($table_name, function($table)
                 {
                     $table->id();

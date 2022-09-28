@@ -13,6 +13,9 @@
     th.even{
         background: whitesmoke;
     }
+    table thead tr td{
+        font-weight: bold;
+    }
 </style>
 @endsection
 
@@ -64,7 +67,9 @@
                                 </div>
 
                                 <div class="col-md-12 text-right">
-                                    <input class="btn btn-info mt-2 mr-2" type="submit" name="submit" value="CSV Download" >
+                                    @if( isset($temperature_logs) )
+                                    <input class="btn btn-info mt-2 mr-2" type="button" id="download-button" name="submit" value="Download as csv" >
+                                    @endif
                                     <input class="btn btn-success mt-2" type="submit" name="submit" value="Search">
                                 </div>
 
@@ -80,7 +85,7 @@
                         @if( isset($from) && isset($to) )
                         <div class="row mb-3">
                             <div class="col-md-12">
-                                <p class="text-center">Search result for date range : {{ $from }} to {{ $to }} </p>
+                                <p class="text-center">Search result for date range : <span id="from">{{ $from }}</span> to <span id="to">{{ $to }}</span> </p>
                             </div>
                         </div>
                         @endif
@@ -89,15 +94,14 @@
                                 <table class="table table-bordered" style="border: 1px solid #dfe2e6;">
                                     <thead>
                                         <tr>
-                                            <th>SId.</th>
-                                            <th>Date & Time</th>
+                                            <td>SId.</td>
+                                            <td>Date & Time</td>
 
                                             @for( $i = 0 ; $i < $total_freezer ; $i++ )
-                                            <th @if( ($i%2) == 0 ) class="even" @endif >Temp. (°C)</th>
-                                            <th @if( ($i%2) == 0 ) class="even" @endif >D. Manual Id</th>
-                                            <th @if( ($i%2) == 0 ) class="even" @endif >Type</th>
+                                            <td @if( ($i%2) == 0 ) class="even" @endif >Temp. (°C)</td>
+                                            <td @if( ($i%2) == 0 ) class="even" @endif >D. Manual Id</td>
+                                            <td @if( ($i%2) == 0 ) class="even" @endif >Type</td>
                                             @endfor
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -267,5 +271,57 @@
             },
         })
     }
+</script>
+
+
+<script>
+    function htmlToCSV(html, filename) {
+        var data = [];
+        var rows = document.querySelectorAll("table tr");
+            
+        for (var i = 0; i < rows.length; i++) {
+
+            var row = [], cols = rows[i].querySelectorAll("td");
+
+            for (var j = 0; j < cols.length; j++) {
+                row.push(cols[j].innerText);
+            }
+                     
+            data.push(row.join(",")); 
+            
+        }
+
+
+        downloadCSVFile(data.join("\n"), filename);
+    }
+    function downloadCSVFile(csv, filename) {
+        var csv_file, download_link;
+
+        let option = {
+            type: "text/csv"
+        };
+        csv_file = new Blob([csv],option);
+
+        download_link = document.createElement("a");
+
+        download_link.download = filename;
+
+        download_link.href = window.URL.createObjectURL(csv_file);
+
+        download_link.style.display = "none";
+
+        document.body.appendChild(download_link);
+
+        download_link.click();
+    }
+
+    document.getElementById("download-button").addEventListener("click", function () {
+        var html = document.querySelector("table").outerHTML;
+
+        let from = $("#from").html();
+        let to = $("#to").html();
+
+        htmlToCSV(html, `temperature_log_${from}_to_${to}.csv`);
+    });
 </script>
 @endsection

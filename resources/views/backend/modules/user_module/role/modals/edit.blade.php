@@ -101,7 +101,7 @@
             <div class="col-md-12 form-group main-group">
                 <div class="row">
 
-                    @foreach( App\Models\UserModule\Module::orderBy("position","asc")->get() as $module )
+                    @foreach( $modules as $module )
                     @foreach( $module->permission as $module_permission )
                     @if($module->key == $module_permission->key )
                     <div class="permission_block" style="padding: 0;">

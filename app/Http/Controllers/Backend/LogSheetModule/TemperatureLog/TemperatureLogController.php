@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Backend\LogSheetModule\TemperatureLog;
 
+use App\Exports\TemperatureLog;
 use App\Http\Controllers\Controller;
 use App\Models\LocationModule\Location;
-use App\Models\ProductionModule\Freezer;
-use App\Models\ProductionModule\FreezerDetails;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Excel;
 
 class TemperatureLogController extends Controller
 {
@@ -52,6 +51,8 @@ class TemperatureLogController extends Controller
                     'from_date_time' => 'required',
                     'to_date_time' => 'required',
                 ]);
+
+
 
                 if( $request->freezer_id ){
                     $from = $request->from_date_time;
@@ -104,6 +105,7 @@ class TemperatureLogController extends Controller
 
                         return view("backend.modules.log_sheet_module.temperature_log.index", compact('temperature_logs','from','to','groups','total_freezer'));
                         
+            
     
                     }
                     else{

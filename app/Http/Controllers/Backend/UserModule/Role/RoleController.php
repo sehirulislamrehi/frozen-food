@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\UserModule\Role;
 
 use App\Http\Controllers\Controller;
 use App\Models\LocationModule\Location;
+use App\Models\UserModule\Module;
 use App\Models\UserModule\Role;
 use App\Models\UserModule\RoleLocation;
 use Carbon\Carbon;
@@ -74,16 +75,18 @@ class RoleController extends Controller
     public function add_modal(){
         if( can("add_roles") ){
 
+            $modules = Module::orderBy("position","asc")->select("id","name","key")->with("permission")->get();
+
             if( auth('super_admin')->check() ){
                 $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
-                return view("backend.modules.user_module.role.modals.add", compact("groups"));
+                return view("backend.modules.user_module.role.modals.add", compact("groups","modules"));
             }
             else{
                 $auth = auth('web')->user();
                 $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
                 $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
 
-                return view("backend.modules.user_module.role.modals.add", compact('groups'));
+                return view("backend.modules.user_module.role.modals.add", compact('groups','modules'));
             }
 
         }
@@ -175,22 +178,24 @@ class RoleController extends Controller
     //role edit modal
     public function edit($id){
         if( can('edit_roles') ){
+
             $role = Role::where("id",$id)->with("role_location")->first();
+            $modules = Module::orderBy("position","asc")->select("id","name","key")->with("permission")->get();
 
             if( auth('super_admin')->check() ){
                 $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
-                return view("backend.modules.user_module.role.modals.edit", compact('role', 'groups'));
+                return view("backend.modules.user_module.role.modals.edit", compact('role', 'groups','modules'));
             }
             else{
                 $auth = auth('web')->user();
                 $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
                 $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
 
-                return view("backend.modules.user_module.role.modals.edit", compact('role', 'groups'));
+                return view("backend.modules.user_module.role.modals.edit", compact('role', 'groups','modules'));
             }
-
             
-        }else{
+        }
+        else{
             return unauthorized();
         }
         

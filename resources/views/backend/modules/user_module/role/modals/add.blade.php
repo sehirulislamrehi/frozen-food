@@ -53,40 +53,40 @@
             <div class="col-md-12 form-group main-group mt-3" >
                 <div class="row">
 
-                    @foreach( App\Models\UserModule\Module::orderBy("position","asc")->get() as $module )
-                    @foreach( $module->permission as $module_permission )
-                    @if($module->key == $module_permission->key )
-                    <div class="permission_block" style="padding: 0">
-                        <p style="
-                            border-bottom: 1px solid #e0d9d9;
-                            background: #323232;
-                            color: white;
-                            padding: 5px;
-                        ">
-                            <label>
-                                <input type="checkbox" class="module_check" name="permission[]"
-                                    value="{{ $module_permission->id }}" />
-                                <span>{{ $module->name }}</span>
-                            </label>
-                        </p>
-                        <div class="sub_module_block">
-                            <ul>
-                                @foreach( $module->permission as $sub_module_permission )
-                                @if( $sub_module_permission->key != $module->key )
-                                <p>
+                    @foreach( $modules as $module )
+                        @foreach( $module->permission as $module_permission )
+                            @if($module->key == $module_permission->key )
+                            <div class="permission_block" style="padding: 0">
+                                <p style="
+                                    border-bottom: 1px solid #e0d9d9;
+                                    background: #323232;
+                                    color: white;
+                                    padding: 5px;
+                                ">
                                     <label>
-                                        <input type="checkbox" class="sub_module_check" name="permission[]"
-                                            disabled value="{{ $sub_module_permission->id }}" />
-                                        <span>{{ $sub_module_permission->display_name }}</span>
+                                        <input type="checkbox" class="module_check" name="permission[]"
+                                            value="{{ $module_permission->id }}" />
+                                        <span>{{ $module->name }}</span>
                                     </label>
                                 </p>
-                                @endif
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                    @endif
-                    @endforeach
+                                <div class="sub_module_block">
+                                    <ul>
+                                        @foreach( $module->permission as $sub_module_permission )
+                                        @if( $sub_module_permission->key != $module->key )
+                                        <p>
+                                            <label>
+                                                <input type="checkbox" class="sub_module_check" name="permission[]"
+                                                    disabled value="{{ $sub_module_permission->id }}" />
+                                                <span>{{ $sub_module_permission->display_name }}</span>
+                                            </label>
+                                        </p>
+                                        @endif
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                            @endif
+                        @endforeach
                     @endforeach
                 </div>
             </div>
