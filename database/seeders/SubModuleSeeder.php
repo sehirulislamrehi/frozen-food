@@ -92,6 +92,14 @@ class SubModuleSeeder extends Seeder
                 'route' => 'device.all',
                 'module_id' => 4,
             ],
+            [
+                'id' => 9,
+                'name' => 'Trolley',
+                'key' => 'trolley',
+                'position' => 2,
+                'route' => 'trolley.all',
+                'module_id' => 4,
+            ],
             //module id 4 end
 
 
@@ -108,6 +116,6 @@ class SubModuleSeeder extends Seeder
         
         ]);
 
-        //last id 8
+        //last id 9
     }
 }

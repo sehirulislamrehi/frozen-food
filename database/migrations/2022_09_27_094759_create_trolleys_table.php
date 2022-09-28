@@ -16,11 +16,17 @@ class CreateTrolleysTable extends Migration
         Schema::create('trolleys', function (Blueprint $table) {
             $table->id();
 
-            $table->integer("code")->unique();
-            $table->string("name");
+            $table->string("code")->unique();
+            $table->string("name")->nullable();
+            
             $table->unsignedBigInteger("group_id");
             $table->unsignedBigInteger("company_id");
             $table->unsignedBigInteger("location_id");
+
+            $table->enum("status",["Free","Used"])->default("Free");
+
+            $table->integer("storage")->nullable()->comment("How many pieces of product store in a trolley");
+
             $table->boolean("is_active")->default(false);
 
             $table->timestamps();

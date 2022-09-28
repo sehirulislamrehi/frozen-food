@@ -192,6 +192,24 @@ class PermissionSedder extends Seeder
                 'display_name' => 'Download Database',
                 'module_id' => 6,
             ],
+            [
+                'id' => 31,
+                'key' => 'trolley',
+                'display_name' => 'Trolley',
+                'module_id' => 4,
+            ],
+            [
+                'id' => 32,
+                'key' => 'add_trolley',
+                'display_name' => '-- Add Trolley',
+                'module_id' => 4,
+            ],
+            [
+                'id' => 33,
+                'key' => 'edit_trolley',
+                'display_name' => '-- Edit Trolley',
+                'module_id' => 4,
+            ],
         ]);
     }
 }
