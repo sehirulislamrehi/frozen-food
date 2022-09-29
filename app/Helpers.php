@@ -108,4 +108,13 @@ use App\Models\LocationModule\Location;
     }
 
 
+    function factor(){
+        return [
+            [
+                'id' => 1,
+                'name' => 'Packet'
+            ]
+        ];
+    }
+
 ?>

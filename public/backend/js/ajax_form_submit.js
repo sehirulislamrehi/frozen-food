@@ -26,6 +26,7 @@ $(document).ready(function () {
             cache: false,
             success: function (response) {
                 $(".loading").hide()
+                console.log(response)
 
                 if (response.success) {
                     swal("", `${response.success}`, "success");
@@ -46,6 +47,13 @@ $(document).ready(function () {
                 if (response.location_reload) {
                     swal('',`${response.location_reload}`,`${response.status}`)
                     return location.reload()
+                }
+
+                if (response.redirect) {
+                    swal('',`${response.message}`,`${response.status}`)
+                    setTimeout(function(){
+                        return window.location.href = response.redirect
+                    },1000);
                 }
 
                 console.clear()

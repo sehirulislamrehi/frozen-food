@@ -100,6 +100,14 @@ class SubModuleSeeder extends Seeder
                 'route' => 'trolley.all',
                 'module_id' => 4,
             ],
+            [
+                'id' => 10,
+                'name' => 'Products',
+                'key' => 'products',
+                'position' => 3,
+                'route' => 'products.all',
+                'module_id' => 4,
+            ],
             //module id 4 end
 
 
@@ -116,6 +124,6 @@ class SubModuleSeeder extends Seeder
         
         ]);
 
-        //last id 9
+        //last id 10
     }
 }

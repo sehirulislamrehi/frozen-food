@@ -69,6 +69,7 @@ Route::group(['prefix' => 'admindashboard', 'middleware' => 'auth'], function ()
     Route::group(['prefix' => 'system-module'], function(){
         require_once 'system_module/device.php';
         require_once 'system_module/trolley.php';
+        require_once 'system_module/products.php';
     });
     //system module routes end
     

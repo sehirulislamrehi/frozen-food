@@ -210,6 +210,25 @@ class PermissionSedder extends Seeder
                 'display_name' => '-- Edit Trolley',
                 'module_id' => 4,
             ],
+            [
+                'id' => 34,
+                'key' => 'products',
+                'display_name' => 'Products',
+                'module_id' => 4,
+            ],
+            [
+                'id' => 35,
+                'key' => 'add_products',
+                'display_name' => '-- Add Products',
+                'module_id' => 4,
+            ],
+            [
+                'id' => 36,
+                'key' => 'edit_products',
+                'display_name' => '-- Edit Products',
+                'module_id' => 4,
+            ],
+            
         ]);
     }
 }
