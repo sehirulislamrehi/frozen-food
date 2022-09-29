@@ -40,6 +40,13 @@ class TrolleyController extends Controller
                 $trolley = Trolley::orderBy("id","desc")->select("id","code","name","company_id","location_id","status","storage","is_active")->with("company","location")->get();
             }
             else{
+                $auth = auth('web')->user();
+                $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
+
+                $trolley = Trolley::orderBy("id","desc")->select("id","code","name","company_id","location_id","status","storage","is_active")
+                ->with("company","location")
+                ->whereIn("location_id",$user_location)
+                ->get();
             }
 
             return DataTables::of($trolley)
@@ -51,7 +58,14 @@ class TrolleyController extends Controller
                 return $trolley->location->name;
             })
             ->editColumn('status', function (Trolley $trolley) {
-                return "<p class='badge badge-success'>$trolley->status</p>";
+
+                if( $trolley->status == "Free" ){
+                    return "<p class='badge badge-success'>$trolley->status</p>";
+                }
+                else{
+                    return "<p class='badge badge-danger'>$trolley->status</p>";
+                }
+                
             })
             ->editColumn('is_active', function (Trolley $trolley) {
                 if ($trolley->is_active == true) {
