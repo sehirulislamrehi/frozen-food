@@ -61,6 +61,7 @@
                                     <th>Name</th>
                                     <th>Role</th>
                                     <th>Status</th>
+                                    <th>Online</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -118,6 +119,10 @@
                 {
                     data: 'is_active',
                     name: 'is_active'
+                },
+                {
+                    data: 'online',
+                    name: 'online'
                 },
                 {
                     data: 'action',

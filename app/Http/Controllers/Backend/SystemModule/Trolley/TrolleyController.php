@@ -76,10 +76,10 @@ class TrolleyController extends Controller
                         </a>
                         ': '') .'
 
-                        '.( can("delete_device") ? '
-                        <a class="dropdown-item" href="#" data-content="'.route('device.delete.modal',encrypt($trolley->id)).'" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
-                            <i class="fas fa-trash"></i>
-                            Delete
+                        '.( can("edit_trolley") ? '
+                        <a class="dropdown-item" href="#" data-content="'.route('trolley.edit.modal',encrypt($trolley->id)).'" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                            <i class="fas fa-edit"></i>
+                            Edit
                         </a>
                         ': '') .'
 
@@ -100,6 +100,7 @@ class TrolleyController extends Controller
     public function download_qr_code($id){
         try{
             if( can("trolley") ){
+
                 $trolley = Trolley::where("id", decrypt($id))->select("code")->first();
 
                 if( $trolley ){
@@ -177,8 +178,8 @@ class TrolleyController extends Controller
     //add_modal function end
 
 
-     //add function start
-     public function add(Request $request){
+    //add function start
+    public function add(Request $request){
         try{
             if( can('add_trolley') ){
 
@@ -222,5 +223,92 @@ class TrolleyController extends Controller
         }
     }
     //add function end
+
+
+    //edit_modal function start
+    public function edit_modal($id){
+        try{
+            if( can("edit_trolley") ){
+
+                $trolley = Trolley::where("id", decrypt($id))->with("group","company","location")->first();
+
+                if( $trolley ){
+                    if( auth('super_admin')->check() ){
+                        $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
+                    }
+                    else{
+                        $auth = auth('web')->user();
+                        $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                        $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
+                    }
+    
+                    return view("backend.modules.system_module.trolley.modals.edit",compact('groups','trolley'));
+                }
+                else{
+                    return "No trolley found";
+                }
+
+            }
+            else{
+                return unauthorized();
+            }
+        }
+        catch( Exception $e ){
+            return $e->getMessage();
+        }
+    }
+    //edit_modal function end
+
+
+    //edit function start
+    public function edit(Request $request, $id){
+        try{
+            if( can('edit_trolley') ){
+                $id = decrypt($id);
+                $validator = Validator::make($request->all(),[
+                    'name' => 'required',
+                    'storage' => 'required|integer|min:0',
+                ]);
+                
+    
+               if( $validator->fails() ){
+                   return response()->json(['errors' => $validator->errors()] ,422);
+               }
+               else{
+
+                    $trolley = Trolley::where("id", $id)->first();
+
+                    if( $trolley ){
+                        $trolley->name = $request->name;
+
+                        if( $request->group_id && $request->company_id && $request->location_id ){
+                            $trolley->group_id = $request->group_id;
+                            $trolley->company_id = $request->company_id;
+                            $trolley->location_id = $request->location_id;
+                        }
+                        
+                        $trolley->storage = $request->storage;
+                        $trolley->is_active = $request->is_active;
+                        
+                        if( $trolley->save() ){
+                            return response()->json(['success' => 'Trolley updated'], 200);
+                        }
+
+                    }
+                    else{
+                        return response()->json(['warning' => 'No trolley found'], 200);
+                    }
+                    
+               }
+            }
+            else{
+                return response()->json(['warning' => unauthorized()],200);
+            }
+        }
+        catch( Exception $e ){
+            return response()->json(['error' => $e->getMessage()],200);
+        }
+    }
+    //edit function end
 
 }

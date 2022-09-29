@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\UserModule\User;
 use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
@@ -23,6 +24,11 @@ class Authenticate
         } 
         elseif( auth('web')->check() ){
             if( auth('web')->user()->is_active == true && auth('web')->user()->role->is_active == true ){
+
+                $user = User::find(auth('web')->user()->id);
+                $user->lastActive = date('Y-m-d H:i:s');
+                $user->save();
+
                 return $next($request);
             }
             else {

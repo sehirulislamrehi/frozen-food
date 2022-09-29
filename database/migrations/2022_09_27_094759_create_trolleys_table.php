@@ -29,6 +29,10 @@ class CreateTrolleysTable extends Migration
 
             $table->boolean("is_active")->default(false);
 
+            $table->foreign("group_id")->references("id")->on("locations")->onDelete("cascade");
+            $table->foreign("company_id")->references("id")->on("locations")->onDelete("cascade");
+            $table->foreign("location_id")->references("id")->on("locations")->onDelete("cascade");
+
             $table->timestamps();
         });
     }

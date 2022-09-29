@@ -36,7 +36,7 @@ class UserController extends Controller
         if( can('all_user') ){
 
             if( auth('super_admin')->check() ){
-                $user = User::orderBy('id', 'desc')->select("id","name","email","role_id","phone","is_active","image","staff_id")->get();
+                $user = User::orderBy('id', 'desc')->select("id","name","email","role_id","phone","is_active","image","staff_id","lastActive")->get();
             }
             elseif( auth('web')->check() ){
                 $auth = auth('web')->user();
@@ -47,14 +47,23 @@ class UserController extends Controller
                 ->whereHas('user_location', function ($query) use ($user_location) {
                     $query->whereIn('location_id', $user_location);
                 })    
-                ->select("id","name","email","role_id","phone","is_active","image","staff_id")->get();
+                ->select("id","name","email","role_id","phone","is_active","image","staff_id","lastActive")->get();
                 
             }
 
             return DataTables::of($user)
-            ->rawColumns(['action', 'is_active','permission','name','image','type'])
+            ->rawColumns(['action', 'is_active','permission','name','image','type','online'])
             ->editColumn('name', function(User $user){
                 return $user->name;
+            })
+            ->editColumn('online', function(User $user){
+                if( Carbon::now()->format("Y-m-d H:i") == Carbon::parse($user->lastActive)->format('Y-m-d H:i') ){
+                    return "Online";
+                }
+                else{
+                    return Carbon::parse($user->lastActive)->diffForHumans();
+                }
+
             })
             ->editColumn('image', function(User $user){
                 if( $user->image == null ){

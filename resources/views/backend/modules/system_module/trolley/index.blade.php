@@ -41,7 +41,7 @@
                                     <th>S.ID</th>
                                     <th>Code</th>
                                     <th>Name</th>
-                                    <th>Storage</th>
+                                    <th>Storage (pcs)</th>
                                     <th>Company</th>
                                     <th>Location</th>
                                     <th>Status</th>
