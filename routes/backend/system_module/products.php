@@ -25,8 +25,16 @@ Route::group(['prefix' => 'products'], function(){
         Route::get("data/{code}",[ProductDetailsController::class,"data"])->name("products.details.data");
 
         //add
-        Route::get("add-modal/{id}",[ProductDetailsController::class,"add_modal"])->name("products.add.modal");
-        Route::post("add/{id}",[ProductDetailsController::class,"add"])->name("products.add");
+        Route::get("add-modal/{id}",[ProductDetailsController::class,"add_modal"])->name("products.details.add.modal");
+        Route::post("add/{id}",[ProductDetailsController::class,"add"])->name("products.details.add");
+
+        //edit
+        Route::get("edit-modal/{id}",[ProductDetailsController::class,"edit_modal"])->name("products.details.edit.modal");
+        Route::post("edit/{id}",[ProductDetailsController::class,"edit"])->name("products.details.edit");
+
+        //stock
+        Route::get("stock-add-modal/{id}",[ProductDetailsController::class,"stock_add_modal"])->name("products.details.stock.add.modal");
+        Route::post("stock-add/{id}",[ProductDetailsController::class,"stock_add"])->name("products.details.stock.add");
 
     });
     //product details route group

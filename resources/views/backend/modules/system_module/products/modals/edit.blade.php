@@ -1,12 +1,23 @@
 <div class="modal-header">
-    <h5 class="modal-title" id="exampleModalLabel">Add New Details</h5>
+    <h5 class="modal-title" id="exampleModalLabel">Edit Details</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 
 <div class="modal-body">
-    <form class="ajax-form" method="post" action="{{ route('products.details.add', encrypt($product->id)) }}">
+
+    <div class="row data-indicator">
+        <ul>
+            <li>{{ $product_details->group->name }}</li>
+            <li>></li>
+            <li>{{ $product_details->company->name }}</li>
+            <li>></li>
+            <li>{{ $product_details->location->name }}</li>
+        </ul>
+    </div>
+
+    <form class="ajax-form" method="post" action="{{ route('products.details.edit', encrypt($product_details->id)) }}">
         @csrf
 
         <div class="row">
@@ -45,24 +56,18 @@
             <!-- Manufacture Date -->
             <div class="col-md-6 form-group">
                 <label>Manufacture Date</label>
-                <input type="date" class="form-control" name="manufacture_date" id="manufacture_date">
+                <input type="date" class="form-control" name="manufacture_date" id="manufacture_date" value="{{ $product_details->manufacture_date }}">
             </div>
 
             <!-- Expiry Date -->
             <div class="col-md-6 form-group">
                 <label>Expiry Date</label>
-                <input type="date" readonly class="form-control" name="expiry_date" id="expiry_date">
-            </div>
-
-            <!-- quantity -->
-            <div class="col-md-12 form-group">
-                <label>in quantity (kg)</label>
-                <input type="number" class="form-control" name="quantity" step=".01">
+                <input type="date" readonly class="form-control" name="expiry_date" id="expiry_date" value="{{ $product_details->expiry_date }}">
             </div>
 
             <div class="col-md-12 form-group text-right">
                 <button type="submit" class="btn btn-outline-dark">
-                    Add
+                    Update
                 </button>
             </div>
 
@@ -167,24 +172,22 @@
 </script>
 
 <script>
-    $(document).on('change','#manufacture_date', function(){
+    $(document).on('change', '#manufacture_date', function() {
         let $this = $(this)
         let type = "{{ $product->type }}"
         let life_time = "{{ $product->life_time }}";
-        const  manufacture_date = $this.val()
+        const manufacture_date = $this.val()
         let split_value = manufacture_date.split("-");
 
-        if( type == "Local" ){
-            let year =  parseInt(split_value[0]) + parseInt(life_time)
-            let new_date = year +'-'+ split_value[1] +'-'+ split_value[2];
+        if (type == "Local") {
+            let year = parseInt(split_value[0]) + parseInt(life_time)
+            let new_date = year + '-' + split_value[1] + '-' + split_value[2];
             $("#expiry_date").val(new_date);
-        }
-        else{
-            let year =  parseInt(split_value[0]) + parseInt(life_time)
-            let new_date = year +'-'+ split_value[1] +'-'+ split_value[2];
+        } else {
+            let year = parseInt(split_value[0]) + parseInt(life_time)
+            let new_date = year + '-' + split_value[1] + '-' + split_value[2];
             $("#expiry_date").val(new_date);
         }
 
     })
 </script>
-

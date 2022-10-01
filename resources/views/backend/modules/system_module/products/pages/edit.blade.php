@@ -46,8 +46,8 @@
                                     </li>
 
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#inventory" data-toggle="tab">
-                                            Inventory
+                                        <a class="nav-link" href="#details" data-toggle="tab">
+                                            Details
                                         </a>
                                     </li>
                                 </ul>
@@ -118,12 +118,12 @@
                                         <!-- TAB PANEL END -->
 
                                         <!-- TAB PANEL START -->
-                                        <div class="tab-pane" id="inventory">
+                                        <div class="tab-pane" id="details">
 
                                             <div class="row">
                                                 <div class="col-md-12 text-right" style="border-top: 2px solid #e9e7e7;">
                                                     @if( can('add_products') )
-                                                    <button type="button" data-content="{{ route('products.add.modal', encrypt($product->id)) }}" data-target="#myModal" class="btn btn-outline-dark mt-3 mb-3" data-toggle="modal">
+                                                    <button type="button" data-content="{{ route('products.details.add.modal', encrypt($product->id)) }}" data-target="#myModal" class="btn btn-outline-dark mt-3 mb-3" data-toggle="modal">
                                                         Add
                                                     </button>
                                                     @endif
@@ -141,7 +141,7 @@
                                                                 <th>Location</th>
                                                                 <th>Manufacture Date</th>
                                                                 <th>Expiry Date</th>
-                                                                <th>Quantity</th>
+                                                                <th>Quantity (kg)</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
