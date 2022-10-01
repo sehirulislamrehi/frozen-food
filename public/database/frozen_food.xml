@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job version="8.13">
+<exportjob>
+<source>
+<host>172.17.2.173</host>
+<user>root</user>
+<pwd>1qaz21`</pwd>
+<port>3306</port>
+
+<compressed>0</compressed>
+<ssl>0</ssl>
+<sslauth>0</sslauth>
+<clientkey></clientkey>
+<clientcert></clientcert>
+<cacert></cacert>
+<cipher></cipher>
+<charset></charset>
+</source>
+<export>
+<databases all="no">
+<database name = "frozen_food">
+<objects all="no">
+<tables all="no">
+<table>devices</table>
+<table>freezer_details</table>
+<table>freezers</table>
+<table>locations</table>
+<table>permission_role</table>
+<table>role_locations</table>
+<table>roles</table>
+<table>temperature_2022_09</table>
+<table>temperature_2022_10</table>
+<table>user_locations</table>
+<table>users</table>
+</tables>
+</objects>
+</database>
+</databases>
+<script fileordir="dir" timestampdir="" timestamp="no">G:\PRAN-RFL\frozen-food\public\database</script>
+</export>
+<options>
+<createdb>yes</createdb>
+<usedb>yes</usedb>
+<dropobjects>yes</dropobjects>
+<bulkinsert>yes</bulkinsert>
+<completeinsert>no</completeinsert>
+<insertdelayed>no</insertdelayed>
+<flushlogs>no</flushlogs>
+<flushmaster>no</flushmaster>
+<flushslave>no</flushslave>
+<locktableread>no</locktableread>
+<singletransaction>no</singletransaction>
+<disablekeys>no</disablekeys>
+<locktablewrite>no</locktablewrite>
+<fkchecks>yes</fkchecks>
+<autocommit>no</autocommit>
+<usecharset>utf8</usecharset>
+<bulksize>0</bulksize>
+<appendtofile>no</appendtofile>
+</options>
+<abortonerror>no</abortonerror>
+<sendreport send="yes" when="onerror"><smtp>
+<displayname>Md. Sehirul Islam Rehi</displayname>
+<toemail>automation28@mis.prangroup.com</toemail>
+<fromemail>mdsehirulislamrehi@gmail.com</fromemail>
+<replyemail>mdsehirulislamrehi@gmail.com</replyemail>
+<host>smtp.email.ap-singapore-1.oci.oraclecloud.com:587</host>
+<encryption>no</encryption>
+<port>25</port>
+<subject>yyyy-mm-dd</subject>
+</smtp>
+</sendreport></exportjob>
+</job>
