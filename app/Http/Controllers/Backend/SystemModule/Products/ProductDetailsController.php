@@ -26,7 +26,8 @@ class ProductDetailsController extends Controller
 
                 if (auth('super_admin')->check()) {
                     $product_details = ProductDetails::orderBy("id", "desc")->with("group", "company", "location")->get();
-                } else {
+                } 
+                else {
                     $auth = auth('web')->user();
                     $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
 
@@ -64,6 +65,13 @@ class ProductDetailsController extends Controller
                             <a class="dropdown-item" href="#" data-content="' . route('products.details.stock.add.modal', encrypt($product_details->id)) . '" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
                                 <i class="fas fa-warehouse"></i>
                                 Stock Entry
+                            </a>
+                            ' : '') . '
+
+                            ' . (can("stock_summary") ? '
+                            <a class="dropdown-item" href="' . route('products.details.stock.summary', encrypt($product_details->id)) . '" class="btn btn-outline-dark">
+                                <i class="fas fa-eye"></i>
+                                Stock Summary
                             </a>
                             ' : '') . '
     
@@ -315,87 +323,5 @@ class ProductDetailsController extends Controller
     //edit function end
 
 
-    //stock_add_modal function start
-    public function stock_add_modal($id)
-    {
-        try {
-            if (can("stock_entry")) {
-
-                $product_details = ProductDetails::where("id", decrypt($id))->select("id","group_id","company_id","location_id")->with("group","company","location")->first();
-
-                if ($product_details) {
-
-                    return view("backend.modules.system_module.products.modals.stock_entry", compact('product_details'));
-
-                } else {
-                    return "No details found";
-                }
-            } else {
-                return unauthorized();
-            }
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
-    //stock_add_modal function end
-
-
-    //stock_add function start
-    public function stock_add(Request $request, $id){
-        try {
-            if (can('edit_products')) {
-
-                $validator = Validator::make($request->all(), [
-                    'type' => 'required|in:In,Out',
-                    'quantity' => 'required|numeric|min:0|not_in:0'
-                ]);
-
-                if ($validator->fails()) {
-                    return response()->json(['errors' => $validator->errors()], 422);
-                } 
-                else {
-
-                    $product_details = ProductDetails::where("id", decrypt($id))->first();
-
-                    if( $product_details ){ 
-
-                        $product_stocks = new ProductStock();
-
-                        $product_stocks->product_details_id = $product_details->id;
-                        $product_stocks->quantity = $request->quantity;
-                        $product_stocks->type = $request->type;
-                        $product_stocks->date_time = Carbon::now()->toDateTimeString();
-
-                        if( $product_stocks->save() ){
-
-                            if( $request->type == "In" ){
-                                $product_details->quantity += $request->quantity;
-                            }
-
-                            if( $request->type == "Out" ){
-                                $product_details->quantity -= $request->quantity;
-                            }
-
-                            if( $product_details->save() ){
-                                return response()->json(['success' => 'Stock updated'], 200);
-                            }
-
-                        }
-
-                    }
-                    else{
-                        return response()->json(['warning' => 'No product details found'], 200);
-                    }
-                    
-                }
-            } 
-            else {
-                return response()->json(['warning' => unauthorized()], 200);
-            }
-        } 
-        catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 200);
-        }
-    } 
-    //stock_add function end
+    
 }

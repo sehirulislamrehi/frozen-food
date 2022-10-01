@@ -234,6 +234,12 @@ class PermissionSedder extends Seeder
                 'display_name' => '-- Stock Entry',
                 'module_id' => 4,
             ],
+            [
+                'id' => 38,
+                'key' => 'stock_summary',
+                'display_name' => '-- Stock Summary',
+                'module_id' => 4,
+            ],
         ]);
     }
 }

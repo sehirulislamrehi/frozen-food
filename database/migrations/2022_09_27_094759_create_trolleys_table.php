@@ -25,7 +25,7 @@ class CreateTrolleysTable extends Migration
 
             $table->enum("status",["Free","Used"])->default("Free");
 
-            $table->integer("storage")->nullable()->comment("How many pieces of product store in a trolley");
+            $table->double("storage")->nullable()->comment("Storage in kg");
 
             $table->boolean("is_active")->default(false);
 
