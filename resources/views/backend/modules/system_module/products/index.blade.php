@@ -39,7 +39,7 @@
                         @if( can("add_products") )
                         <div class="row">
                             <div class="col-md-4 text-left">
-                                <p>Import Files (.csv)</p>
+                                <p>Import products (.csv)</p>
                                 <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <div class="form-group">

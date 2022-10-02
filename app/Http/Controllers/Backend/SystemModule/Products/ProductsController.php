@@ -20,7 +20,7 @@ class ProductsController extends Controller
             if( can("products") ){
 
                 $search = $request->search;
-                if( auth('super_admin')->check() ){
+                // if( auth('super_admin')->check() ){
 
                     if( $search ){
                         $products = Product::orderBy("id","desc")
@@ -34,26 +34,26 @@ class ProductsController extends Controller
                         $products = Product::orderBy("id","desc")->paginate(50);
                     }
                     
-                }
-                else{
-                    $auth = auth('web')->user();
-                    $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
-                    $product_ids = ProductDetails::whereIn("location_id", $user_location)->select("product_id")->groupBy("product_id")->pluck("product_id");
+                // }
+                // else{
+                //     $auth = auth('web')->user();
+                //     $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
+                //     $product_ids = ProductDetails::whereIn("location_id", $user_location)->select("product_id")->groupBy("product_id")->pluck("product_id");
 
-                    if( $search ){
-                        $products = Product::orderBy("id","desc")->whereIn("id",$product_ids)
-                        ->where("code","LIKE","%$search%")
-                        ->orWhere("name","LIKE","%$search%")
-                        ->orWhere("factor","LIKE","%$search%")
-                        ->orWhere("type","LIKE","%$search%")
-                        ->paginate(50);
-                    }
-                    else{
-                        $products = Product::orderBy("id","desc")->whereIn("id",$product_ids)->paginate(50);
-                    }
+                //     if( $search ){
+                //         $products = Product::orderBy("id","desc")->whereIn("id",$product_ids)
+                //         ->where("code","LIKE","%$search%")
+                //         ->orWhere("name","LIKE","%$search%")
+                //         ->orWhere("factor","LIKE","%$search%")
+                //         ->orWhere("type","LIKE","%$search%")
+                //         ->paginate(50);
+                //     }
+                //     else{
+                //         $products = Product::orderBy("id","desc")->whereIn("id",$product_ids)->paginate(50);
+                //     }
 
                     
-                }
+                // }
 
                 return view("backend.modules.system_module.products.index", compact("products","search"));
             }
@@ -200,16 +200,16 @@ class ProductsController extends Controller
 
                 if( $product ){
 
-                    if( auth('web')->check() ){
-                        $auth = auth('web')->user();
-                        $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
-                        $product_ids = ProductDetails::whereIn("location_id", $user_location)->select("product_id")->groupBy("product_id")->get();
+                    // if( auth('web')->check() ){
+                    //     $auth = auth('web')->user();
+                    //     $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
+                    //     $product_ids = ProductDetails::whereIn("location_id", $user_location)->select("product_id")->groupBy("product_id")->get();
                         
-                        if( !$product_ids->where("product_id", $product->id)->first() ){
-                            return back()->with('warning', 'You are not accessible for the product');
-                        }
+                    //     if( !$product_ids->where("product_id", $product->id)->first() ){
+                    //         return back()->with('warning', 'You are not accessible for the product');
+                    //     }
 
-                    }
+                    // }
 
                     $factors = factor();
                     return view("backend.modules.system_module.products.pages.edit", compact("factors","product"));
