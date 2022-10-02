@@ -13,6 +13,7 @@ Route::group(['prefix' => 'products'], function(){
     //add
     Route::get("add-page",[ProductsController::class,"add_page"])->name("products.add.page");
     Route::post("add",[ProductsController::class,"add"])->name("products.add");
+    Route::post("import",[ProductsController::class,"import"])->name("products.import");
 
     //edit
     Route::get("edit-page/{code}",[ProductsController::class,"edit_page"])->name("products.edit.page");

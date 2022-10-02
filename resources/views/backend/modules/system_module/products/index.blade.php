@@ -36,6 +36,28 @@
                     </div>
                     <div class="card-body">
 
+                        @if( can("add_products") )
+                        <div class="row">
+                            <div class="col-md-4 text-left">
+                                <p>Import Files (.csv)</p>
+                                <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="form-group">
+                                        <input type="file" name="file" class="form-control" required accept=".csv">
+                                        <small>
+                                            <a href="{{ asset('images/sample_file/product_import.csv') }}" >Download sample file</a>
+                                        </small>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-info">
+                                            Upload
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        @endif
+
                         <div class="col-md-12 text-right">
                             <form action="{{ route('products.all') }}" method="get">
                                 @csrf

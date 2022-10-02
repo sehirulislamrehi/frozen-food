@@ -33,7 +33,7 @@
 
             <!-- quantity -->
             <div class="col-md-12 form-group">
-                <label>in quantity (kg)</label>
+                <label>Quantity (kg)</label>
                 <input type="number" class="form-control" name="quantity" step=".01">
             </div>
 

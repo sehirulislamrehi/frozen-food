@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Backend\SystemModule\Products;
 
 use App\Http\Controllers\Controller;
+use App\Imports\ProductImport;
 use App\Models\SystemModule\Product;
 use App\Models\SystemModule\ProductDetails;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Excel;
+use Illuminate\Support\Facades\DB;
 
 class ProductsController extends Controller
 {
@@ -133,6 +136,59 @@ class ProductsController extends Controller
         }
     }
     //add function end
+
+
+    //import function start
+    public function import(Request $request){
+        try{
+            if( can('add_products') ){
+                $files = $request->file('file');
+                $type = $request->file('file')->getClientOriginalExtension();
+            
+                if( $type == "csv" ){
+                    $datas = Excel::toArray(new ProductImport, $files);
+                    $result = [];
+
+                    foreach( $datas[0] as $data ){
+                        array_push($result,[
+                            'code' => $data[0],
+                            'name' => $data[1],
+                            'factor' => $data[2],
+                            'type' => $data[3],
+                            'life_time' => $data[4],
+                            'is_active' => true
+                        ]);
+                    }
+
+                    try{
+                        DB::table("products")->insert($result);
+                    }
+                    catch( Exception $e ){
+                        $code = DB::select("SELECT code FROM products ORDER BY id DESC LIMIT 1");
+
+                        if( isset($code[0]) ){
+                            $code = $code[0]->code;
+                        }
+
+                        return redirect()->back()->with('error', 'Data insert failed. Please follow the sample file properly. Last entry code : '.$code.'');
+                    }
+
+                    return redirect()->back()->with('success', 'Product inserted');
+
+                }
+                else{
+                    return redirect()->back()->with('warning', 'Please upload .csv format');
+                }
+            }
+            else{
+                return view("errors.403");
+            }
+        }
+        catch( Exception $e ){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    } 
+    //import function end
 
 
     //edit_page function start
