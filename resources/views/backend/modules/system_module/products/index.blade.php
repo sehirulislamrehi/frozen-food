@@ -35,6 +35,16 @@
                         @endif
                     </div>
                     <div class="card-body">
+
+                        <div class="col-md-12 text-right">
+                            <form action="{{ route('products.all') }}" method="get">
+                                @csrf
+                                <input type="search" name="search" value="{{ $search }}">
+                                <button type="submit" class="btn btn-info btn-sm">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </form>
+                        </div>
                         <table class="table table-bordered table-striped dataTable dtr-inline user-datatable" id="datatable">
                             <thead>
                                 <tr>
@@ -47,11 +57,41 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            
+                            <tbody>
+                                @forelse( $products as $key => $product )
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $product->code }}</td>
+                                    <td>{{ $product->name }}</td>
+                                    <td>{{ $product->factor }}</td>
+                                    <td>{{ $product->type }}</td>
+                                    <td>
+                                        @if( $product->is_active == true )
+                                        <span class="badge badge-success">Active</span>
+                                        @else
+                                        <span class="badge badge-danger">Inactive</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if( can("edit_products") )
+                                        <a href="{{ route('products.edit.page', $product->code) }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td class="text-center" colspan="7">No data found</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
                         </table>
                     </div>
                 </div>
-
+            </div>
+            <div class="col-md-12">
+                {{ $products->links() }}
             </div>
         </div>
     </div>

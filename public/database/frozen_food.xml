@@ -7,7 +7,7 @@
 <pwd>1qaz21`</pwd>
 <port>3306</port>
 
-<compressed>0</compressed>
+<compressed>1</compressed>
 <ssl>0</ssl>
 <sslauth>0</sslauth>
 <clientkey></clientkey>
@@ -58,16 +58,6 @@
 <bulksize>0</bulksize>
 <appendtofile>no</appendtofile>
 </options>
-<abortonerror>no</abortonerror>
-<sendreport send="yes" when="onerror"><smtp>
-<displayname>Md. Sehirul Islam Rehi</displayname>
-<toemail>automation28@mis.prangroup.com</toemail>
-<fromemail>mdsehirulislamrehi@gmail.com</fromemail>
-<replyemail>mdsehirulislamrehi@gmail.com</replyemail>
-<host>smtp.email.ap-singapore-1.oci.oraclecloud.com:587</host>
-<encryption>no</encryption>
-<port>25</port>
-<subject>yyyy-mm-dd</subject>
-</smtp>
-</sendreport></exportjob>
+<abortonerror>yes</abortonerror>
+<sendreport send="no" /></exportjob>
 </job>

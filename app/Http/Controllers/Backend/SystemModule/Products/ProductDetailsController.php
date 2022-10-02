@@ -25,13 +25,14 @@ class ProductDetailsController extends Controller
             if ($product) {
 
                 if (auth('super_admin')->check()) {
-                    $product_details = ProductDetails::orderBy("id", "desc")->with("group", "company", "location")->get();
+                    $product_details = ProductDetails::orderBy("id", "desc")->with("group", "company", "location")->where("product_id", $product->id)->get();
                 } 
                 else {
                     $auth = auth('web')->user();
                     $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
 
                     $product_details = ProductDetails::orderBy("id", "desc")->with("group", "company", "location")
+                    ->where("product_id", $product->id)
                     ->whereIn("location_id",$user_location)->get();
                 }
 

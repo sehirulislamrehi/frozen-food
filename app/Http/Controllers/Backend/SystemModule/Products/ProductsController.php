@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\SystemModule\Products;
 
 use App\Http\Controllers\Controller;
 use App\Models\SystemModule\Product;
+use App\Models\SystemModule\ProductDetails;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -11,10 +12,47 @@ use Illuminate\Support\Facades\Validator;
 class ProductsController extends Controller
 {
     //index function start
-    public function index(){
+    public function index(Request $request){
         try{
             if( can("products") ){
-                return view("backend.modules.system_module.products.index");
+
+                $search = $request->search;
+                if( auth('super_admin')->check() ){
+
+                    if( $search ){
+                        $products = Product::orderBy("id","desc")
+                        ->where("code","LIKE","%$search%")
+                        ->orWhere("name","LIKE","%$search%")
+                        ->orWhere("factor","LIKE","%$search%")
+                        ->orWhere("type","LIKE","%$search%")
+                        ->paginate(50);
+                    }
+                    else{
+                        $products = Product::orderBy("id","desc")->paginate(50);
+                    }
+                    
+                }
+                else{
+                    $auth = auth('web')->user();
+                    $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
+                    $product_ids = ProductDetails::whereIn("location_id", $user_location)->select("product_id")->groupBy("product_id")->pluck("product_id");
+
+                    if( $search ){
+                        $products = Product::orderBy("id","desc")->whereIn("id",$product_ids)
+                        ->where("code","LIKE","%$search%")
+                        ->orWhere("name","LIKE","%$search%")
+                        ->orWhere("factor","LIKE","%$search%")
+                        ->orWhere("type","LIKE","%$search%")
+                        ->paginate(50);
+                    }
+                    else{
+                        $products = Product::orderBy("id","desc")->whereIn("id",$product_ids)->paginate(50);
+                    }
+
+                    
+                }
+
+                return view("backend.modules.system_module.products.index", compact("products","search"));
             }
             else{
                 return view("errors.403");
@@ -31,6 +69,7 @@ class ProductsController extends Controller
     public function add_page(){
         try{
             if( can("add_products") ){
+                
                 $factors = factor();
 
                 return view("backend.modules.system_module.products.pages.add", compact("factors"));
@@ -104,8 +143,19 @@ class ProductsController extends Controller
                 $product = Product::where("code", $code)->first();
 
                 if( $product ){
-                    $factors = factor();
 
+                    if( auth('web')->check() ){
+                        $auth = auth('web')->user();
+                        $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
+                        $product_ids = ProductDetails::whereIn("location_id", $user_location)->select("product_id")->groupBy("product_id")->get();
+                        
+                        if( !$product_ids->where("product_id", $product->id)->first() ){
+                            return back()->with('warning', 'You are not accessible for the product');
+                        }
+
+                    }
+
+                    $factors = factor();
                     return view("backend.modules.system_module.products.pages.edit", compact("factors","product"));
                 }
                 else{
