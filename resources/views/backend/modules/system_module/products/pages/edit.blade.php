@@ -79,14 +79,8 @@
 
                                                 <!-- Factor -->
                                                 <div class="col-md-2 form-group">
-                                                    <label>Factor</label>
-                                                    <select name="factor" class="form-control">
-                                                        @foreach( $factors as $factor )
-                                                        <option value="{{ $factor['name'] }}" @if( $factor['name']==$product->factor ) selected @endif >
-                                                            {{ $factor['name'] }}
-                                                        </option>
-                                                        @endforeach
-                                                    </select>
+                                                    <label>Factor (pieces)</label>
+                                                    <input type="number" class="form-control" name="factor" min="1" value="{{ $product->factor }}">
                                                 </div>
 
                                                 <!-- Type -->
@@ -142,6 +136,7 @@
                                                                 <th>Manufacture Date</th>
                                                                 <th>Expiry Date</th>
                                                                 <th>Quantity (kg)</th>
+                                                                <th>Cartoon Name</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
@@ -214,6 +209,10 @@
                     {
                         data: 'quantity',
                         name: 'quantity'
+                    },
+                    {
+                        data: 'cartoon_name',
+                        name: 'cartoon_name'
                     },
                     {
                         data: 'action',

@@ -22,6 +22,7 @@ class CreateProductDetailsTable extends Migration
             $table->unsignedBigInteger("location_id");
             $table->date("manufacture_date");
             $table->date("expiry_date");
+            $table->string("cartoon_name");
             $table->double("quantity")->comment("Quantity in KG.");
 
             $table->foreign("product_id")->references("id")->on("products")->onDelete("cascade");

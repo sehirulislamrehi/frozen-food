@@ -136,7 +136,8 @@ class ProductDetailsController extends Controller
                     'location_id' =>  'required|integer|exists:locations,id',
                     'manufacture_date' => 'required',
                     'expiry_date' => 'required',
-                    'quantity' => 'required|numeric|min:0|not_in:0'
+                    'quantity' => 'required|numeric|min:0|not_in:0',
+                    'cartoon_name' => 'required'
                 ]);
 
                 if ($validator->fails()) {
@@ -166,6 +167,7 @@ class ProductDetailsController extends Controller
                             $product_details->company_id = $request->company_id;
                             $product_details->location_id = $request->location_id;
                             $product_details->manufacture_date = $request->manufacture_date;
+                            $product_details->cartoon_name = $request->cartoon_name;
     
                             $explode = explode("-", $request->manufacture_date);
     
@@ -255,7 +257,8 @@ class ProductDetailsController extends Controller
 
                 $validator = Validator::make($request->all(), [
                     'manufacture_date' => 'required',
-                    'expiry_date' => 'required'
+                    'expiry_date' => 'required',
+                    'cartoon_name' => 'required'
                 ]);
 
                 if ($validator->fails()) {
@@ -291,6 +294,7 @@ class ProductDetailsController extends Controller
 
                         
                         $product_details->manufacture_date = $request->manufacture_date;
+                        $product_details->cartoon_name = $request->cartoon_name;
 
                         $explode = explode("-", $request->manufacture_date);
 

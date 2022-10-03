@@ -64,15 +64,21 @@ class ProductStockController extends Controller
                         $product_stocks->type = $request->type;
                         $product_stocks->date_time = Carbon::now()->toDateTimeString();
 
+                        if( $request->type == "In" ){
+                            $product_details->quantity += $request->quantity;
+                        }
+
+                        if( $request->type == "Out" ){
+                            $product_details->quantity -= $request->quantity;
+
+                            if( $product_details->quantity < 0 ){
+                                return response()->json(['warning' => 'Stock quantity cannot be negative.'], 200);
+                            }
+                        }
+
                         if( $product_stocks->save() ){
 
-                            if( $request->type == "In" ){
-                                $product_details->quantity += $request->quantity;
-                            }
-
-                            if( $request->type == "Out" ){
-                                $product_details->quantity -= $request->quantity;
-                            }
+                            
 
                             if( $product_details->save() ){
                                 return response()->json(['success' => 'Stock updated'], 200);

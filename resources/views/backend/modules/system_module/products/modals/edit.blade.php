@@ -65,6 +65,12 @@
                 <input type="date" readonly class="form-control" name="expiry_date" id="expiry_date" value="{{ $product_details->expiry_date }}">
             </div>
 
+            <!-- Cartoon Name -->
+            <div class="col-md-12 form-group">
+                <label>Cartoon Name</label>
+                <input type="text" class="form-control" name="cartoon_name" value="{{ $product_details->cartoon_name }}">
+            </div>
+
             <div class="col-md-12 form-group text-right">
                 <button type="submit" class="btn btn-outline-dark">
                     Update

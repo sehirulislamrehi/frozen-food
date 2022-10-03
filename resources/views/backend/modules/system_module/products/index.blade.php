@@ -73,7 +73,7 @@
                                     <th>S.ID</th>
                                     <th>Code</th>
                                     <th>Name</th>
-                                    <th>Factor</th>
+                                    <th>Factor (pieces)</th>
                                     <th>Type</th>
                                     <th>Status</th>
                                     <th>Action</th>

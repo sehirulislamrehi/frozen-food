@@ -73,12 +73,8 @@
 
                                                 <!-- Factor -->
                                                 <div class="col-md-2 form-group">
-                                                    <label>Factor</label>
-                                                    <select name="factor" class="form-control">
-                                                        @foreach( $factors as $factor )
-                                                        <option value="{{ $factor['name'] }}">{{ $factor['name'] }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <label>Factor (pieces)</label>
+                                                    <input type="number" class="form-control" name="factor" min="1">
                                                 </div>
 
                                                 <!-- Type -->

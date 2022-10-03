@@ -18,7 +18,7 @@ class CreateProductsTable extends Migration
 
             $table->integer("code")->unique();
             $table->string("name")->unique();
-            $table->enum('factor',['Packet']);
+            $table->integer('factor')->comment("Factor in pieces");
             $table->enum('type',['Local','Export']);
             $table->enum('life_time',[1,2])->comment("Year");
             $table->boolean('is_active')->default(false);

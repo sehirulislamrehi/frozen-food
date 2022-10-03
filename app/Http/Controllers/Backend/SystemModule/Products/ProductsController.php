@@ -96,7 +96,7 @@ class ProductsController extends Controller
                 $validator = Validator::make($request->all(),[
                     'code' =>  'required|unique:products,code|integer',
                     'name' =>  'required|unique:products,name',
-                    'factor' =>  'required|in:Packet',
+                    'factor' =>  'required|integer|min:1',
                     'type' => 'required|in:Local,Export',
                     'is_active' => 'required|in:0,1',
                 ]);
@@ -238,7 +238,7 @@ class ProductsController extends Controller
                 $validator = Validator::make($request->all(),[
                     'code' =>  'required|integer|unique:products,code,'. $id,
                     'name' =>  'required|unique:products,name,'. $id,
-                    'factor' =>  'required|in:Packet',
+                    'factor' =>  'required|integer|min:1',
                     'type' => 'required|in:Local,Export',
                     'is_active' => 'required|in:0,1',
                 ]);
