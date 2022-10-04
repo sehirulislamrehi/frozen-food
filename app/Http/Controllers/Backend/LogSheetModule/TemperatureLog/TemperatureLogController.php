@@ -97,7 +97,8 @@ class TemperatureLogController extends Controller
                         }
 
                         $result = array();
-                        foreach( $temperature_logs as $temperature_log ){
+                        foreach( $temperature_logs as $key => $temperature_log ){
+                            $key = $key + 1;
                             $result[$temperature_log->date_time][] = $temperature_log;
                         }
 

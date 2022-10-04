@@ -162,6 +162,7 @@ class UserController extends Controller
                         $user->phone = $user_info->contactno ?? null;                        
                         $user->role_id = $request->role_id;
                         $user->is_active = true;
+                        $user->lastActive = Carbon::now()->toDateTimeString();
                         
                         if( $user->save() ){
 

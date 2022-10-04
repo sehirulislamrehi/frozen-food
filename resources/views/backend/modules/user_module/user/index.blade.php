@@ -61,7 +61,7 @@
                                     <th>Name</th>
                                     <th>Role</th>
                                     <th>Status</th>
-                                    <th>Online</th>
+                                    <th>Active Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
