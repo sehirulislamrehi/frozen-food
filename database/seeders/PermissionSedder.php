@@ -240,6 +240,24 @@ class PermissionSedder extends Seeder
                 'display_name' => '-- Stock Summary',
                 'module_id' => 4,
             ],
+            [
+                'id' => 39,
+                'key' => 'blast_freezer_entry',
+                'display_name' => 'Blast Freezer Entry',
+                'module_id' => 5,
+            ],
+            [
+                'id' => 40,
+                'key' => 'add_blast_freezer_entry',
+                'display_name' => '-- Add Blast Freezer Entry',
+                'module_id' => 5,
+            ],
+            [
+                'id' => 41,
+                'key' => 'edit_blast_freezer_entry',
+                'display_name' => '-- Edit Blast Freezer Entry',
+                'module_id' => 5,
+            ],
         ]);
     }
 }

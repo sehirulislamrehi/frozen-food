@@ -76,6 +76,7 @@ Route::group(['prefix' => 'admindashboard', 'middleware' => 'auth'], function ()
     //production module routes start
     Route::group(['prefix' => 'production-module'], function(){
         require_once 'production_module/freezer.php';
+        require_once 'production_module/blast_freezer_entry.php';
     });
     //production module routes end
 

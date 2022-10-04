@@ -120,10 +120,18 @@ class SubModuleSeeder extends Seeder
                 'route' => 'freezer.all',
                 'module_id' => 5
             ],
+            [
+                'id' => 11,
+                'name' => 'Blast Freezer Entry',
+                'key' => 'blast_freezer_entry',
+                'position' => 2,
+                'route' => 'blast.freezer.entry.all',
+                'module_id' => 5
+            ],
             //module id 5 end
         
         ]);
 
-        //last id 10
+        //last id 11
     }
 }
