@@ -37,6 +37,12 @@
                 <input type="number" class="form-control" name="quantity" step=".01">
             </div>
 
+            <!-- Cartoon Name -->
+            <div class="col-md-12 form-group">
+                <label>Cartoon Name</label>
+                <input type="text" class="form-control" name="cartoon_name">
+            </div>
+
             <div class="col-md-12 form-group text-right">
                 <button type="submit" class="btn btn-outline-dark">
                     Add

@@ -73,6 +73,7 @@
                                             <tr>
                                                 <th>SID.</th>
                                                 <th>Type</th>
+                                                <th>Cartoon</th>
                                                 <th>Quantity (kg)</th>
                                                 <th>Date & Time</th>
                                             </tr>
@@ -82,6 +83,7 @@
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>{{ $product_stock->type }}</td>
+                                                <td>{{ $product_stock->cartoon_name ?? 'N/A' }}</td>
                                                 <td>{{ $product_stock->quantity }}</td>
                                                 <td>{{ $product_stock->date_time }}</td>
                                             </tr>

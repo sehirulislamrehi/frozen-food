@@ -45,7 +45,8 @@ class ProductStockController extends Controller
 
                 $validator = Validator::make($request->all(), [
                     'type' => 'required|in:In,Out',
-                    'quantity' => 'required|numeric|min:0|not_in:0'
+                    'quantity' => 'required|numeric|min:0|not_in:0',
+                    'cartoon_name' => 'required'
                 ]);
 
                 if ($validator->fails()) {
@@ -62,6 +63,7 @@ class ProductStockController extends Controller
                         $product_stocks->product_details_id = $product_details->id;
                         $product_stocks->quantity = $request->quantity;
                         $product_stocks->type = $request->type;
+                        $product_stocks->cartoon_name = $request->cartoon_name;
                         $product_stocks->date_time = Carbon::now()->toDateTimeString();
 
                         if( $request->type == "In" ){
@@ -77,8 +79,6 @@ class ProductStockController extends Controller
                         }
 
                         if( $product_stocks->save() ){
-
-                            
 
                             if( $product_details->save() ){
                                 return response()->json(['success' => 'Stock updated'], 200);
@@ -113,7 +113,7 @@ class ProductStockController extends Controller
 
                 if ( $product_details ) {
 
-                    $product_stocks = ProductStock::where("product_details_id", $product_details->id)->select("quantity","type","date_time")->paginate(10);
+                    $product_stocks = ProductStock::where("product_details_id", $product_details->id)->select("quantity","type","date_time","cartoon_name")->orderBy("id","desc")->paginate(10);
                     $product = Product::where("id", $product_details->product_id)->select("code","name")->first();
 
                     return view("backend.modules.system_module.products.pages.stock_summary", compact('product_details','product_stocks','product'));

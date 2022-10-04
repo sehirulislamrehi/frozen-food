@@ -54,12 +54,6 @@
                 <input type="date" readonly class="form-control" name="expiry_date" id="expiry_date">
             </div>
 
-            <!-- Cartoon Name -->
-            <div class="col-md-12 form-group">
-                <label>Cartoon Name</label>
-                <input type="text" class="form-control" name="cartoon_name">
-            </div>
-
             <!-- quantity -->
             <div class="col-md-12 form-group">
                 <label>In quantity (kg)</label>

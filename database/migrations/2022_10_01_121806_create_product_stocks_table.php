@@ -20,7 +20,8 @@ class CreateProductStocksTable extends Migration
             $table->double("quantity")->comment("Quantity in kg");
             $table->enum('type',['In','Out']);
             $table->dateTime("date_time");
-
+            $table->string("cartoon_name")->nullable();
+            
             $table->foreign("product_details_id")->references("id")->on("product_details")->onDelete("cascade");
 
             $table->timestamps();

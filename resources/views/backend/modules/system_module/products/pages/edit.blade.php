@@ -136,7 +136,6 @@
                                                                 <th>Manufacture Date</th>
                                                                 <th>Expiry Date</th>
                                                                 <th>Quantity (kg)</th>
-                                                                <th>Cartoon Name</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
@@ -209,10 +208,6 @@
                     {
                         data: 'quantity',
                         name: 'quantity'
-                    },
-                    {
-                        data: 'cartoon_name',
-                        name: 'cartoon_name'
                     },
                     {
                         data: 'action',
