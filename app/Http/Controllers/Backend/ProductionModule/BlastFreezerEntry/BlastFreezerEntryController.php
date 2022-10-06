@@ -12,7 +12,25 @@ class BlastFreezerEntryController extends Controller
     public function index(){
         try{
             if( can("blast_freezer_entry") ){
-                return view("backend.modules.production_module.blast_freezer_entry.index");
+
+                $datas = [
+                    [
+                        'hour' => 2,
+                        'min' => 2,
+                        'sec' => 45,
+                    ],
+                    [
+                        'hour' => 1,
+                        'min' => 3,
+                        'sec' => 34,
+                    ],
+                    [
+                        'hour' => 0,
+                        'min' => 1,
+                        'sec' => 13,
+                    ],
+                ];
+                return view("backend.modules.production_module.blast_freezer_entry.index", compact("datas"));
             }
             else{
                 return view("errors.403");
