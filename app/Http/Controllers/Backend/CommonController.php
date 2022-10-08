@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\LocationModule\Location;
 use App\Models\ProductionModule\Freezer;
 use App\Models\SystemModule\Device;
+use App\Models\SystemModule\ProductDetails;
+use App\Models\SystemModule\Trolley;
 use App\Models\UserModule\Role;
 use App\Models\UserModule\RoleLocation;
 use Exception;
@@ -176,5 +178,31 @@ class CommonController extends Controller
         }
     }
     //location_wise_freezer function end
+
+
+    //location_wise_data function start
+    public function location_wise_data(Request $request){
+        try{
+            
+            $device = Device::whereIn("location_id",$request->location_ids)->select("id","device_manual_id")->where("type","Blast Freeze")->get();
+            $trolley = Trolley::whereIn("location_id",$request->location_ids)->select("id","code","name")->where("status","Free")->where("is_active", true)->get();
+            $product_details = ProductDetails::whereIn("location_id",$request->location_ids)->select("id","product_id","quantity")->with("product")->get();
+            
+            return response()->json([
+                'status' => 'success',
+                'device' => $device,
+                'trolley' => $trolley,
+                'product_details' => $product_details,
+            ], 200);
+
+        }
+        catch( Exception $e ){
+            return response()->json([
+                'status' => 'error',
+                'data' => $e->getMessage()
+            ], 200);
+        }
+    }
+    //location_wise_data function end
 
 }

@@ -258,6 +258,12 @@ class PermissionSedder extends Seeder
                 'display_name' => '-- Edit Blast Freezer Entry',
                 'module_id' => 5,
             ],
+            [
+                'id' => 42,
+                'key' => 'delete_blast_freezer_entry',
+                'display_name' => '-- Delete Blast Freezer Entry',
+                'module_id' => 5,
+            ],
         ]);
     }
 }
