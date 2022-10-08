@@ -30,7 +30,6 @@ CREATE TABLE `product_details` (
   `location_id` bigint(20) unsigned NOT NULL,
   `manufacture_date` date NOT NULL,
   `expiry_date` date NOT NULL,
-  `cartoon_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `quantity` double NOT NULL COMMENT 'Quantity in KG.',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -43,7 +42,7 @@ CREATE TABLE `product_details` (
   CONSTRAINT `product_details_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `product_details_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `product_details_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `product_details` */
 

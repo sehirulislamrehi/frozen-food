@@ -39,8 +39,6 @@ CREATE TABLE `products` (
 
 /*Data for the table `products` */
 
-insert  into `products` values (1,33888,'Chicken Singara (100 gm)',12,'Local','1',1,NULL,NULL),(2,33889,'Chicken Samosa (80 gm)',12,'Local','1',1,NULL,NULL);
-
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

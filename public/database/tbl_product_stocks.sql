@@ -23,6 +23,7 @@ USE `frozen_food`;
 DROP TABLE IF EXISTS `product_stocks`;
 
 CREATE TABLE `product_stocks` (
+  `cartoon_name` char(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `product_details_id` bigint(20) unsigned NOT NULL,
   `quantity` double NOT NULL COMMENT 'Quantity in kg',
@@ -33,7 +34,7 @@ CREATE TABLE `product_stocks` (
   PRIMARY KEY (`id`),
   KEY `product_stocks_product_details_id_foreign` (`product_details_id`),
   CONSTRAINT `product_stocks_product_details_id_foreign` FOREIGN KEY (`product_details_id`) REFERENCES `product_details` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `product_stocks` */
 

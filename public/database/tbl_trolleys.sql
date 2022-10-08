@@ -42,11 +42,11 @@ CREATE TABLE `trolleys` (
   CONSTRAINT `trolleys_company_id_foreign` FOREIGN KEY (`company_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `trolleys_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `trolleys_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `trolleys` */
 
-insert  into `trolleys` values (1,'T636299','Trolley 1',1,3,6,'Free',10,1,'2022-10-03 15:17:15','2022-10-03 15:17:15');
+insert  into `trolleys` values (2,'T760049','Trolly-1',1,3,6,'Free',180,1,'2022-10-04 11:20:52','2022-10-04 11:22:34');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
