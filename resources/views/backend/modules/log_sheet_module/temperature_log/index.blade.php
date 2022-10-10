@@ -109,18 +109,26 @@
 
                                             @php
                                                 $i = 1;
+                                                $count = 1;
                                             @endphp
                                             @forelse( $temperature_logs as $key => $temperature_log )
-                                            <tr>
-                                                <td>{{ $i }}</td>
-                                                <td>{{ $key }}</td>
+                                                
+                                                @if( $i == 1 || $i % 30 == 1 )
+                                                <tr>
+                                                    <td>{{ $count }}</td>
+                                                    <td>{{ $key }}</td>
 
-                                                @foreach( $temperature_log as $key => $log )
-                                                <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->temperature }}</td>
-                                                <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->device_manual_id }}</td>
-                                                <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->type }}</td>
-                                                @endforeach
-                                            </tr>
+                                                    @foreach( $temperature_log as $key => $log )
+                                                    <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->temperature }}</td>
+                                                    <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->device_manual_id }}</td>
+                                                    <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->type }}</td>
+                                                    @endforeach
+                                                </tr>
+                                                    @php
+                                                        $count++;
+                                                    @endphp
+                                                @endif
+
                                                 @php
                                                     $i++;
                                                 @endphp
