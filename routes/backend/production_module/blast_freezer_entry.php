@@ -8,6 +8,9 @@ Route::group(['prefix' => 'blast-freezer-entry'], function(){
     //index
     Route::get("",[BlastFreezerEntryController::class,"index"])->name("blast.freezer.entry.all");
 
+    //out
+    Route::get("out-item",[BlastFreezerEntryController::class,"out_item"])->name("blast.freezer.entry.out.item");
+
     //add
     Route::get("add-modal",[BlastFreezerEntryController::class,"add_modal"])->name("blast.freezer.entry.modal");
     Route::post("add",[BlastFreezerEntryController::class,"add"])->name("blast.freezer.entry");

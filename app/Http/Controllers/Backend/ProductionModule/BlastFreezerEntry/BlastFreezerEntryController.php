@@ -53,6 +53,58 @@ class BlastFreezerEntryController extends Controller
     //index function end
 
 
+    //out_item function start
+    public function out_item(Request $request){
+        try{
+            if( can("blast_freezer_entry") ){
+
+                $from = null;
+                $to = null;
+                $search = $request->search;
+
+                $query = BlastFreezerEntry::orderBy("id","desc")
+                ->where("status","Out")
+                ->with('device','trolley','product_details');
+
+                if( $request->from_date && $request->to_date ){
+                    $from = date('Y-m-d H:i:00', strtotime($request->from_date));
+                    $to = date('Y-m-d H:i:00', strtotime($request->to_date));
+                    $query = $query->where("lead_time",">=",$from)->where("lead_time","<=",$to);
+                }
+
+                if( $search ){
+
+                    $query->whereHas('device', function ($device) use ($search){
+                        $device->where('device_manual_id', $search);
+                    })->orWhereHas('trolley', function ($trolley) use ($search){
+                        $trolley->where('code', $search);
+                    })->orwhere("code",$search);
+                    
+                }
+
+                if( auth('super_admin')->check() ){
+                    $blast_freezer_entries = $query->paginate(20);
+                }
+                else{
+                    $auth = auth('web')->user();
+                    $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
+                    $blast_freezer_entries = $query->whereIn("location_id",$user_location)->paginate(20);
+                }
+
+                return view("backend.modules.production_module.blast_freezer_entry.out_item", compact("blast_freezer_entries","from","to","search"));
+
+            }
+            else{
+                return view("errors.403");
+            }
+        }
+        catch( Exception $e ){
+            return back()->with('error', $e->getMessage());
+        }
+    }
+    //out_item function end
+
+
     //add_modal function start
     public function add_modal(){
         try{
@@ -296,14 +348,20 @@ class BlastFreezerEntryController extends Controller
 
                 if( $blast_freezer_entry ){
 
-                    $trolley = Trolley::where("id", $blast_freezer_entry->trolley_id)->first();
-
-                    $trolley->status = "Free";
-                    $trolley->save();
-
-                    if( $blast_freezer_entry->delete() ){
-                        return response()->json(['status' => 'success','location_reload' => 'Item deleted.'],200);
+                    if( $blast_freezer_entry->status == "Out" ){
+                        return response()->json(['warning' => 'You cannot delete after trolley outed from blast freezer.'],200);
                     }
+                    else{
+                        $trolley = Trolley::where("id", $blast_freezer_entry->trolley_id)->first();
+
+                        $trolley->status = "Free";
+                        $trolley->save();
+    
+                        if( $blast_freezer_entry->delete() ){
+                            return response()->json(['status' => 'success','location_reload' => 'Item deleted.'],200);
+                        }
+                    }
+                    
 
                 }
                 else{

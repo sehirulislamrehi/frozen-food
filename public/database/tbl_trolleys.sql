@@ -46,7 +46,7 @@ CREATE TABLE `trolleys` (
 
 /*Data for the table `trolleys` */
 
-insert  into `trolleys` values (2,'T760049','Trolly-1',1,3,6,'Free',180,1,'2022-10-04 11:20:52','2022-10-04 11:22:34');
+insert  into `trolleys` values (2,'T760049','Trolly-1',1,3,6,'Free',180,0,'2022-10-04 11:20:52','2022-10-09 14:24:54');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
