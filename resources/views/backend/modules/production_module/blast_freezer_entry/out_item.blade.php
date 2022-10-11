@@ -144,11 +144,11 @@
                         </p>
                         <p>
                             <strong>Lead Time :</strong>
-                            {{ date("H:i", strtotime($blast_freezer_entry->lead_time)) }}
+                            {{ date("Y-m-d H:i", strtotime($blast_freezer_entry->lead_time)) }}
                         </p>
                         <p>
                             <strong>Trolley out at :</strong>
-                            {{ $blast_freezer_entry->trolley_outed ? date("H:i", strtotime($blast_freezer_entry->trolley_outed)) : 'Currently In' }}
+                            {{ $blast_freezer_entry->trolley_outed ? date("Y-m-d H:i", strtotime($blast_freezer_entry->trolley_outed)) : 'Currently In' }}
                         </p>
                         <p>
                             <strong>Quantity :</strong>

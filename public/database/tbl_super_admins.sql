@@ -39,7 +39,7 @@ CREATE TABLE `super_admins` (
 
 /*Data for the table `super_admins` */
 
-insert  into `super_admins` values (1,'Super Admin','superadmin@gmail.com',NULL,'1858361812',NULL,'$2y$10$S68jriMmIpV4XUVxVaNfKuoKwP6aaBeyDHua0oBxdcLHIAXFPQvtK','sgGeJumtljrCKIyrODOIF2OH1LGAup0yYY6tOe4xc3C4DQ1G8tCtgeSgKpMU',NULL,NULL);
+insert  into `super_admins` values (1,'Super Admin','superadmin@gmail.com',NULL,'1858361812',NULL,'$2y$10$S68jriMmIpV4XUVxVaNfKuoKwP6aaBeyDHua0oBxdcLHIAXFPQvtK','Cw8ETALcIY6C9XJAh83fj1N8kIZELlNsYg8lN80S4YqRwgbH6VIHloscCH7Q',NULL,NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -36,11 +36,11 @@ CREATE TABLE `sub_modules` (
   UNIQUE KEY `sub_modules_key_unique` (`key`),
   KEY `sub_modules_module_id_foreign` (`module_id`),
   CONSTRAINT `sub_modules_module_id_foreign` FOREIGN KEY (`module_id`) REFERENCES `modules` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `sub_modules` */
 
-insert  into `sub_modules` values (1,'All User','all_user',1,'user.all',1,NULL,NULL),(2,'Roles','roles',2,'role.all',1,NULL,NULL),(3,'App Info','app_info',1,'app.info.all',50,NULL,NULL),(4,'Temperature log','temperature_log',1,'temperature.log',2,NULL,NULL),(5,'Company','company',1,'company.all',3,NULL,NULL),(6,'Location','location',2,'location.all',3,NULL,NULL),(7,'Device','device',1,'device.all',4,NULL,NULL),(8,'Freezer','freezer',1,'freezer.all',5,NULL,NULL),(9,'Trolley','trolley',2,'trolley.all',4,NULL,NULL),(10,'Products','products',3,'products.all',4,NULL,NULL);
+insert  into `sub_modules` values (1,'All User','all_user',1,'user.all',1,NULL,NULL),(2,'Roles','roles',2,'role.all',1,NULL,NULL),(3,'App Info','app_info',1,'app.info.all',50,NULL,NULL),(4,'Temperature log','temperature_log',1,'temperature.log',2,NULL,NULL),(5,'Company','company',1,'company.all',3,NULL,NULL),(6,'Location','location',2,'location.all',3,NULL,NULL),(7,'Device','device',1,'device.all',4,NULL,NULL),(8,'Freezer','freezer',1,'freezer.all',5,NULL,NULL),(9,'Trolley','trolley',2,'trolley.all',4,NULL,NULL),(10,'Products','products',3,'products.all',4,NULL,NULL),(11,'Blast Freezer Entry','blast_freezer_entry',2,'blast.freezer.entry.all',5,NULL,NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
