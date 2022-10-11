@@ -34,9 +34,11 @@ CREATE TABLE `product_stocks` (
   PRIMARY KEY (`id`),
   KEY `product_stocks_product_details_id_foreign` (`product_details_id`),
   CONSTRAINT `product_stocks_product_details_id_foreign` FOREIGN KEY (`product_details_id`) REFERENCES `product_details` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `product_stocks` */
+
+insert  into `product_stocks` values (NULL,2,2,120,'In','2022-10-11 14:27:28','2022-10-11 14:27:28','2022-10-11 14:27:28');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

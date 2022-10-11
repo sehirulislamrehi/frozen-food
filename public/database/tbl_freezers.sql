@@ -37,11 +37,11 @@ CREATE TABLE `freezers` (
   CONSTRAINT `freezers_company_id_foreign` FOREIGN KEY (`company_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `freezers_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `freezers_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `freezers` */
 
-insert  into `freezers` values (1,1,3,6,'Freezer 1','2022-09-24 06:03:31','2022-09-24 06:20:20');
+insert  into `freezers` values (1,1,3,6,'Freezer 1','2022-09-24 06:03:31','2022-09-24 06:20:20'),(3,1,3,6,'Paratha','2022-10-11 14:21:09','2022-10-11 14:21:09');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -34,11 +34,11 @@ CREATE TABLE `freezer_details` (
   KEY `freezer_details_device_id_foreign` (`device_id`),
   CONSTRAINT `freezer_details_device_id_foreign` FOREIGN KEY (`device_id`) REFERENCES `devices` (`id`) ON DELETE CASCADE,
   CONSTRAINT `freezer_details_freezer_id_foreign` FOREIGN KEY (`freezer_id`) REFERENCES `freezers` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `freezer_details` */
 
-insert  into `freezer_details` values (1,1,1,104651,'2022-09-24 06:03:31','2022-09-24 06:03:31'),(2,1,2,104652,'2022-09-24 06:03:31','2022-09-24 06:03:31'),(3,1,3,104653,'2022-09-24 06:03:31','2022-09-24 06:03:31'),(4,1,4,104654,'2022-09-24 06:03:32','2022-09-24 06:03:32');
+insert  into `freezer_details` values (1,1,1,104651,'2022-09-24 06:03:31','2022-09-24 06:03:31'),(2,1,2,104652,'2022-09-24 06:03:31','2022-09-24 06:03:31'),(3,1,3,104653,'2022-09-24 06:03:31','2022-09-24 06:03:31'),(4,1,4,104654,'2022-09-24 06:03:32','2022-09-24 06:03:32'),(6,3,1,104651,'2022-10-11 14:21:09','2022-10-11 14:21:09');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
