@@ -25,7 +25,7 @@
     }
 
     .card-item{
-        border: 2px solid white;
+        border: 4px solid white;
         margin-bottom: 15px;
     }
     .timer span {
@@ -37,11 +37,11 @@
     }
 
     .time-over{
-        border: 2px solid red!important;
+        border: 4px solid red!important;
         /* background: #ffeded!important; */
     }
     .time-almost-over{
-        border: 2px solid #ffcb8c;
+        border: 4px solid #ffb55d;
         /* background: #ffc107!important; */
     }
     .time-name{

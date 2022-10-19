@@ -41,7 +41,7 @@
                                     <th>S.ID</th>
                                     <th>Code</th>
                                     <th>Name</th>
-                                    <th>Storage (kg)</th>
+                                    <!-- <th>Storage (kg)</th> -->
                                     <th>Company</th>
                                     <th>Location</th>
                                     <th>Status</th>
@@ -93,10 +93,10 @@
                     data: 'name',
                     name: 'name'
                 },
-                {
-                    data: 'storage',
-                    name: 'storage'
-                },
+                // {
+                //     data: 'storage',
+                //     name: 'storage'
+                // },
                 {
                     data: 'company',
                     name: 'company'

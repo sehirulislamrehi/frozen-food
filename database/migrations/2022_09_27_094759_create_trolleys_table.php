@@ -25,7 +25,7 @@ class CreateTrolleysTable extends Migration
 
             $table->enum("status",["Free","Used"])->default("Free");
 
-            $table->double("storage")->nullable()->comment("Storage in kg");
+            // $table->double("storage")->nullable()->comment("Storage in kg");
 
             $table->boolean("is_active")->default(false);
 

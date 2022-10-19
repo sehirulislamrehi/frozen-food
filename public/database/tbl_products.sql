@@ -39,7 +39,7 @@ CREATE TABLE `products` (
 
 /*Data for the table `products` */
 
-insert  into `products` values (3,33888,'Chicken Singara (100 gm)',120,'Local','1',1,'2022-10-11 14:25:50','2022-10-11 14:25:50');
+insert  into `products` values (3,33888,'Chicken Singara (100 gm)',120,'Local','1',0,'2022-10-11 14:25:50','2022-10-15 17:37:55');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

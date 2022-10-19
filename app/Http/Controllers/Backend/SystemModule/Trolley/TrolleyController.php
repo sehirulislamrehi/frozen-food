@@ -37,13 +37,13 @@ class TrolleyController extends Controller
         if( can('trolley') ){
 
             if( auth('super_admin')->check() ){
-                $trolley = Trolley::orderBy("id","desc")->select("id","code","name","company_id","location_id","status","storage","is_active")->with("company","location")->get();
+                $trolley = Trolley::orderBy("id","desc")->select("id","code","name","company_id","location_id","status","is_active")->with("company","location")->get();
             }
             else{
                 $auth = auth('web')->user();
                 $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
 
-                $trolley = Trolley::orderBy("id","desc")->select("id","code","name","company_id","location_id","status","storage","is_active")
+                $trolley = Trolley::orderBy("id","desc")->select("id","code","name","company_id","location_id","status","is_active")
                 ->with("company","location")
                 ->whereIn("location_id",$user_location)
                 ->get();
@@ -202,7 +202,7 @@ class TrolleyController extends Controller
                     'company_id' =>  'required|integer|exists:locations,id',
                     'location_id' =>  'required|integer|exists:locations,id',
                     'name' => 'required',
-                    'storage' => 'required|integer|min:0',
+                    // 'storage' => 'required|integer|min:0',
                 ]);
                 
     
@@ -219,7 +219,7 @@ class TrolleyController extends Controller
                     $trolley->company_id = $request->company_id;
                     $trolley->location_id = $request->location_id;
                     $trolley->status = "Free";
-                    $trolley->storage = $request->storage;
+                    // $trolley->storage = $request->storage;
                     $trolley->is_active = true;
                     
                     if( $trolley->save() ){
@@ -281,7 +281,7 @@ class TrolleyController extends Controller
                 $id = decrypt($id);
                 $validator = Validator::make($request->all(),[
                     'name' => 'required',
-                    'storage' => 'required|integer|min:0',
+                    // 'storage' => 'required|integer|min:0',
                 ]);
                 
     
@@ -301,7 +301,7 @@ class TrolleyController extends Controller
                             $trolley->location_id = $request->location_id;
                         }
                         
-                        $trolley->storage = $request->storage;
+                        // $trolley->storage = $request->storage;
                         $trolley->is_active = $request->is_active;
                         
                         if( $trolley->save() ){

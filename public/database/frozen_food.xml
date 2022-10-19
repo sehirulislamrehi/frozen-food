@@ -20,7 +20,32 @@
 <databases all="no">
 <database name = "frozen_food">
 <objects all="no">
-<tables all="yes">
+<tables all="no">
+<table>app_infos</table>
+<table>blast_freezer_entries</table>
+<table>devices</table>
+<table>failed_jobs</table>
+<table>freezer_details</table>
+<table>freezers</table>
+<table>locations</table>
+<table>migrations</table>
+<table>modules</table>
+<table>password_resets</table>
+<table>permission_role</table>
+<table>permissions</table>
+<table>product_details</table>
+<table>product_stocks</table>
+<table>products</table>
+<table>role_locations</table>
+<table>roles</table>
+<table>sub_modules</table>
+<table>super_admins</table>
+<table>temperature</table>
+<table>temperature_2022_10</table>
+<table>trolleys</table>
+<table>units</table>
+<table>user_locations</table>
+<table>users</table>
 </tables>
 </objects>
 </database>

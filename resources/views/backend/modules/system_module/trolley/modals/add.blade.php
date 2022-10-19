@@ -49,10 +49,10 @@
             </div>
 
             <!-- Trolley Storage ( Pieces ) -->
-            <div class="col-md-12 col-12 form-group">
+            <!-- <div class="col-md-12 col-12 form-group">
                 <label>Trolley Storage (kg)</label><span class="require-span">*</span>
                 <input type="number" name="storage" class="form-control">
-            </div>
+            </div> -->
 
             <div class="col-md-12 form-group text-right">
                 <button type="submit" class="btn btn-outline-dark">
