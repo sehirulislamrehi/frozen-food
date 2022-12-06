@@ -16,6 +16,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
@@ -25,6 +26,8 @@ class UserController extends Controller
     //index start
     public function index(){
         if( can('all_user') ){
+
+            return Session::get("unique_code");
             return view("backend.modules.user_module.user.index");
         }else{
             return view("errors.403");
