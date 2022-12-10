@@ -80,6 +80,14 @@ class SubModuleSeeder extends Seeder
                 'route' => 'app.info.all',
                 'module_id' => 50,
             ],
+            [
+                'id' => 12,
+                'name' => 'Email Lists',
+                'key' => 'email_list',
+                'position' => 2,
+                'route' => 'email.list.all',
+                'module_id' => 50,
+            ],
             //module id 50 end
 
 

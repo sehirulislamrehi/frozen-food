@@ -264,6 +264,36 @@ class PermissionSedder extends Seeder
                 'display_name' => '-- Delete Blast Freezer Entry',
                 'module_id' => 5,
             ],
+            [
+                'id' => 43,
+                'key' => 'email_list',
+                'display_name' => 'Email List',
+                'module_id' => 50,
+            ],
+            [
+                'id' => 44,
+                'key' => 'add_email_list',
+                'display_name' => '-- Add Email',
+                'module_id' => 50,
+            ],
+            [
+                'id' => 45,
+                'key' => 'edit_email_list',
+                'display_name' => '-- Edit Email',
+                'module_id' => 50,
+            ],
+            [
+                'id' => 46,
+                'key' => 'delete_email_list',
+                'display_name' => '-- Delete Email',
+                'module_id' => 50,
+            ],
+            [
+                'id' => 47,
+                'key' => 'create_cartoon',
+                'display_name' => 'Create Cartoon',
+                'module_id' => 5,
+            ],
         ]);
     }
 }

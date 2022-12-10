@@ -62,6 +62,7 @@ Route::group(['prefix' => 'admindashboard', 'middleware' => 'auth'], function ()
     //settings module routes start
     Route::group(['prefix' => 'settings-module'], function () {
         require_once 'settings_module/app_info.php';
+        require_once 'settings_module/email_list.php';
     });
     //settings module routes end
 

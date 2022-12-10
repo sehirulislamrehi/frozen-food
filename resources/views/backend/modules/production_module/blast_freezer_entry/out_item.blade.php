@@ -39,6 +39,25 @@
         border-radius: 100%;
         cursor: pointer;
     }
+    #clear-selected-trolleys{
+        cursor: pointer;
+        margin-bottom: 15px;
+        background: red;
+        color: white;
+        padding: 5px 10px;
+        display: inline-block;
+    }
+    #clear-selected-trolleys:hover{
+        background: #f18080;
+    }
+    #create-new-cartoon{
+        display: inline-block;
+        background: #40a1b8;
+        color: white;
+        padding: 5px 10px;
+        margin: 0 0 0 10px;
+        cursor: pointer;
+    }
 </style>
 @endsection
 
@@ -119,11 +138,32 @@
             </div>
             <!-- search box end -->
 
+            @if( can("create_cartoon") )
+            <div class="col-md-12">
+                <p id="clear-selected-trolleys" onclick="clearselectedTrolleys()">
+                    <i class="fas fa-times"></i>
+                    Clear selected trolleys
+                </p>
+                <p id="create-new-cartoon" onclick="createNewCartoon()">
+                    Create new cartoon
+                    <form action="" id="cartoon-create-step-one" method="GET">
+                        @csrf
+                        <input type="hidden" name="codes[]" id="codes">
+                    </form>
+                </p>
+            </div>
+            @endif
+
             <!-- card item start -->
             @foreach( $blast_freezer_entries as $key => $blast_freezer_entry )
             <div class="col-md-4">
-
                 <div class="card-item">
+
+                    @if( can("create_cartoon") )
+                    <div class="card-select">
+                        <input type="checkbox" name="selected_codes[]" class="selected_codes" onclick="selectCode(this)" data-code="{{ $blast_freezer_entry->code }}">
+                    </div>
+                    @endif
 
                     <div class="card-content">
                         <p>
@@ -152,7 +192,7 @@
                         </p>
                         <p>
                             <strong>Quantity :</strong>
-                            {{ $blast_freezer_entry->quantity }} / {{ $blast_freezer_entry->trolley->storage }} Kg
+                            {{ $blast_freezer_entry->remaining_quantity }} / {{ $blast_freezer_entry->quantity }} Kg
                         </p>
                         <p>
                             <strong>Status :</strong>
@@ -187,7 +227,100 @@
     <script src="{{  asset('backend/js/ajax_form_submit.js') }}"></script>
     <script>
         $(function () {
-  $('[data-toggle="popover"]').popover()
-})
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
+    <script>
+        function selectCode(e){
+
+            let blast_freezer_entries_code = e.dataset.code;
+            let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
+            let codes_array = Array();
+            
+            if( stored_codes ){
+                if( e.checked == true ){
+                    if(stored_codes.indexOf(blast_freezer_entries_code) !== -1 ){
+                        //Value exists!
+                    } 
+                    else{
+                        stored_codes.push(blast_freezer_entries_code)
+                        localStorage.setItem("stored_codes",JSON.stringify(stored_codes))
+                    }
+                }
+                else{
+                    let index = stored_codes.indexOf(blast_freezer_entries_code);
+                    stored_codes.splice(index, 1);
+                    localStorage.setItem("stored_codes",JSON.stringify(stored_codes))
+                }
+            }
+            else{
+                codes_array.push(blast_freezer_entries_code)
+                localStorage.setItem("stored_codes",JSON.stringify(codes_array))
+            }
+        }
+    </script>
+
+    <script>
+        window.addEventListener("load", (event) => {
+            console.clear()
+            let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
+            if( stored_codes ){
+                let selected_codes = document.querySelectorAll(".selected_codes")
+
+                for( let i = 0 ; i < selected_codes.length ; i++ ){
+                    let blast_freezer_entries_code = selected_codes[i].dataset.code;
+
+                    if(stored_codes.indexOf(blast_freezer_entries_code) !== -1 ){
+                        selected_codes[i].checked = true;
+                    }
+                   
+                }
+            }
+        });
+    </script>
+    <script>
+        function clearselectedTrolleys(){
+            localStorage.removeItem("stored_codes")
+            document.getElementById("codes").value = ""
+
+            let selected_codes = document.querySelectorAll(".selected_codes")
+            for( let i = 0 ; i < selected_codes.length ; i++ ){
+                selected_codes[i].checked = false;
+            }
+            swal("","Codes Successfully removed","success")
+        }
+    </script>
+    <script>
+        function createNewCartoon(){
+            let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
+            if( stored_codes ){
+                $.ajax({
+                    method : "GET",
+                    url: "{{ route('blast.freezser.validate.code') }}",
+                    data: { 
+                        codes: stored_codes 
+                    },
+                    success: function(response){
+                        swal('',`${response.message}`,`${response.status}`)
+
+                        if( response.redirect_url ){
+                            document.getElementById("codes").value = stored_codes
+                            document.getElementById("cartoon-create-step-one").setAttribute("action",response.redirect_url)
+                            document.getElementById("cartoon-create-step-one").submit()
+                        }
+                        else{
+                            document.getElementById("codes").value = ""
+                            document.getElementById("cartoon-create-step-one").setAttribute("action","")
+                        }
+                    },
+                    error: function(response){
+
+                    },
+                })
+            }
+            else{
+                swal("","Please select at least one trolley","warning")
+            }
+        }
     </script>
     @endsection

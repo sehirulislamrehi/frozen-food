@@ -64,6 +64,7 @@ class BlastFreezerEntryController extends Controller
 
                 $query = BlastFreezerEntry::orderBy("id","desc")
                 ->where("status","Out")
+                ->where("remaining_quantity","!=",0)
                 ->with('device','trolley','product_details');
 
                 if( $request->from_date && $request->to_date ){
@@ -179,6 +180,7 @@ class BlastFreezerEntryController extends Controller
                                 $blast_freezer_entries->product_details_id  = $request->product_details_id;
                                 $blast_freezer_entries->lead_time  = $lead_time;
                                 $blast_freezer_entries->quantity  = $request->quantity;
+                                $blast_freezer_entries->remaining_quantity  = $request->quantity;
                                 $blast_freezer_entries->status  = 'In';
     
                                 if( $blast_freezer_entries->save() ){

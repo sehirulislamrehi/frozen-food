@@ -208,7 +208,7 @@
                         </p>
                         <p>
                             <strong>Quantity :</strong>
-                            {{ $blast_freezer_entry->quantity }} / {{ $blast_freezer_entry->trolley->storage }} Kg
+                            {{ $blast_freezer_entry->quantity }} Kg
                         </p>
                         <p>
                             <strong>Status :</strong>

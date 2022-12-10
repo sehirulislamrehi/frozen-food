@@ -21,7 +21,7 @@ class BlastFreezerEntry extends Model
     }
 
     public function product_details(){
-        return $this->belongsTo(ProductDetails::class);
+        return $this->belongsTo(ProductDetails::class)->with('product');
     }
 
 }

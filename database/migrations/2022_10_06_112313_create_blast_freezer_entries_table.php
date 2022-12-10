@@ -28,6 +28,7 @@ class CreateBlastFreezerEntriesTable extends Migration
             $table->dateTime("lead_time")->comment("Trolley out time");
             $table->dateTime("trolley_outed")->nullable();
             $table->double("quantity")->comment("Quantity in Kg");
+            $table->double("remaining_quantity")->comment("The remaining quantity 0 means all items stored in a cartoon from the trolley.");
             $table->enum("status",["In","Out"]);
 
             $table->foreign("group_id")->references("id")->on("locations")->onDelete("cascade");
