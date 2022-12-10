@@ -4,7 +4,8 @@ SQLyog Job Agent Version 8.2 Copyright(c) Webyog Softworks Pvt. Ltd. All Rights 
 
 MySQL - 5.7.35 : Database - frozen_food
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
