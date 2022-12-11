@@ -79,20 +79,11 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach( $product_stocks as $key => $product_stock )
-                                            <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td>{{ $product_stock->type }}</td>
-                                                <td>{{ $product_stock->cartoon_name ?? 'N/A' }}</td>
-                                                <td>{{ $product_stock->quantity }}</td>
-                                                <td>{{ $product_stock->date_time }}</td>
-                                            </tr>
-                                            @endforeach
+                                            
                                         </tbody>
                                     </table>
                                 </div>
                                 <div class="col-md-12">
-                                    {{ $product_stocks->links() }}
                                 </div>
                             </div>
                         </div>

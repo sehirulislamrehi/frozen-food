@@ -82,7 +82,6 @@
             <div class="col-md-6 col-12 form-group">
                 <label>Quantity</label>
                 <input type="number" class="form-control" name="quantity">
-                <input type="number" style="display: none;" class="form-control" name="stock_quantity" id="stock_quantity">
             </div>
 
             <div class="col-md-12 form-group text-right">
@@ -246,10 +245,9 @@
                     `);
                     $.each(response.product_details, function(key, value) {
                         $(".product_details_id").append(`
-                            <option value="${value.id}" data-quantity="${value.quantity}">${value.product.name} ( ${value.quantity} Kg )</option>
+                            <option value="${value.id}">${value.product.name}</option>
                         `);
 
-                        $("#stock_quantity").val(value.quantity)
                     })
 
 

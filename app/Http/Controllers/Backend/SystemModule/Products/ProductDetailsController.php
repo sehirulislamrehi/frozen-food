@@ -62,13 +62,6 @@ class ProductDetailsController extends Controller
                             </a>
                             ' : '') . '
 
-                            ' . (can("stock_entry") ? '
-                            <a class="dropdown-item" href="#" data-content="' . route('products.details.stock.add.modal', encrypt($product_details->id)) . '" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
-                                <i class="fas fa-warehouse"></i>
-                                Stock Entry
-                            </a>
-                            ' : '') . '
-
                             ' . (can("stock_summary") ? '
                             <a class="dropdown-item" href="' . route('products.details.stock.summary', encrypt($product_details->id)) . '" class="btn btn-outline-dark">
                                 <i class="fas fa-eye"></i>
@@ -136,7 +129,7 @@ class ProductDetailsController extends Controller
                     'location_id' =>  'required|integer|exists:locations,id',
                     'manufacture_date' => 'required',
                     'expiry_date' => 'required',
-                    'quantity' => 'required|numeric|min:0|not_in:0'
+                    // 'quantity' => 'required|numeric|min:0|not_in:0'
                 ]);
 
                 if ($validator->fails()) {
@@ -177,21 +170,10 @@ class ProductDetailsController extends Controller
                                 $product_details->expiry_date = $explode[0] + product_life_time("Export") .'-'. $explode[1] .'-'. $explode[2];
                             }
     
-                            $product_details->quantity = $request->quantity;
+                            // $product_details->quantity = $request->quantity;
     
                             if( $product_details->save() ){
-
-                                $product_stock = new ProductStock();
-
-                                $product_stock->product_details_id = $product_details->id; 
-                                $product_stock->quantity = $request->quantity; 
-                                $product_stock->type = 'In'; 
-                                $product_stock->date_time = Carbon::now()->toDateTimeString();
-
-                                if( $product_stock->save() ){
-                                    return response()->json(['success' => 'Details created'], 200);
-                                }
-
+                                return response()->json(['success' => 'Details created'], 200);
                             }
                         }
 

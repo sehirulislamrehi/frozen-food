@@ -146,16 +146,16 @@ class BlastFreezerEntryController extends Controller
                     'product_details_id' =>  'required|integer|exists:product_details,id',
                     'lead_time' =>  'required',
                     'quantity' =>  'required|integer|min:1',
-                    'stock_quantity' =>  'required|integer|min:1',
                 ]);
 
                 if( $validator->fails() ){
                     return response()->json(['errors' => $validator->errors()],422);
                 }
                 else{
-                    $product_details = ProductDetails::where("id",$request->product_details_id)->select("id","product_id","quantity")->with("product")->first();
+                    $product_details = ProductDetails::where("id",$request->product_details_id)->select("id","product_id")->with("product")->first();
 
-                    if( $product_details->quantity > $request->quantity ){
+                    if( $product_details ){
+
                         $current_time = date('Y-m-d H:i:s', strtotime(Carbon::now()));
                         $lead_time = date('Y-m-d H:i:s', strtotime($request->lead_time));
 
@@ -186,7 +186,6 @@ class BlastFreezerEntryController extends Controller
                                 if( $blast_freezer_entries->save() ){
 
                                     $trolley->status = "Used";
-
                                     if( $trolley->save() ){
                                         return response()->json(['status' => 'success','location_reload' => 'New trolley inserted into the blast freeze.'],200);
                                     }
@@ -196,13 +195,12 @@ class BlastFreezerEntryController extends Controller
                             else{
                                 return response()->json(['warning' => 'No trolley found'],200);
                             }
-
                         }
-        
                     }
                     else{
-                        return response()->json(['warning' => 'Quantity cannot be larger than the product stock.'],200);
+                        return response()->json(['warning' => 'No product details found'],200);
                     }
+                    
 
                 }
             }

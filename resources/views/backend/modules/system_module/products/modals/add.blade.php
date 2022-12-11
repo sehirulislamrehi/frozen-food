@@ -55,10 +55,10 @@
             </div>
 
             <!-- quantity -->
-            <div class="col-md-12 form-group">
+            <!-- <div class="col-md-12 form-group">
                 <label>In quantity (kg)</label>
                 <input type="number" class="form-control" name="quantity" step=".01">
-            </div>
+            </div> -->
 
             <div class="col-md-12 form-group text-right">
                 <button type="submit" class="btn btn-outline-dark">

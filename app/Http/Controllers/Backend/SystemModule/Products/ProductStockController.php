@@ -113,10 +113,9 @@ class ProductStockController extends Controller
 
                 if ( $product_details ) {
 
-                    $product_stocks = ProductStock::where("product_details_id", $product_details->id)->select("quantity","type","date_time","cartoon_name")->orderBy("id","desc")->paginate(10);
                     $product = Product::where("id", $product_details->product_id)->select("code","name")->first();
 
-                    return view("backend.modules.system_module.products.pages.stock_summary", compact('product_details','product_stocks','product'));
+                    return view("backend.modules.system_module.products.pages.stock_summary", compact('product_details','product'));
 
                 } 
                 else {

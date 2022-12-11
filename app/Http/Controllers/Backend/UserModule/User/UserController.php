@@ -26,10 +26,9 @@ class UserController extends Controller
     //index start
     public function index(){
         if( can('all_user') ){
-
-            return Session::get("unique_code");
             return view("backend.modules.user_module.user.index");
-        }else{
+        }
+        else{
             return view("errors.403");
         }
     }

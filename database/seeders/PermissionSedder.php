@@ -228,12 +228,12 @@ class PermissionSedder extends Seeder
                 'display_name' => '-- Edit Products',
                 'module_id' => 4,
             ],
-            [
-                'id' => 37,
-                'key' => 'stock_entry',
-                'display_name' => '-- Stock Entry',
-                'module_id' => 4,
-            ],
+            // [
+            //     'id' => 37,
+            //     'key' => 'stock_entry',
+            //     'display_name' => '-- Stock Entry',
+            //     'module_id' => 4,
+            // ],
             [
                 'id' => 38,
                 'key' => 'stock_summary',

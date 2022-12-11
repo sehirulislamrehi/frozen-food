@@ -135,7 +135,6 @@
                                                                 <th>Location</th>
                                                                 <th>Manufacture Date</th>
                                                                 <th>Expiry Date</th>
-                                                                <th>Quantity (kg)</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
@@ -204,10 +203,6 @@
                     {
                         data: 'expiry_date',
                         name: 'expiry_date'
-                    },
-                    {
-                        data: 'quantity',
-                        name: 'quantity'
                     },
                     {
                         data: 'action',

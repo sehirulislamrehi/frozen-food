@@ -186,7 +186,7 @@ class CommonController extends Controller
             
             $device = Device::whereIn("location_id",$request->location_ids)->select("id","device_manual_id")->where("type","Blast Freeze")->get();
             $trolley = Trolley::whereIn("location_id",$request->location_ids)->select("id","code","name")->where("status","Free")->where("is_active", true)->get();
-            $product_details = ProductDetails::whereIn("location_id",$request->location_ids)->select("id","product_id","quantity")->with("product")->get();
+            $product_details = ProductDetails::whereIn("location_id",$request->location_ids)->select("id","product_id")->with("product")->get();
             
             return response()->json([
                 'status' => 'success',
