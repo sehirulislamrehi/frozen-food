@@ -201,7 +201,7 @@ class BlastFreezerEntryController extends Controller
         
                     }
                     else{
-                        return response()->json(['warning' => 'Quantity cannot be gather than the product stock.'],200);
+                        return response()->json(['warning' => 'Quantity cannot be larger than the product stock.'],200);
                     }
 
                 }

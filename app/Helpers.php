@@ -117,4 +117,13 @@ use App\Models\LocationModule\Location;
         ];
     }
 
+    function product_life_time($type){
+        if( $type == "Local" ){
+            return 1;
+        }
+        if( $type == "Export" ){
+            return 2;
+        }
+    }
+
 ?>

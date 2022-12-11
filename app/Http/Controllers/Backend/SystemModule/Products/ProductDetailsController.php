@@ -170,11 +170,11 @@ class ProductDetailsController extends Controller
                             $explode = explode("-", $request->manufacture_date);
     
                             if( $product->type == "Local" ){
-                                $product_details->expiry_date = $explode[0] + $product->life_time .'-'. $explode[1] .'-'. $explode[2];
+                                $product_details->expiry_date = $explode[0] + product_life_time("Local") .'-'. $explode[1] .'-'. $explode[2];
                             }
     
                             if( $product->type == "Export" ){
-                                $product_details->expiry_date = $explode[0] + $product->life_time .'-'. $explode[1] .'-'. $explode[2];
+                                $product_details->expiry_date = $explode[0] + product_life_time("Export") .'-'. $explode[1] .'-'. $explode[2];
                             }
     
                             $product_details->quantity = $request->quantity;
@@ -293,11 +293,11 @@ class ProductDetailsController extends Controller
                         $explode = explode("-", $request->manufacture_date);
 
                         if( $product->type == "Local" ){
-                            $product_details->expiry_date = $explode[0] + $product->life_time .'-'. $explode[1] .'-'. $explode[2];
+                            $product_details->expiry_date = $explode[0] + product_life_time("Local") .'-'. $explode[1] .'-'. $explode[2];
                         }
 
                         if( $product->type == "Export" ){
-                            $product_details->expiry_date = $explode[0] + $product->life_time .'-'. $explode[1] .'-'. $explode[2];
+                            $product_details->expiry_date = $explode[0] + product_life_time("Export") .'-'. $explode[1] .'-'. $explode[2];
                         }
 
                         if( $product_details->save() ){

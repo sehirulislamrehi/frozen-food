@@ -29,6 +29,7 @@ Route::group(['prefix' => 'blast-freezer-entry'], function(){
 
     //create cartoon step one
     Route::get("create-cartoon-step-one",[CartoonController::class,"create_cartoon_step_one"])->name("create.cartoon.step.one");
+    Route::post("create-cartoon",[CartoonController::class,"create_cartoon"])->name("create.cartoon");
 
 });
 

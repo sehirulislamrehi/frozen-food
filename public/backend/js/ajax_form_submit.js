@@ -26,19 +26,23 @@ $(document).ready(function () {
             cache: false,
             success: function (response) {
                 $(".loading").hide()
-                console.log(response)
-
                 if (response.success) {
                     swal("", `${response.success}`, "success");
-                    $("#datatable").DataTable().ajax.reload();
+                    if( $("#datatable").length ){
+                        $("#datatable").DataTable().ajax.reload();
+                    }
                 }
                 if (response.warning) {
                     swal("", `${response.warning}`, "warning");
-                    $("#datatable").DataTable().ajax.reload();
+                    if( $("#datatable").length ){
+                        $("#datatable").DataTable().ajax.reload();
+                    }
                 }
                 if (response.error) {
                     swal("", `${response.error}`, "error");
-                    $("#datatable").DataTable().ajax.reload();
+                    if( $("#datatable").length ){
+                        $("#datatable").DataTable().ajax.reload();
+                    }
                 }
                 if (response.login) {
                     swal("Login Successfully Done","Redirecting Please Wait","success")
@@ -56,7 +60,6 @@ $(document).ready(function () {
                     },1000);
                 }
 
-                console.clear()
             },
             error: function (response) {
                 $(".loading").hide()

@@ -262,7 +262,6 @@
 
     <script>
         window.addEventListener("load", (event) => {
-            console.clear()
             let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
             if( stored_codes ){
                 let selected_codes = document.querySelectorAll(".selected_codes")
@@ -307,6 +306,7 @@
                             document.getElementById("codes").value = stored_codes
                             document.getElementById("cartoon-create-step-one").setAttribute("action",response.redirect_url)
                             document.getElementById("cartoon-create-step-one").submit()
+                            localStorage.removeItem("stored_codes")
                         }
                         else{
                             document.getElementById("codes").value = ""

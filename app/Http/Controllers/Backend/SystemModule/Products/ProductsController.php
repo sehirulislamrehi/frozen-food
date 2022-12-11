@@ -114,7 +114,7 @@ class ProductsController extends Controller
                     $product->factor = $request->factor;
                     $product->type = $request->type;
 
-                    $product->life_time = ( $request->type == "Local" ) ? 1 : 2;
+                    $product->life_time = ( $request->type == "Local" ) ? product_life_time("Local") : product_life_time("Export");
  
                     $product->is_active = $request->is_active;
                     
@@ -253,16 +253,34 @@ class ProductsController extends Controller
 
                     if( $product ){
 
+                        if( $product->type != $request->type ){
+                            $product_details = ProductDetails::where("product_id", $product->id)->get();
+                            foreach( $product_details as $product_detail ){
+                                $explode = explode("-", $product_detail->manufacture_date);
+
+                                if( $request->type == "Local" ){
+                                    $product_detail->expiry_date = $explode[0] + product_life_time("Local") .'-'. $explode[1] .'-'. $explode[2];
+                                }
+        
+                                if( $request->type == "Export" ){
+                                    $product_detail->expiry_date = $explode[0] + product_life_time("Export") .'-'. $explode[1] .'-'. $explode[2];
+                                }
+
+                                $product_detail->save();
+                            }
+                        }
+
                         $product->code = $request->code;
                         $product->name = $request->name;
                         $product->factor = $request->factor;
                         $product->type = $request->type;
 
-                        $product->life_time = ( $request->type == "Local" ) ? 1 : 2;
+                        $product->life_time = ( $request->type == "Local" ) ? product_life_time("Local") : product_life_time("Export");
 
                         $product->is_active = $request->is_active;
                         
                         if( $product->save() ){
+
                             return response()->json(['success' => 'Product updated'], 200);
                         }
                     }

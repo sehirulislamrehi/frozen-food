@@ -25,6 +25,14 @@ class CreateCartoonsTable extends Migration
             $table->enum('status',['In','Out']);
             $table->unsignedBigInteger("product_id");
 
+            $table->unsignedBigInteger("group_id");
+            $table->unsignedBigInteger("company_id");
+            $table->unsignedBigInteger("location_id");
+
+            $table->foreign("group_id")->references("id")->on("locations")->onDelete("cascade");
+            $table->foreign("company_id")->references("id")->on("locations")->onDelete("cascade");
+            $table->foreign("location_id")->references("id")->on("locations")->onDelete("cascade");
+            
             $table->foreign("product_id")->references("id")->on("products")->onDelete("cascade");
 
             $table->timestamps();

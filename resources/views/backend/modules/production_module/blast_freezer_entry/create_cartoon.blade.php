@@ -107,60 +107,70 @@
                     </div>
 
                     <div class="card-content">
-                        
-                        @foreach( $blast_freezer_entries as $blast_freezer_entry )
-                        <div class="row quantity-row">
-                            <div class="col-md-2 form-group">
-                                <label> <strong>Trolley Code:</strong> {{ $blast_freezer_entry->trolley->code }}</label>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <label> <strong>Product:</strong> {{ $blast_freezer_entry->product_details->product->name }}</label>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <label> <strong>Code:</strong> {{ $blast_freezer_entry->product_details->product->code }}</label>
-                            </div>
-                            <div class="col-md-2 form-group">
-                                <label> <strong>Type:</strong> {{ $blast_freezer_entry->product_details->product->type }}</label>
-                            </div>
-                            <div class="col-md-4 form-group">
-                                <label>Quantity (kg)</label>
-                                @if( $blast_freezer_entry->product_details->product->type == "Local" )
-                                <input type="number" value="{{ $blast_freezer_entry->remaining_quantity }}" max="{{ $blast_freezer_entry->remaining_quantity }}" min="1" class="form-control">
-                                @else
-                                <p class="form-control">{{ $blast_freezer_entry->remaining_quantity }}</p>
-                                @endif
-                            </div>
-                        </div>
-                        @endforeach
+                        <form action="{{ route('create.cartoon') }}" method="POST" class="ajax-form">
+                            @csrf
 
-                        <div class="row mt-5">
+                            @foreach( $blast_freezer_entries as $blast_freezer_entry )
+                            <div class="row quantity-row">
+                                <div class="col-md-2 form-group">
+                                    <label> <strong>Trolley Code:</strong> {{ $blast_freezer_entry->trolley->code }}</label>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label> <strong>Product:</strong> {{ $blast_freezer_entry->product_details->product->name }}</label>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label> <strong>Code:</strong> {{ $blast_freezer_entry->product_details->product->code }}</label>
+                                </div>
+                                <div class="col-md-2 form-group">
+                                    <label> <strong>Type:</strong> {{ $blast_freezer_entry->product_details->product->type }}</label>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label>Quantity (kg)</label>
+                                    @if( $blast_freezer_entry->product_details->product->type == "Local" )
+                                    <input type="number" value="{{ $blast_freezer_entry->remaining_quantity }}" oninput="updateQuantity(this)" max="{{ $blast_freezer_entry->remaining_quantity }}" min="1" name="remaining_quantity[]" class="form-control product_quantity">
+                                    @else
+                                    <p class="form-control">{{ $blast_freezer_entry->remaining_quantity }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <input type="hidden" value="{{ $blast_freezer_entry->code }}" name="blast_freezer_entries_code[]">
+                            @endforeach
 
-                            <div class="col-md-3 form-group">
-                                <label>Cartoon Name</label>
-                                <input type="text" class="form-control" name="cartoon_name">
+                            <div class="row mt-5">
+
+                                <div class="col-md-3 form-group">
+                                    <label>Cartoon Name</label>
+                                    <input type="text" class="form-control" name="cartoon_name">
+                                </div>
+
+                                <div class="col-md-3 form-group ">
+                                    <label>Cartoon Weight (kg)</label>
+                                    <p class="form-control"> <span id="cartoon-weight">{{$cartoon_weight}}</span> kg</p>
+                                </div>
+
+                                <div class="col-md-3 form-group">
+                                    <label>Packet Quantity (pieces)</label>
+                                    <input type="number" min="1" class="form-control" name="packet_quantity">
+                                </div>
+                                
+                                <div class="col-md-3 form-group">
+                                    <label>Per Packet weight (kg)</label>
+                                    <input type="text" class="form-control" name="per_packet_weight">
+                                </div>
+
+                                <div class="col-md-3 form-group">
+                                    <label>Per packet items (pieces)</label>
+                                    <input type="number" min="1" class="form-control" name="per_packet_item">
+                                </div>
+
                             </div>
 
-                            <div class="col-md-3 form-group ">
-                                <label>Cartoon Weight (kg)</label>
-                                <p class="form-control">{{$cartoon_weight}} kg</p>
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <button type="submit" class="btn btn-success">Create</button>
+                                </div>
                             </div>
-
-                            <div class="col-md-3 form-group">
-                                <label>Packet Quantity (pieces)</label>
-                                <input type="number" min="1" class="form-control" name="packet_quantity">
-                            </div>
-                            
-                            <div class="col-md-3 form-group">
-                                <label>Per Packet weight (kg)</label>
-                                <input type="text" class="form-control" name="packet_weight">
-                            </div>
-
-                            <div class="col-md-3 form-group">
-                                <label>Per packet items (pieces)</label>
-                                <input type="number" min="1" class="form-control" name="items_per_packet">
-                            </div>
-
-                        </div>
+                        </form>                        
                     </div>
                 </div>
             </div>
@@ -175,4 +185,20 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ asset('backend/js/custom-script.min.js') }}"></script>
     <script src="{{  asset('backend/js/ajax_form_submit.js') }}"></script>
+    <script>
+        function updateQuantity(e){
+
+            if( e.value > 0 ){
+                let product_quantity = document.querySelectorAll(".product_quantity")
+                let total_quantity = 0;
+
+                for( let i = 0 ; i < product_quantity.length ; i++ ){
+                    total_quantity += product_quantity[i].value ? parseInt(product_quantity[i].value) : 0
+                }
+
+                document.getElementById("cartoon-weight").innerHTML = total_quantity 
+            }
+            
+        }
+    </script>
     @endsection
