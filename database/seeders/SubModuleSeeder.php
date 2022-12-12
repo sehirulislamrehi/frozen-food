@@ -136,10 +136,18 @@ class SubModuleSeeder extends Seeder
                 'route' => 'blast.freezer.entry.all',
                 'module_id' => 5
             ],
+            [
+                'id' => 13,
+                'name' => 'Cartoon List',
+                'key' => 'cartoon_list',
+                'position' => 3,
+                'route' => 'cartoon.list.all',
+                'module_id' => 5
+            ],
             //module id 5 end
         
         ]);
 
-        //last id 11
+        //last id 13
     }
 }

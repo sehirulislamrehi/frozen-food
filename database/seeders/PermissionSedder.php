@@ -290,8 +290,20 @@ class PermissionSedder extends Seeder
             ],
             [
                 'id' => 47,
+                'key' => 'cartoon_list',
+                'display_name' => 'Cartoon List',
+                'module_id' => 5,
+            ],
+            [
+                'id' => 48,
                 'key' => 'create_cartoon',
-                'display_name' => 'Create Cartoon',
+                'display_name' => '-- Create Cartoon',
+                'module_id' => 5,
+            ],
+            [
+                'id' => 49,
+                'key' => 'edit_cartoon',
+                'display_name' => '-- Edit Cartoon',
                 'module_id' => 5,
             ],
         ]);

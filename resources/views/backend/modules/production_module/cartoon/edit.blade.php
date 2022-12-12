@@ -77,8 +77,8 @@
     <div class="br-pageheader">
         <nav class="breadcrumb pd-0 mg-0 tx-12">
             <a class="breadcrumb-item" href="{{ route('dashboard') }}">Dashboard</a>
-            <a class="breadcrumb-item" href="{{ route('blast.freezer.entry.out.item') }}">Out Trolleys</a>
-            <a class="breadcrumb-item active" href="#">Create Cartoon</a>
+            <a class="breadcrumb-item" href="{{ route('cartoon.list.all') }}">Cartool List</a>
+            <a class="breadcrumb-item active" href="#">{{ $cartoon->cartoon_code }}</a>
         </nav>
     </div>
 
@@ -88,86 +88,67 @@
             <div class="col-md-12">
                 <div class="card card-primary card-outline">
                     <div class="card-header">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <p> 
-                                    <strong>Trolley codes are:</strong> 
-                                    @php
-                                        $cartoon_weight = 0;
-                                    @endphp
-                                    @foreach( $blast_freezer_entries as $blast_freezer_entry )
-                                        @php
-                                            $cartoon_weight += $blast_freezer_entry->remaining_quantity;
-                                        @endphp
-                                        {{ $blast_freezer_entry->trolley->code }},
-                                    @endforeach
-                                </p>
-                            </div>
-                        </div>
+                        
                     </div>
 
                     <div class="card-content">
-                        <form action="{{ route('create.cartoon') }}" method="POST" class="ajax-form">
+                        <form action="{{ route('edit.cartoon', $cartoon->cartoon_code) }}" method="POST" class="ajax-form">
                             @csrf
-
-                            @foreach( $blast_freezer_entries as $blast_freezer_entry )
+                            
+                            @foreach( $cartoon->cartoon_details as $cartoon_detail )
                             <div class="row quantity-row">
                                 <div class="col-md-2 form-group">
-                                    <label> <strong>Trolley Code:</strong> {{ $blast_freezer_entry->trolley->code }}</label>
+                                    <label> <strong>Trolley Code:</strong> {{ $cartoon_detail->blast_freezer_entry->trolley->code }}</label>
                                 </div>
                                 <div class="col-md-2 form-group">
-                                    <label> <strong>Product:</strong> {{ $blast_freezer_entry->product_details->product->name }}</label>
+                                    <label> <strong>Product:</strong> {{ $cartoon->product->name }}</label>
                                 </div>
                                 <div class="col-md-2 form-group">
-                                    <label> <strong>Code:</strong> {{ $blast_freezer_entry->product_details->product->code }}</label>
+                                    <label> <strong>Code:</strong> {{ $cartoon->product->code }}</label>
                                 </div>
                                 <div class="col-md-2 form-group">
-                                    <label> <strong>Type:</strong> {{ $blast_freezer_entry->product_details->product->type }}</label>
+                                    <label> <strong>Type:</strong> {{ $cartoon->product->type }}</label>
                                 </div>
                                 <div class="col-md-4 form-group">
                                     <label>Quantity (kg)</label>
-                                    {{--@if( $blast_freezer_entry->product_details->product->type == "Local" )--}}
-                                    <input type="number" value="{{ $blast_freezer_entry->remaining_quantity }}" oninput="updateQuantity(this)" max="{{ $blast_freezer_entry->remaining_quantity }}" min="1" name="remaining_quantity[]" class="form-control product_quantity">
-                                    {{-- @else
-                                    <p class="form-control">{{ $blast_freezer_entry->remaining_quantity }}</p>
-                                    @endif --}}
+                                    <input type="number" value="{{ $cartoon_detail->quantity }}" oninput="updateQuantity(this)" max="{{ $cartoon_detail->quantity + $cartoon_detail->blast_freezer_entry->remaining_quantity }}" min="0" name="quantity[]" class="form-control product_quantity">
                                 </div>
                             </div>
-                            <input type="hidden" value="{{ $blast_freezer_entry->code }}" name="blast_freezer_entries_code[]">
+                            <input type="hidden" value="{{ $cartoon_detail->blast_freezer_entry->code }}" name="blast_freezer_entries_code[]">
                             @endforeach
 
                             <div class="row mt-5">
 
                                 <div class="col-md-3 form-group">
                                     <label>Cartoon Name</label>
-                                    <input type="text" class="form-control" name="cartoon_name">
+                                    <input type="text" class="form-control" name="cartoon_name" value="{{ $cartoon->cartoon_name }}">
                                 </div>
 
                                 <div class="col-md-3 form-group ">
                                     <label>Cartoon Weight (kg)</label>
-                                    <p class="form-control"> <span id="cartoon-weight">{{$cartoon_weight}}</span> kg</p>
+                                    <p class="form-control"> <span id="cartoon-weight">{{$cartoon->cartoon_weight}}</span> kg</p>
                                 </div>
 
                                 <div class="col-md-3 form-group">
                                     <label>Packet Quantity (pieces)</label>
-                                    <input type="number" min="1" class="form-control" name="packet_quantity">
+                                    <input type="number" min="1" class="form-control" name="packet_quantity" value="{{ $cartoon->packet_quantity }}">
                                 </div>
                                 
                                 <div class="col-md-3 form-group">
                                     <label>Per Packet weight (kg)</label>
-                                    <input type="text" class="form-control" name="per_packet_weight">
+                                    <input type="text" class="form-control" name="per_packet_weight" value="{{ $cartoon->per_packet_weight }}">
                                 </div>
 
                                 <div class="col-md-3 form-group">
                                     <label>Per packet items (pieces)</label>
-                                    <input type="number" min="1" class="form-control" name="per_packet_item">
+                                    <input type="number" min="1" class="form-control" name="per_packet_item" value="{{ $cartoon->per_packet_item }}">
                                 </div>
 
                             </div>
 
                             <div class="row">
                                 <div class="col-md-12 text-right">
-                                    <button type="submit" class="btn btn-success">Create</button>
+                                    <button type="submit" class="btn btn-success">Update</button>
                                 </div>
                             </div>
                         </form>                        
@@ -187,6 +168,10 @@
     <script src="{{  asset('backend/js/ajax_form_submit.js') }}"></script>
     <script>
         function updateQuantity(e){
+
+            if( e.value == 0 ){
+                swal("","Quantity value 0 will works to delete a trolley","warning")
+            }
 
             if( e.value > 0 ){
                 let product_quantity = document.querySelectorAll(".product_quantity")

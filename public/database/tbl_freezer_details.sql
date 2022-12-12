@@ -34,7 +34,7 @@ CREATE TABLE `freezer_details` (
   KEY `freezer_details_device_id_foreign` (`device_id`),
   CONSTRAINT `freezer_details_device_id_foreign` FOREIGN KEY (`device_id`) REFERENCES `devices` (`id`) ON DELETE CASCADE,
   CONSTRAINT `freezer_details_freezer_id_foreign` FOREIGN KEY (`freezer_id`) REFERENCES `freezers` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `freezer_details` */
 

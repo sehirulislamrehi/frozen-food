@@ -286,7 +286,7 @@
             for( let i = 0 ; i < selected_codes.length ; i++ ){
                 selected_codes[i].checked = false;
             }
-            swal("","Codes Successfully removed","success")
+            swal("","Trolley Successfully removed","success")
         }
     </script>
     <script>

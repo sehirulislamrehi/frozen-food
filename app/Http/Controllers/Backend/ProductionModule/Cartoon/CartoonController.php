@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Backend\ProductionModule\BlastFreezerEntry;
+namespace App\Http\Controllers\Backend\ProductionModule\Cartoon;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProductionModule\BlastFreezerEntry;
@@ -131,7 +131,7 @@ class CartoonController extends Controller
                         }
                         array_push($product_ids, $blast_freezer_entry->product_details->product_id);
 
-                        if( $blast_freezer_entry->product_details->product->type == "Local" ){
+                        // if( $blast_freezer_entry->product_details->product->type == "Local" ){
                             if( $request->remaining_quantity[$key] < 1 ){
                                 return response()->json([
                                     'warning' => 'Quantity must be larger than 0'
@@ -144,15 +144,15 @@ class CartoonController extends Controller
                                 ],200);
                             }
                             $cartoon_weight += $request->remaining_quantity[$key];
-                        }
-                        else{
-                            if( $blast_freezer_entry->remaining_quantity < 1 ){
-                                return response()->json([
-                                    'warning' => 'Stock unavaiable in the trolley: '. $blast_freezer_entry->trolley->code
-                                ],200);
-                            }
-                            $cartoon_weight += $blast_freezer_entry->remaining_quantity;
-                        }
+                        // }
+                        // else{
+                        //     if( $blast_freezer_entry->remaining_quantity < 1 ){
+                        //         return response()->json([
+                        //             'warning' => 'Stock unavaiable in the trolley: '. $blast_freezer_entry->trolley->code
+                        //         ],200);
+                        //     }
+                        //     $cartoon_weight += $blast_freezer_entry->remaining_quantity;
+                        // }
                         
                     }
                     //quantity validation end
@@ -186,7 +186,7 @@ class CartoonController extends Controller
                                 $blast_freezer_entry_remaining = BlastFreezerEntry::where("id",$blast_freezer_entry->id)->with("product_details")->first();
                                 $remaining_quantity = $blast_freezer_entry_remaining->remaining_quantity;
 
-                                if( $blast_freezer_entry->product_details->product->type == "Local" ){
+                                // if( $blast_freezer_entry->product_details->product->type == "Local" ){
                                     if( $blast_freezer_entry_remaining ){
                                         $blast_freezer_entry_remaining->remaining_quantity -= $request->remaining_quantity[$key];
                                         $blast_freezer_entry_remaining->save();
@@ -200,29 +200,31 @@ class CartoonController extends Controller
                                         'created_at' => Carbon::now(),
                                         'updated_at' => Carbon::now(),
                                     ]);
-                                }
-                                else{
-                                    if( $blast_freezer_entry_remaining ){
-                                        $blast_freezer_entry_remaining->remaining_quantity = 0;
-                                        $blast_freezer_entry_remaining->save();
-                                    }
+                                // }
+                                // else{
+                                //     if( $blast_freezer_entry_remaining ){
+                                //         $blast_freezer_entry_remaining->remaining_quantity = 0;
+                                //         $blast_freezer_entry_remaining->save();
+                                //     }
     
-                                    array_push($cartoon_details,[
-                                        'cartoon_id' => $cartoon->id,
-                                        'blast_freezer_entries_id' => $blast_freezer_entry->id,
-                                        'product_details_id' => $blast_freezer_entry->product_details_id,
-                                        'quantity' => $remaining_quantity,
-                                        'created_at' => Carbon::now(),
-                                        'updated_at' => Carbon::now(),
-                                    ]);
-                                }
+                                //     array_push($cartoon_details,[
+                                //         'cartoon_id' => $cartoon->id,
+                                //         'blast_freezer_entries_id' => $blast_freezer_entry->id,
+                                //         'product_details_id' => $blast_freezer_entry->product_details_id,
+                                //         'quantity' => $remaining_quantity,
+                                //         'created_at' => Carbon::now(),
+                                //         'updated_at' => Carbon::now(),
+                                //     ]);
+                                // }
                                 
                             }
     
                             DB::table("cartoon_details")->insert($cartoon_details);
 
                             return response()->json([
-                                'success' => 'Cartoon created'
+                                'status' => 'success',
+                                'message' => 'Cartoon created',
+                                'redirect' => route('edit.cartoon.page', $cartoon->cartoon_code)
                             ],200);
 
                         }
