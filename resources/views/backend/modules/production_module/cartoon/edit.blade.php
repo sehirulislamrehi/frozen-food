@@ -75,6 +75,12 @@
         display: initial;
         background: #d5d5d5;
     }
+    .remove-item{
+        background: red;
+        border: none;
+        color: white;
+        cursor: pointer;
+    }
 </style>
 @endsection
 
@@ -215,7 +221,7 @@
 
             if( e.value == 0 ){
                 swal("","Quantity value 0 will works to delete a trolley","warning")
-                document.getElementById("cartoon-weight").value =  0 
+                // document.getElementById("cartoon-weight").value =  0 
             }
 
             if( e.value > 0 ){
@@ -226,7 +232,7 @@
                     total_quantity += product_quantity[i].value ? parseFloat(product_quantity[i].value) : 0
                 }
 
-                document.getElementById("cartoon-weight").value = ( total_quantity.toFixed(2) < 1 ) ? 1 : total_quantity.toFixed(2)
+                // document.getElementById("cartoon-weight").value = ( total_quantity.toFixed(2) < 1 ) ? 1 : total_quantity.toFixed(2)
             }
             
         }
@@ -271,13 +277,19 @@
                                                 <input type="number" value="${value.remaining_quantity}" oninput="updateQuantity(this)" max="${value.remaining_quantity}" min="1" step="0.01" name="new_quantity[]" class="form-control product_quantity">
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button class="remove-item"> <i class="fas fa-trash"></i> Delete</button>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" value="${value.code}" name="new_blast_freezer_entries_code[]">
                                     </div>
-                                    <input type="hidden" value="${value.code}" name="new_blast_freezer_entries_code[]">
+                                    
                                 `);
                                 cartoon_weight += parseFloat(value.remaining_quantity);
                             })
 
-                            document.getElementById("cartoon-weight").value = cartoon_weight.toFixed(2)
+                            // document.getElementById("cartoon-weight").value = cartoon_weight.toFixed(2)
                             $('#largeModal').modal('toggle');
 
                         }
@@ -292,5 +304,11 @@
                 swal("","Please select at least one trolley","warning")
             }
         }
+    </script>
+    <script>
+        $(document).on('click','.remove-item', function(){
+            let $this = $(this);
+            $this.closest(".quantity-col.new").remove()
+        })
     </script>
     @endsection

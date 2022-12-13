@@ -217,7 +217,7 @@
                     total_quantity += product_quantity[i].value ? parseFloat(product_quantity[i].value) : 0
                 }
 
-                document.getElementById("cartoon-weight").value = total_quantity.toFixed(2)
+                // document.getElementById("cartoon-weight").value = total_quantity.toFixed(2)
             }
             
         }
