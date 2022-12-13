@@ -1,6 +1,7 @@
 @extends("backend.template.layout")
 
 @section('per_page_css')
+<link rel="stylesheet" href="//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
 <style>
     .data-indicator ul {
         padding-left: 15px;
@@ -62,10 +63,17 @@
         padding: 15px;
     }
     .quantity-row{
+        padding: 0 20px;
+    }
+    .quantity-row .quantity-col{
         border: 1px solid #d7d7d7;
         margin: 10px 5px;
-        padding: 10px 0;
+        padding: 10px;
         box-shadow: black 1px 1px 3px -2px;
+    }
+    .add-new-trolley{
+        display: initial;
+        background: #d5d5d5;
     }
 </style>
 @endsection
@@ -88,60 +96,94 @@
             <div class="col-md-12">
                 <div class="card card-primary card-outline">
                     <div class="card-header">
-                        
+                        @if( can("create_cartoon") )
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <a class="dropdown-item add-new-trolley" href="#" data-content="{{ route('add.trolley_product.cartoon.modal',[
+                                    'code' => $cartoon->cartoon_code,
+                                    'product_details_id' => $product_details_id ? $product_details_id : 'null'  
+                                ]) }}" data-target="#largeModal" data-toggle="modal">
+                                    <i class="fas fa-plus"></i>
+                                    Add Trolley 
+                                </a>
+                            </div>
+                        </div>
+                        @endif
                     </div>
 
                     <div class="card-content">
                         <form action="{{ route('edit.cartoon', $cartoon->cartoon_code) }}" method="POST" class="ajax-form">
                             @csrf
                             
-                            @foreach( $cartoon->cartoon_details as $cartoon_detail )
+                            
                             <div class="row quantity-row">
-                                <div class="col-md-2 form-group">
-                                    <label> <strong>Trolley Code:</strong> {{ $cartoon_detail->blast_freezer_entry->trolley->code }}</label>
+                                @foreach( $cartoon->cartoon_details as $cartoon_detail )
+                                <div class="col-md-12 quantity-col">
+                                    <div class="row">
+                                        <div class="col-md-2 form-group">
+                                            <label> <strong>Trolley Code:</strong> {{ $cartoon_detail->blast_freezer_entry->trolley->code }}</label>
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <label> <strong>Product:</strong> {{ $cartoon->product->name }}</label>
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <label> <strong>Code:</strong> {{ $cartoon->product->code }}</label>
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <label> <strong>Type:</strong> {{ $cartoon->product->type }}</label>
+                                        </div>
+                                        <div class="col-md-4 form-group">
+                                            <label>Quantity (kg)</label>
+                                            <input type="number" value="{{ $cartoon_detail->quantity }}" step="0.01" oninput="updateQuantity(this)" max="{{ $cartoon_detail->quantity + $cartoon_detail->blast_freezer_entry->remaining_quantity }}" min="0" name="quantity[]" class="form-control product_quantity">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-2 form-group">
-                                    <label> <strong>Product:</strong> {{ $cartoon->product->name }}</label>
-                                </div>
-                                <div class="col-md-2 form-group">
-                                    <label> <strong>Code:</strong> {{ $cartoon->product->code }}</label>
-                                </div>
-                                <div class="col-md-2 form-group">
-                                    <label> <strong>Type:</strong> {{ $cartoon->product->type }}</label>
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label>Quantity (kg)</label>
-                                    <input type="number" value="{{ $cartoon_detail->quantity }}" oninput="updateQuantity(this)" max="{{ $cartoon_detail->quantity + $cartoon_detail->blast_freezer_entry->remaining_quantity }}" min="0" name="quantity[]" class="form-control product_quantity">
-                                </div>
+                                <input type="hidden" value="{{ $cartoon_detail->blast_freezer_entry->code }}" name="blast_freezer_entries_code[]">
+                                @endforeach 
                             </div>
-                            <input type="hidden" value="{{ $cartoon_detail->blast_freezer_entry->code }}" name="blast_freezer_entries_code[]">
-                            @endforeach
-
+                            
                             <div class="row mt-5">
 
                                 <div class="col-md-3 form-group">
-                                    <label>Cartoon Name</label>
+                                    <label>Cartoon Name</label><span class="require-span">*</span>
                                     <input type="text" class="form-control" name="cartoon_name" value="{{ $cartoon->cartoon_name }}">
                                 </div>
 
                                 <div class="col-md-3 form-group ">
-                                    <label>Cartoon Weight (kg)</label>
-                                    <p class="form-control"> <span id="cartoon-weight">{{$cartoon->cartoon_weight}}</span> kg</p>
+                                    <label>Cartoon Weight (kg)</label><span class="require-span">*</span>
+                                    <input type="number" min="1" step="0.01" class="form-control" name="cartoon_weight" id="cartoon-weight" value="{{$cartoon->actual_cartoon_weight}}">
                                 </div>
 
                                 <div class="col-md-3 form-group">
-                                    <label>Packet Quantity (pieces)</label>
+                                    <label>Packet Quantity (pieces)</label><span class="require-span">*</span>
                                     <input type="number" min="1" class="form-control" name="packet_quantity" value="{{ $cartoon->packet_quantity }}">
                                 </div>
                                 
                                 <div class="col-md-3 form-group">
-                                    <label>Per Packet weight (kg)</label>
-                                    <input type="text" class="form-control" name="per_packet_weight" value="{{ $cartoon->per_packet_weight }}">
+                                    <label>Per Packet weight (kg)</label><span class="require-span">*</span>
+                                    <input type="number" min="0" step="0.01" class="form-control" name="per_packet_weight" value="{{ $cartoon->per_packet_weight }}">
                                 </div>
 
                                 <div class="col-md-3 form-group">
                                     <label>Per packet items (pieces)</label>
                                     <input type="number" min="1" class="form-control" name="per_packet_item" value="{{ $cartoon->per_packet_item }}">
+                                </div>
+
+                                <div class="col-md-3 form-group">
+                                    <label>Sample items (pieces)</label><span class="require-span">*</span>
+                                    <input type="number" min="0" class="form-control" name="sample_item" value="{{ $cartoon->sample_item }}">
+                                </div>
+
+                                <!-- Manufacture Date -->
+                                <div class="col-md-3 form-group">
+                                    <label>Manufacture Date</label><span class="require-span">*</span>
+                                    <input type="date" class="form-control" name="manufacture_date" id="manufacture_date" value="{{ $cartoon->manufacture_date }}">
+                                </div>
+
+                                <!-- Expiry Date -->
+                                <div class="col-md-3 form-group">
+                                    <label>Expiry Date</label><span class="require-span">*</span>
+                                    <input type="date" readonly class="form-control" name="expiry_date" id="expiry_date" value="{{ $cartoon->expiry_date }}">
                                 </div>
 
                             </div>
@@ -166,11 +208,14 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ asset('backend/js/custom-script.min.js') }}"></script>
     <script src="{{  asset('backend/js/ajax_form_submit.js') }}"></script>
+    <script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    
     <script>
         function updateQuantity(e){
 
             if( e.value == 0 ){
                 swal("","Quantity value 0 will works to delete a trolley","warning")
+                document.getElementById("cartoon-weight").value =  0 
             }
 
             if( e.value > 0 ){
@@ -178,12 +223,74 @@
                 let total_quantity = 0;
 
                 for( let i = 0 ; i < product_quantity.length ; i++ ){
-                    total_quantity += product_quantity[i].value ? parseInt(product_quantity[i].value) : 0
+                    total_quantity += product_quantity[i].value ? parseFloat(product_quantity[i].value) : 0
                 }
 
-                document.getElementById("cartoon-weight").innerHTML = total_quantity 
+                document.getElementById("cartoon-weight").value = ( total_quantity.toFixed(2) < 1 ) ? 1 : total_quantity.toFixed(2)
             }
             
+        }
+    </script>
+
+    <script>
+        function addAndClose(e){
+            let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
+            if( stored_codes && stored_codes.length != 0 ){
+                $.ajax({
+                    method : "GET",
+                    url: "{{ route('add.trolley.cartoon.validate') }}",
+                    data: { 
+                        codes: stored_codes 
+                    },
+                    success: function(response){
+                        if( response.status != 'success' ){
+                            swal('',`${response.data}`,`${response.status}`)
+                        }
+                        else{
+                            $(".quantity-row .quantity-col.new").remove()
+
+                            let cartoon_weight = 0;
+                            $.each(response.data, function(key, value){
+                                $(".quantity-row").append(`
+                                    <div class="col-md-12 quantity-col new">
+                                        <div class="row">
+                                            <div class="col-md-2 form-group">
+                                                <label> <strong>Trolley Code:</strong>${value.trolley.code}</label>
+                                            </div>
+                                            <div class="col-md-2 form-group">
+                                                <label> <strong>Product:</strong> ${value.product_details.product.name}</label>
+                                            </div>
+                                            <div class="col-md-2 form-group">
+                                                <label> <strong>Code:</strong> ${value.product_details.product.code}</label>
+                                            </div>
+                                            <div class="col-md-2 form-group">
+                                                <label> <strong>Type:</strong> ${value.product_details.product.type}</label>
+                                            </div>
+                                            <div class="col-md-4 form-group">
+                                                <label>Quantity (kg)</label>
+                                                <input type="number" value="${value.remaining_quantity}" oninput="updateQuantity(this)" max="${value.remaining_quantity}" min="1" step="0.01" name="new_quantity[]" class="form-control product_quantity">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" value="${value.code}" name="new_blast_freezer_entries_code[]">
+                                `);
+                                cartoon_weight += parseFloat(value.remaining_quantity);
+                            })
+
+                            document.getElementById("cartoon-weight").value = cartoon_weight.toFixed(2)
+                            $('#largeModal').modal('toggle');
+
+                        }
+                        
+                    },
+                    error: function(response){
+
+                    },
+                })
+            }
+            else{
+                swal("","Please select at least one trolley","warning")
+            }
         }
     </script>
     @endsection

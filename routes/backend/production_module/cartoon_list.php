@@ -20,6 +20,10 @@ Route::group(['prefix' => 'cartoon-list'], function(){
     Route::get("edit-cartoon/{code}",[CartoonListController::class,"edit_cartoon_page"])->name("edit.cartoon.page");
     Route::post("edit-cartoon/{code}",[CartoonListController::class,"edit_cartoon"])->name("edit.cartoon");
 
+    //add trolley product to cartoon
+    Route::get("add-trolley_product-cartoon-modal/{code}/{product_details_id}",[CartoonListController::class,"add_trolley_product_cartoon_modal"])->name("add.trolley_product.cartoon.modal");
+    Route::get("add-trolley-cartoon-validate",[CartoonListController::class,"add_trolley_cartoon_validate"])->name("add.trolley.cartoon.validate");
+    Route::post("add-trolley_product-cartoon/{code}",[CartoonListController::class,"add_trolley_product_cartoon"])->name("add.trolley_product.cartoon");
 
 });
 

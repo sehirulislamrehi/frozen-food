@@ -18,12 +18,16 @@ class CreateCartoonsTable extends Migration
 
             $table->string('cartoon_name');
             $table->string('cartoon_code');
-            $table->double('cartoon_weight')->comment("weight in kg");
+            $table->double('actual_cartoon_weight')->comment("weight in kg. Manual entry");
+            $table->double('cartoon_weight')->comment("weight in kg. Auto calculated.");
             $table->integer('packet_quantity');
             $table->double('per_packet_weight')->comment("weight in kg");
-            $table->integer('per_packet_item');
+            $table->integer('per_packet_item')->nullable();
+            $table->integer('sample_item')->default(0);
             $table->enum('status',['In','Out']);
             $table->unsignedBigInteger("product_id");
+            $table->date("manufacture_date");
+            $table->date("expiry_date");
 
             $table->unsignedBigInteger("group_id");
             $table->unsignedBigInteger("company_id");

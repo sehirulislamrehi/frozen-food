@@ -145,7 +145,7 @@ class BlastFreezerEntryController extends Controller
                     'trolley_id' =>  'required|integer|exists:trolleys,id',
                     'product_details_id' =>  'required|integer|exists:product_details,id',
                     'lead_time' =>  'required',
-                    'quantity' =>  'required|integer|min:1',
+                    'quantity' =>  'required|min:1',
                 ]);
 
                 if( $validator->fails() ){

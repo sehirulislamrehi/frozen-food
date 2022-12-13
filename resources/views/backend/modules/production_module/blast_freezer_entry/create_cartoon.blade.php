@@ -94,10 +94,14 @@
                                     <strong>Trolley codes are:</strong> 
                                     @php
                                         $cartoon_weight = 0;
+                                        $type = "";
+                                        $life_time = 0;
                                     @endphp
                                     @foreach( $blast_freezer_entries as $blast_freezer_entry )
                                         @php
                                             $cartoon_weight += $blast_freezer_entry->remaining_quantity;
+                                            $type = $blast_freezer_entry->product_details->product->type;
+                                            $life_time = product_life_time($type);
                                         @endphp
                                         {{ $blast_freezer_entry->trolley->code }},
                                     @endforeach
@@ -127,7 +131,7 @@
                                 <div class="col-md-4 form-group">
                                     <label>Quantity (kg)</label>
                                     {{--@if( $blast_freezer_entry->product_details->product->type == "Local" )--}}
-                                    <input type="number" value="{{ $blast_freezer_entry->remaining_quantity }}" oninput="updateQuantity(this)" max="{{ $blast_freezer_entry->remaining_quantity }}" min="1" name="remaining_quantity[]" class="form-control product_quantity">
+                                    <input type="number" value="{{ $blast_freezer_entry->remaining_quantity }}" oninput="updateQuantity(this)" max="{{ $blast_freezer_entry->remaining_quantity }}" @if($blast_freezer_entry->remaining_quantity < 1 ) min="0" @else min="1" @endif step="0.01" name="remaining_quantity[]" class="form-control product_quantity">
                                     {{-- @else
                                     <p class="form-control">{{ $blast_freezer_entry->remaining_quantity }}</p>
                                     @endif --}}
@@ -139,28 +143,45 @@
                             <div class="row mt-5">
 
                                 <div class="col-md-3 form-group">
-                                    <label>Cartoon Name</label>
+                                    <label>Cartoon Name</label><span class="require-span">*</span>
                                     <input type="text" class="form-control" name="cartoon_name">
                                 </div>
 
                                 <div class="col-md-3 form-group ">
-                                    <label>Cartoon Weight (kg)</label>
-                                    <p class="form-control"> <span id="cartoon-weight">{{$cartoon_weight}}</span> kg</p>
+                                    <label>Cartoon Weight (kg)</label><span class="require-span">*</span>
+                                    <input type="number" min="1" step="0.01" class="form-control" name="cartoon_weight" id="cartoon-weight" value="{{$cartoon_weight}}">
                                 </div>
 
                                 <div class="col-md-3 form-group">
-                                    <label>Packet Quantity (pieces)</label>
+                                    <label>Packet Quantity (pieces)</label><span class="require-span">*</span>
                                     <input type="number" min="1" class="form-control" name="packet_quantity">
                                 </div>
                                 
                                 <div class="col-md-3 form-group">
-                                    <label>Per Packet weight (kg)</label>
-                                    <input type="text" class="form-control" name="per_packet_weight">
+                                    <label>Per Packet weight (kg)</label><span class="require-span">*</span>
+                                    <input type="number" min="0" step="0.01" class="form-control" name="per_packet_weight">
                                 </div>
 
                                 <div class="col-md-3 form-group">
                                     <label>Per packet items (pieces)</label>
-                                    <input type="number" min="1" class="form-control" name="per_packet_item">
+                                    <input type="number" class="form-control" name="per_packet_item">
+                                </div>
+
+                                <div class="col-md-3 form-group">
+                                    <label>Sample items (pieces)</label><span class="require-span">*</span>
+                                    <input type="number" min="0" class="form-control" name="sample_item" value="0">
+                                </div>
+
+                                <!-- Manufacture Date -->
+                                <div class="col-md-3 form-group">
+                                    <label>Manufacture Date</label><span class="require-span">*</span>
+                                    <input type="date" class="form-control" name="manufacture_date" id="manufacture_date">
+                                </div>
+
+                                <!-- Expiry Date -->
+                                <div class="col-md-3 form-group">
+                                    <label>Expiry Date</label><span class="require-span">*</span>
+                                    <input type="date" readonly class="form-control" name="expiry_date" id="expiry_date">
                                 </div>
 
                             </div>
@@ -193,12 +214,34 @@
                 let total_quantity = 0;
 
                 for( let i = 0 ; i < product_quantity.length ; i++ ){
-                    total_quantity += product_quantity[i].value ? parseInt(product_quantity[i].value) : 0
+                    total_quantity += product_quantity[i].value ? parseFloat(product_quantity[i].value) : 0
                 }
 
-                document.getElementById("cartoon-weight").innerHTML = total_quantity 
+                document.getElementById("cartoon-weight").value = total_quantity.toFixed(2)
             }
             
         }
+    </script>
+
+    <script>
+        $(document).on('change','#manufacture_date', function(){
+            let $this = $(this)
+            let type = "{{ $type }}"
+            let life_time = "{{ $life_time }}";
+            const  manufacture_date = $this.val()
+            let split_value = manufacture_date.split("-");
+
+            if( type == "Local" ){
+                let year =  parseInt(split_value[0]) + parseInt(life_time)
+                let new_date = year +'-'+ split_value[1] +'-'+ split_value[2];
+                $("#expiry_date").val(new_date);
+            }
+            else{
+                let year =  parseInt(split_value[0]) + parseInt(life_time)
+                let new_date = year +'-'+ split_value[1] +'-'+ split_value[2];
+                $("#expiry_date").val(new_date);
+            }
+
+        })
     </script>
     @endsection

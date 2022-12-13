@@ -81,7 +81,7 @@
             <!-- Quantity -->
             <div class="col-md-6 col-12 form-group">
                 <label>Quantity</label>
-                <input type="number" class="form-control" name="quantity">
+                <input type="number" class="form-control" step="0.01" name="quantity">
             </div>
 
             <div class="col-md-12 form-group text-right">
@@ -260,4 +260,5 @@
         })
     }
 </script>
+
 

@@ -96,9 +96,12 @@ class CartoonController extends Controller
             if( can("create_cartoon") ){
                 $validator = Validator::make($request->all(),[
                     "cartoon_name" => "required|max:20",
+                    "cartoon_weight" => "required|min:1",
                     "packet_quantity" => "required|integer|min:1",
                     "per_packet_weight" => "required|min:0",
-                    "per_packet_item" => "required|integer|min:1"
+                    "sample_item" => "required|integer|min:0",
+                    "manufacture_date" => "required",
+                    "expiry_date" => "required",
                 ]);
 
                 if( $validator->fails() ){
@@ -111,6 +114,7 @@ class CartoonController extends Controller
                     $group_id = 0;
                     $company_id = 0;
                     $location_id = 0;
+                    $type = "";
                     
                     if( $request->blast_freezer_entries_code ){
                         $blast_freezer_entries = BlastFreezerEntry::whereIn("code", $request->blast_freezer_entries_code)->select("id","code","trolley_id","quantity","remaining_quantity","product_details_id","group_id","company_id","location_id")->with("trolley","product_details")->get();
@@ -123,6 +127,8 @@ class CartoonController extends Controller
 
                     //quantity validation start
                     foreach( $blast_freezer_entries as $key => $blast_freezer_entry ){
+
+                        $type = $blast_freezer_entry->product_details->product->type;
 
                         if( $key == 0 ){
                             $group_id = $blast_freezer_entry->group_id;
@@ -168,15 +174,30 @@ class CartoonController extends Controller
 
                         $cartoon->cartoon_name = $request->cartoon_name;
                         $cartoon->cartoon_code = "CN". rand(000000,999999);
+                        $cartoon->actual_cartoon_weight = $request->cartoon_weight;
                         $cartoon->cartoon_weight = $cartoon_weight;
                         $cartoon->packet_quantity = $request->packet_quantity;
                         $cartoon->per_packet_weight = $request->per_packet_weight;
-                        $cartoon->per_packet_item = $request->per_packet_item;
+                        $cartoon->per_packet_item = $request->per_packet_item ?? null;
+                        $cartoon->sample_item = $request->sample_item;
                         $cartoon->status = "In";
                         $cartoon->product_id = $product_ids[0];
+                        $cartoon->manufacture_date = $request->manufacture_date;
+                        
+                        $explode = explode("-", $request->manufacture_date);
+    
+                        if( $type == "Local" ){
+                            $cartoon->expiry_date = $explode[0] + product_life_time("Local") .'-'. $explode[1] .'-'. $explode[2];
+                        }
+
+                        if( $type == "Export" ){
+                            $cartoon->expiry_date = $explode[0] + product_life_time("Export") .'-'. $explode[1] .'-'. $explode[2];
+                        }
+
                         $cartoon->group_id = $group_id;
                         $cartoon->company_id = $company_id;
                         $cartoon->location_id = $location_id;
+
                         if( $cartoon->save() ){
 
                             $cartoon_details = array();
