@@ -128,6 +128,7 @@
                                     <div class="row">
                                         <div class="col-md-2 form-group">
                                             <label> <strong>Trolley Code:</strong> {{ $cartoon_detail->blast_freezer_entry->trolley->code }}</label>
+                                            <label> <strong>Blast freezer entry Code:</strong> {{ $cartoon_detail->blast_freezer_entry->code }}</label>
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <label> <strong>Product:</strong> {{ $cartoon->product->name }}</label>
@@ -221,7 +222,15 @@
 
             if( e.value == 0 ){
                 swal("","Quantity value 0 will works to delete a trolley","warning")
-                // document.getElementById("cartoon-weight").value =  0 
+                
+                let product_quantity = document.querySelectorAll(".product_quantity")
+                let total_quantity = 0;
+
+                for( let i = 0 ; i < product_quantity.length ; i++ ){
+                    total_quantity += product_quantity[i].value ? parseFloat(product_quantity[i].value) : 0
+                }
+
+                document.getElementById("cartoon-weight").value = ( total_quantity.toFixed(2) < 1 ) ? 1 : total_quantity.toFixed(2)
             }
 
             if( e.value > 0 ){
@@ -232,7 +241,7 @@
                     total_quantity += product_quantity[i].value ? parseFloat(product_quantity[i].value) : 0
                 }
 
-                // document.getElementById("cartoon-weight").value = ( total_quantity.toFixed(2) < 1 ) ? 1 : total_quantity.toFixed(2)
+                document.getElementById("cartoon-weight").value = ( total_quantity.toFixed(2) < 1 ) ? 1 : total_quantity.toFixed(2)
             }
             
         }
@@ -254,14 +263,14 @@
                         }
                         else{
                             $(".quantity-row .quantity-col.new").remove()
-
-                            let cartoon_weight = 0;
+                            
                             $.each(response.data, function(key, value){
                                 $(".quantity-row").append(`
                                     <div class="col-md-12 quantity-col new">
                                         <div class="row">
                                             <div class="col-md-2 form-group">
                                                 <label> <strong>Trolley Code:</strong>${value.trolley.code}</label>
+                                                <label> <strong>Blast freezer entry Code:</strong> ${value.code}</label>
                                             </div>
                                             <div class="col-md-2 form-group">
                                                 <label> <strong>Product:</strong> ${value.product_details.product.name}</label>
@@ -286,10 +295,15 @@
                                     </div>
                                     
                                 `);
-                                cartoon_weight += parseFloat(value.remaining_quantity);
                             })
 
-                            // document.getElementById("cartoon-weight").value = cartoon_weight.toFixed(2)
+                            let product_quantity = document.getElementsByClassName("product_quantity")
+                            let cartoon_weight = 0;
+                            for( let i = 0 ; i < product_quantity.length ; i++ ){
+                                cartoon_weight += parseFloat(product_quantity[i].value)
+                            }
+
+                            document.getElementById("cartoon-weight").value = cartoon_weight.toFixed(2)
                             $('#largeModal').modal('toggle');
 
                         }
@@ -309,6 +323,14 @@
         $(document).on('click','.remove-item', function(){
             let $this = $(this);
             $this.closest(".quantity-col.new").remove()
+
+            let product_quantity = document.getElementsByClassName("product_quantity")
+            let cartoon_weight = 0;
+            for( let i = 0 ; i < product_quantity.length ; i++ ){
+                cartoon_weight += parseFloat(product_quantity[i].value)
+            }
+            document.getElementById("cartoon-weight").value = cartoon_weight.toFixed(2)
+
         })
     </script>
     @endsection

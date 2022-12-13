@@ -46,6 +46,7 @@
                                     <th>Name</th>
                                     <th>Code</th>
                                     <th>Product</th>
+                                    <th>Actual Weight (kg)</th>
                                     <th>Weight (kg)</th>
                                     <th>Packet ( pieces )</th>
                                     <th>Status</th>
@@ -60,6 +61,7 @@
                                     <td>{{ $cartoon->cartoon_name }}</td>
                                     <td>{{ $cartoon->cartoon_code }}</td>
                                     <td>{{ $cartoon->product->name }}</td>
+                                    <td>{{ $cartoon->actual_cartoon_weight }}</td>
                                     <td>{{ $cartoon->cartoon_weight }}</td>
                                     <td>{{ $cartoon->packet_quantity }}</td>
                                     <td>{{ $cartoon->status }}</td>

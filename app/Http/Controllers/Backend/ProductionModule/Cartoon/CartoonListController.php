@@ -20,12 +20,12 @@ class CartoonListController extends Controller
             if( can("cartoon_list") ){
 
                 if( auth('super_admin')->check() ){
-                    $cartoons = Cartoon::orderBy("id","desc")->select("id","cartoon_name","cartoon_code","cartoon_weight","packet_quantity","status","product_id","created_at")->with("product")->paginate(20);
+                    $cartoons = Cartoon::orderBy("id","desc")->select("id","cartoon_name","cartoon_code","actual_cartoon_weight","cartoon_weight","packet_quantity","status","product_id","created_at")->with("product")->paginate(20);
                 }
                 else{
                     $auth = auth('web')->user();
                     $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
-                    $cartoons = Cartoon::orderBy("id","desc")->select("id","cartoon_name","cartoon_code","cartoon_weight","packet_quantity","status","product_id","created_at")->with("product")->whereIn("location_id",$user_location)->paginate(20);
+                    $cartoons = Cartoon::orderBy("id","desc")->select("id","cartoon_name","cartoon_code","actual_cartoon_weight","cartoon_weight","packet_quantity","status","product_id","created_at")->with("product")->whereIn("location_id",$user_location)->paginate(20);
                 }
 
                 return view("backend.modules.production_module.cartoon.index",compact("cartoons"));
@@ -251,7 +251,7 @@ class CartoonListController extends Controller
                                             // }
                                             
                                         }
-                                        
+
                                         DB::table("cartoon_details")->insert($cartoon_details);
                                     }
 

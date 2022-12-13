@@ -26,6 +26,13 @@ $(document).ready(function () {
             cache: false,
             success: function (response) {
                 $(".loading").hide()
+
+                if (response.redirect) {
+                    swal('',`${response.message}`,`${response.status}`)
+                    setTimeout(function(){
+                        return window.location.href = response.redirect
+                    },1000);
+                }
                 if (response.success) {
                     swal("", `${response.success}`, "success");
                     if( $("#datatable").length ){
@@ -53,12 +60,7 @@ $(document).ready(function () {
                     return location.reload()
                 }
 
-                if (response.redirect) {
-                    swal('',`${response.message}`,`${response.status}`)
-                    setTimeout(function(){
-                        return window.location.href = response.redirect
-                    },1000);
-                }
+                
 
             },
             error: function (response) {
