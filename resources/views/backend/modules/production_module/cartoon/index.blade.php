@@ -1,14 +1,25 @@
 @extends("backend.template.layout")
 
 @section('per_page_css')
-<link href="{{ asset('backend/css/datatable/jquery.dataTables.min.css') }}" rel="stylesheet">
-<link href="{{ asset('backend/css/datatable/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ asset('backend/css/chosen/choosen.min.css') }}" rel="stylesheet">
+
 <style>
     .data-indicator ul{
         padding-left: 15px;
     }
     .data-indicator ul li{
         display: inline;
+    }
+    .custom-popover{
+        font-size: 10px;
+        background: #7a7a7a;
+        color: white;
+        padding: 3px 6px;
+        border-radius: 100%;
+        cursor: pointer;
+    }
+    .form-control, .dataTables_filter input {
+        height: calc(2.6125rem + -5px);
     }
 </style>
 @endsection
@@ -26,17 +37,88 @@
     <div class="br-pagebody">
         <div class="row">
             <div class="col-md-12">
-                <div class="card card-primary card-outline table-responsive">
+                <div class="card card-primary card-outline">
                     
                     <div class="card-body">
 
-                        <div class="col-md-12 text-right">
-                            <form action="" method="get">
+                        <div class="col-md-12">
+                            <form action="{{ route('cartoon.list.all') }}" method="get">
                                 @csrf
-                                <input type="search" name="search" value="">
-                                <button type="submit" class="btn btn-info btn-sm">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                                <div class="row">
+
+                                    <div class="col-md-2 form-group">
+                                        <label>
+                                            Search
+                                            <i class="fas fa-info custom-popover" 
+                                                data-toggle="popover" 
+                                                data-placement="top"
+                                                title="Search Fields" 
+                                                data-content="Cartoon code, Name"
+                                            ></i>
+                                        </label>
+                                        <input type="search" class="form-control" name="search" value="{{ isset($search) ? $search : '' }}">
+                                    </div>
+
+                                    <!-- select group -->
+                                    <div class="col-md-2 col-12 form-group">
+                                        <label>Select Group</label>
+                                        <select name="group_id" class="form-control chosen" onchange="groupChange(this)">
+                                            <option value="" disabled selected>Select group</option>
+                                            @foreach( $groups as $group )
+                                            <option value="{{ $group->id }}" @if($search_group && $group->id == $search_group->id) selected @endif>{{ $group->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <!-- select company -->
+                                    <div class="col-md-2 col-12 form-group select-company">
+                                        <label>Select company</label>
+                                        <div class="company-block">
+                                            <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">
+                                                <option value="" selected disabled>Select company</option>
+                                                @if($company) 
+                                                <option value="{{ $company->id }}" selected>{{ $company->name }}</option>
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- select location -->
+                                    <div class="col-md-2 col-12 form-group select-location">
+                                        <label>Select location</label>
+                                        <div class="location-block">
+                                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
+                                                <option value="" selected disabled>Select location</option>
+                                                @if($location) 
+                                                <option value="{{ $location->id }}" selected>{{ $location->name }}</option>
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Select Product -->
+                                    <div class="col-md-2 select-product">
+                                        <label>Select Product</label>
+                                        <div class="product-block">
+                                            <select name="product_id" class="form-control product_id chosen" >
+                                                <option value="" selected disabled>Select product</option>
+                                                @if($product) 
+                                                <option value="{{ $product->id }}" selected>{{ $product->name }}</option>
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2 form-group">
+                                        <button type="submit" class="btn btn-info btn-sm mt-4">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                        <a href="{{ route('cartoon.list.all') }}" class="btn btn-success btn-sm mt-4">
+                                            <i class="fas fa-sync"></i>
+                                        </a>
+                                    </div>
+
+                                </div>
                             </form>
                         </div>
                         <table class="table table-bordered table-striped dataTable dtr-inline user-datatable" id="datatable">
@@ -86,10 +168,15 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="9">No data found</td>
+                                    <td colspan="10" class="text-center">No data found</td>
                                 </tr>
                                 @endforelse
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="10">{{  ($check_search == true) ? null : $cartoons->links() }}</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -107,4 +194,134 @@
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{ asset('backend/js/custom-script.min.js') }}"></script>
 <script src="{{  asset('backend/js/ajax_form_submit.js') }}"></script>
+<script src="{{ asset('backend/js/chosen/choosen.min.js') }}"></script>
+<script>
+    $(document).ready(function domReady() {
+        $(".chosen").chosen();
+    });
+</script>
+<script>
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+</script>
+<script>
+    function groupChange(e) {
+        let group_id = e.value
+        $.ajax({
+            type: "GET",
+            url: "{{ route('group.wise.company') }}",
+            data: {
+                group_id: group_id,
+            },
+            success: function(response) {
+                if (response.status == "success") {
+                    $(".company-block").remove();
+                    $(".select-company").append(`
+                        <div class="company-block">
+                            <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">
+                                <option value="" selected disabled>Select company</option>
+                            </select>
+                        </div>
+                    `);
+
+                    $(".location-block").remove();
+                    $(".select-location").append(`
+                        <div class="location-block">
+                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
+                                <option value="" selected disabled>Select location</option>
+                            </select>
+                        </div>
+                    `);
+
+                    $.each(response.data, function(key, value) {
+                        $(".company_id").append(`
+                            <option value="${value.id}">${value.name}</option>
+                        `);
+                    })
+
+                    $(".chosen").chosen();
+                }
+            },
+            error: function(response) {
+
+            },
+        })
+    }
+
+    function companyChange(e) {
+        let company_id = Array();
+        company_id.push(e.value)
+
+        $.ajax({
+            type: "GET",
+            url: "{{ route('company.wise.location') }}",
+            data: {
+                company_ids: company_id,
+            },
+            success: function(response) {
+                if (response.status == "success") {
+                    $(".location-block").remove();
+                    $(".select-location").append(`
+                        <div class="location-block">
+                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
+                                <option value="" selected disabled>Select location</option>
+                            </select>
+                        </div>
+                    `);
+
+                    $.each(response.data, function(key, value) {
+                        $(".location_id").append(`
+                            <option value="${value.id}">${value.name}</option>
+                        `);
+                    })
+
+                    $(".chosen").chosen();
+                }
+            },
+            error: function(response) {
+
+            },
+        })
+    }
+
+
+    function locationChange(e){
+
+        let location_id = Array();
+
+        location_id.push(e.value)
+
+        $.ajax({
+            type: "GET",
+            url: "{{ route('location.wise.data') }}",
+            data: {
+                location_ids: location_id,
+            },
+            success: function(response) {
+                if (response.status == "success") {
+                    $(".product-block").remove();
+                    $(".select-product").append(`
+                        <div class="product-block">
+                            <select name="product_id" class="form-control product_id chosen">
+                                <option value="" selected disabled>Select product</option>
+                            </select>
+                        </div>
+                    `);
+
+                    $.each(response.product_details, function(key, value) {
+                        $(".product_id").append(`
+                            <option value="${value.product.id}">${value.product.name}</option>
+                        `);
+                    })
+
+                    $(".chosen").chosen();
+                }
+            },
+            error: function(response) {
+
+            },
+        })
+    }
+</script>
 @endsection

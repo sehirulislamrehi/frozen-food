@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Backend\ProductionModule\Cartoon;
 
 use App\Http\Controllers\Controller;
+use App\Models\LocationModule\Location;
 use App\Models\ProductionModule\BlastFreezerEntry;
 use App\Models\ProductionModule\Cartoon;
 use App\Models\ProductionModule\CartoonDetail;
+use App\Models\SystemModule\Product;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -15,20 +17,70 @@ use Illuminate\Support\Facades\Validator;
 class CartoonListController extends Controller
 {
     //index function start
-    public function index(){
+    public function index(Request $request){
         try{
             if( can("cartoon_list") ){
 
+                $search = "";
+                $search_group = "";
+                $company = "";
+                $location = "";
+                $product = "";
+                $check_search = false;
+
+                $query = Cartoon::orderBy("id","desc")
+                ->select("id","cartoon_name","cartoon_code","actual_cartoon_weight","cartoon_weight","packet_quantity","status","product_id","created_at")
+                ->with("product");
+
+                if( $request->search ){
+                    $search = $request->search;
+                    $query->where("cartoon_code","LIKE","%$search%")->orWhere("cartoon_name","LIKE","%$search%");
+                    $check_search = true;
+                }
+                if( $request->group_id ){
+                    $search_group = Location::where("id",$request->group_id)->where("type","Group")->select("id","name")->first();
+                    $query->where("group_id",$search_group->id);
+                    $check_search = true;
+                }
+                if( $request->company_id ){
+                    $company = Location::where("id",$request->company_id)->where("type","Company")->select("id","name")->first();
+                    $query->where("company_id",$company->id);
+                    $check_search = true;
+                }
+                if( $request->location_id ){
+                    $location = Location::where("id",$request->location_id)->where("type","Location")->select("id","name")->first();
+                    $query->where("location_id",$location->id);
+                    $check_search = true;
+                }
+                if( $request->product_id ){
+                    $product = Product::where("id",$request->product_id)->select("id","name")->first();
+                    $query->where("product_id",$product->id);
+                    $check_search = true;
+                }
+
                 if( auth('super_admin')->check() ){
-                    $cartoons = Cartoon::orderBy("id","desc")->select("id","cartoon_name","cartoon_code","actual_cartoon_weight","cartoon_weight","packet_quantity","status","product_id","created_at")->with("product")->paginate(20);
+                    if( $check_search == true ){
+                        $cartoons = $query->get();
+                    }
+                    else{
+                        $cartoons = $query->paginate(20);
+                    }
+                    $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
                 }
                 else{
                     $auth = auth('web')->user();
                     $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
-                    $cartoons = Cartoon::orderBy("id","desc")->select("id","cartoon_name","cartoon_code","actual_cartoon_weight","cartoon_weight","packet_quantity","status","product_id","created_at")->with("product")->whereIn("location_id",$user_location)->paginate(20);
+                    if( $check_search == true ){
+                        $cartoons = $query->whereIn("location_id",$user_location)->get();
+                    }
+                    else{
+                        $cartoons = $query->whereIn("location_id",$user_location)->paginate(20);
+                    }
+                    $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
                 }
 
-                return view("backend.modules.production_module.cartoon.index",compact("cartoons"));
+                return view("backend.modules.production_module.cartoon.index",compact("cartoons","groups","search","search_group","company","location",
+                "product","check_search"));
             }
             else{
                 return view("errors.403");

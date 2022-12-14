@@ -92,7 +92,7 @@
         <nav class="breadcrumb pd-0 mg-0 tx-12">
             <a class="breadcrumb-item" href="{{ route('dashboard') }}">Dashboard</a>
             <a class="breadcrumb-item" href="{{ route('cartoon.list.all') }}">Cartool List</a>
-            <a class="breadcrumb-item active" href="#">{{ $cartoon->cartoon_code }}</a>
+            <a class="breadcrumb-item active">{{ $cartoon->cartoon_code }}</a>
         </nav>
     </div>
 
@@ -333,4 +333,5 @@
 
         })
     </script>
+
     @endsection
