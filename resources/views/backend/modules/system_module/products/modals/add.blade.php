@@ -42,24 +42,6 @@
                 </div>
             </div>
 
-            <!-- Manufacture Date -->
-            <div class="col-md-6 form-group">
-                <label>Manufacture Date</label>
-                <input type="date" class="form-control" name="manufacture_date" id="manufacture_date">
-            </div>
-
-            <!-- Expiry Date -->
-            <div class="col-md-6 form-group">
-                <label>Expiry Date</label>
-                <input type="date" readonly class="form-control" name="expiry_date" id="expiry_date">
-            </div>
-
-            <!-- quantity -->
-            <!-- <div class="col-md-12 form-group">
-                <label>In quantity (kg)</label>
-                <input type="number" class="form-control" name="quantity" step=".01">
-            </div> -->
-
             <div class="col-md-12 form-group text-right">
                 <button type="submit" class="btn btn-outline-dark">
                     Add
@@ -166,25 +148,4 @@
     }
 </script>
 
-<script>
-    $(document).on('change','#manufacture_date', function(){
-        let $this = $(this)
-        let type = "{{ $product->type }}"
-        let life_time = "{{ $product->life_time }}";
-        const  manufacture_date = $this.val()
-        let split_value = manufacture_date.split("-");
-
-        if( type == "Local" ){
-            let year =  parseInt(split_value[0]) + parseInt(life_time)
-            let new_date = year +'-'+ split_value[1] +'-'+ split_value[2];
-            $("#expiry_date").val(new_date);
-        }
-        else{
-            let year =  parseInt(split_value[0]) + parseInt(life_time)
-            let new_date = year +'-'+ split_value[1] +'-'+ split_value[2];
-            $("#expiry_date").val(new_date);
-        }
-
-    })
-</script>
 

@@ -20,9 +20,6 @@ class CreateProductDetailsTable extends Migration
             $table->unsignedBigInteger("group_id");
             $table->unsignedBigInteger("company_id");
             $table->unsignedBigInteger("location_id");
-            $table->date("manufacture_date");
-            $table->date("expiry_date");
-            $table->double("quantity")->comment("Quantity in KG.")->nullable();
 
             $table->foreign("product_id")->references("id")->on("products")->onDelete("cascade");
             $table->foreign("group_id")->references("id")->on("locations")->onDelete("cascade");

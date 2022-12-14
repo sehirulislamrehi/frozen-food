@@ -126,10 +126,7 @@ class ProductDetailsController extends Controller
                 $validator = Validator::make($request->all(), [
                     'group_id' =>  'required|integer|exists:locations,id',
                     'company_id' =>  'required|integer|exists:locations,id',
-                    'location_id' =>  'required|integer|exists:locations,id',
-                    'manufacture_date' => 'required',
-                    'expiry_date' => 'required',
-                    // 'quantity' => 'required|numeric|min:0|not_in:0'
+                    'location_id' =>  'required|integer|exists:locations,id'
                 ]);
 
                 if ($validator->fails()) {
@@ -158,19 +155,6 @@ class ProductDetailsController extends Controller
                             $product_details->group_id = $request->group_id;
                             $product_details->company_id = $request->company_id;
                             $product_details->location_id = $request->location_id;
-                            $product_details->manufacture_date = $request->manufacture_date;
-    
-                            $explode = explode("-", $request->manufacture_date);
-    
-                            if( $product->type == "Local" ){
-                                $product_details->expiry_date = $explode[0] + product_life_time("Local") .'-'. $explode[1] .'-'. $explode[2];
-                            }
-    
-                            if( $product->type == "Export" ){
-                                $product_details->expiry_date = $explode[0] + product_life_time("Export") .'-'. $explode[1] .'-'. $explode[2];
-                            }
-    
-                            // $product_details->quantity = $request->quantity;
     
                             if( $product_details->save() ){
                                 return response()->json(['success' => 'Details created'], 200);
@@ -235,62 +219,38 @@ class ProductDetailsController extends Controller
         try {
             if (can('edit_products')) {
 
-                $validator = Validator::make($request->all(), [
-                    'manufacture_date' => 'required',
-                    'expiry_date' => 'required',
-                ]);
+                $product_details = ProductDetails::where("id", decrypt($id))->with("product")->first();
 
-                if ($validator->fails()) {
-                    return response()->json(['errors' => $validator->errors()], 422);
-                } 
-                else {
+                if( $product_details ){ 
 
-                    $product_details = ProductDetails::where("id", decrypt($id))->with("product")->first();
+                    $product = $product_details->product;
 
-                    if( $product_details ){ 
+                    if( $request->group_id && $request->company_id && $request->location_id ){
 
-                        $product = $product_details->product;
+                        $exists = ProductDetails::select("id")->where("group_id", $request->group_id)
+                        ->where("company_id", $request->company_id)
+                        ->where("location_id", $request->location_id)
+                        ->where("product_id", $product_details->product_id)
+                        ->first();
 
-                        if( $request->group_id && $request->company_id && $request->location_id ){
-
-                            $exists = ProductDetails::select("id")->where("group_id", $request->group_id)
-                            ->where("company_id", $request->company_id)
-                            ->where("location_id", $request->location_id)
-                            ->where("product_id", $product_details->product_id)
-                            ->first();
-
-                            if( $exists ){
-                                return response()->json(['warning' => 'Details already exists in this location'], 200);
-                            }
-                            else{
-                                $product_details->group_id = $request->group_id;
-                                $product_details->company_id = $request->company_id;
-                                $product_details->location_id = $request->location_id;
-                            }
-
+                        if( $exists ){
+                            return response()->json(['warning' => 'Details already exists in this location'], 200);
                         }
-                        
-                        $product_details->manufacture_date = $request->manufacture_date;
-
-                        $explode = explode("-", $request->manufacture_date);
-
-                        if( $product->type == "Local" ){
-                            $product_details->expiry_date = $explode[0] + product_life_time("Local") .'-'. $explode[1] .'-'. $explode[2];
-                        }
-
-                        if( $product->type == "Export" ){
-                            $product_details->expiry_date = $explode[0] + product_life_time("Export") .'-'. $explode[1] .'-'. $explode[2];
-                        }
-
-                        if( $product_details->save() ){
-                            return response()->json(['success' => 'Details updated'], 200);
+                        else{
+                            $product_details->group_id = $request->group_id;
+                            $product_details->company_id = $request->company_id;
+                            $product_details->location_id = $request->location_id;
                         }
 
                     }
-                    else{
-                        return response()->json(['warning' => 'No product details found'], 200);
+
+                    if( $product_details->save() ){
+                        return response()->json(['success' => 'Details updated'], 200);
                     }
-                    
+
+                }
+                else{
+                    return response()->json(['warning' => 'No product details found'], 200);
                 }
             } 
             else {

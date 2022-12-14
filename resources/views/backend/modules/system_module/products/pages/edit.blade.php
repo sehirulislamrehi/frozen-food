@@ -133,8 +133,6 @@
                                                                 <th>Group</th>
                                                                 <th>Company</th>
                                                                 <th>Location</th>
-                                                                <th>Manufacture Date</th>
-                                                                <th>Expiry Date</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
@@ -195,14 +193,6 @@
                     {
                         data: 'location',
                         name: 'location'
-                    },
-                    {
-                        data: 'manufacture_date',
-                        name: 'manufacture_date'
-                    },
-                    {
-                        data: 'expiry_date',
-                        name: 'expiry_date'
                     },
                     {
                         data: 'action',
