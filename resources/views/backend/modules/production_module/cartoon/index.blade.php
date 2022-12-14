@@ -4,13 +4,15 @@
 <link href="{{ asset('backend/css/chosen/choosen.min.css') }}" rel="stylesheet">
 
 <style>
-    .data-indicator ul{
+    .data-indicator ul {
         padding-left: 15px;
     }
-    .data-indicator ul li{
+
+    .data-indicator ul li {
         display: inline;
     }
-    .custom-popover{
+
+    .custom-popover {
         font-size: 10px;
         background: #7a7a7a;
         color: white;
@@ -18,7 +20,9 @@
         border-radius: 100%;
         cursor: pointer;
     }
-    .form-control, .dataTables_filter input {
+
+    .form-control,
+    .dataTables_filter input {
         height: calc(2.6125rem + -5px);
     }
 </style>
@@ -38,7 +42,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-primary card-outline">
-                    
+
                     <div class="card-body">
 
                         <div class="col-md-12">
@@ -49,12 +53,7 @@
                                     <div class="col-md-2 form-group">
                                         <label>
                                             Search
-                                            <i class="fas fa-info custom-popover" 
-                                                data-toggle="popover" 
-                                                data-placement="top"
-                                                title="Search Fields" 
-                                                data-content="Cartoon code, Name"
-                                            ></i>
+                                            <i class="fas fa-info custom-popover" data-toggle="popover" data-placement="top" title="Search Fields" data-content="Cartoon code, Name"></i>
                                         </label>
                                         <input type="search" class="form-control" name="search" value="{{ isset($search) ? $search : '' }}">
                                     </div>
@@ -76,7 +75,7 @@
                                         <div class="company-block">
                                             <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">
                                                 <option value="" selected disabled>Select company</option>
-                                                @if($company) 
+                                                @if($company)
                                                 <option value="{{ $company->id }}" selected>{{ $company->name }}</option>
                                                 @endif
                                             </select>
@@ -89,7 +88,7 @@
                                         <div class="location-block">
                                             <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
                                                 <option value="" selected disabled>Select location</option>
-                                                @if($location) 
+                                                @if($location)
                                                 <option value="{{ $location->id }}" selected>{{ $location->name }}</option>
                                                 @endif
                                             </select>
@@ -100,9 +99,9 @@
                                     <div class="col-md-2 select-product">
                                         <label>Select Product</label>
                                         <div class="product-block">
-                                            <select name="product_id" class="form-control product_id chosen" >
+                                            <select name="product_id" class="form-control product_id chosen">
                                                 <option value="" selected disabled>Select product</option>
-                                                @if($product) 
+                                                @if($product)
                                                 <option value="{{ $product->id }}" selected>{{ $product->name }}</option>
                                                 @endif
                                             </select>
@@ -121,63 +120,79 @@
                                 </div>
                             </form>
                         </div>
-                        <table class="table table-bordered table-striped dataTable dtr-inline user-datatable" id="datatable">
-                            <thead>
-                                <tr>
-                                    <th>S.ID</th>
-                                    <th>Name</th>
-                                    <th>Code</th>
-                                    <th>Product</th>
-                                    <th>Actual Weight (kg)</th>
-                                    <th>Weight (kg)</th>
-                                    <th>Packet ( pieces )</th>
-                                    <th>Status</th>
-                                    <th>Time</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse( $cartoons as $key => $cartoon )
-                                <tr>
-                                    <td>{{ $key + 1 }}</td>
-                                    <td>{{ $cartoon->cartoon_name }}</td>
-                                    <td>{{ $cartoon->cartoon_code }}</td>
-                                    <td>{{ $cartoon->product->name }}</td>
-                                    <td>{{ $cartoon->actual_cartoon_weight }}</td>
-                                    <td>{{ $cartoon->cartoon_weight }}</td>
-                                    <td>{{ $cartoon->packet_quantity }}</td>
-                                    <td>{{ $cartoon->status }}</td>
-                                    <td>{{ $cartoon->created_at }}</td>
-                                    <td>
-                                        <div class="dropdown">
-                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-{{ $cartoon->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Action
-                                            </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdown-{{ $cartoon->id }}">
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-striped dataTable dtr-inline user-datatable" id="datatable">
+                                <thead>
+                                    <tr>
+                                        <th>S.ID</th>
+                                        <th>Name</th>
+                                        <th>Code</th>
+                                        <th>Product</th>
+                                        <th>Actual Weight (kg)</th>
+                                        <th>Weight (kg)</th>
+                                        <th>Packet ( pieces )</th>
+                                        <th>Status</th>
+                                        <th>Time</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $actual_weight = 0;
+                                        $weight = 0;
+                                    @endphp
+                                    @forelse( $cartoons as $key => $cartoon )
+                                        @php
+                                            $actual_weight += $cartoon->actual_cartoon_weight;
+                                            $weight += $cartoon->cartoon_weight;
+                                        @endphp
+                                    <tr>
+                                        <td>{{ $key + 1 }}</td>
+                                        <td>{{ $cartoon->cartoon_name }}</td>
+                                        <td>{{ $cartoon->cartoon_code }}</td>
+                                        <td>{{ $cartoon->product->name }}</td>
+                                        <td>{{ $cartoon->actual_cartoon_weight }}</td>
+                                        <td>{{ $cartoon->cartoon_weight }}</td>
+                                        <td>{{ $cartoon->packet_quantity }}</td>
+                                        <td>{{ $cartoon->status }}</td>
+                                        <td>{{ $cartoon->created_at }}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdown-{{ $cartoon->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Action
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="dropdown-{{ $cartoon->id }}">
 
-                                                @if( can("edit_cartoon") )
-                                                <a class="dropdown-item" href="{{ route('edit.cartoon.page', $cartoon->cartoon_code) }}" class="btn btn-outline-dark">
-                                                    <i class="fas fa-edit"></i>
-                                                    Edit
-                                                </a>
-                                                @endif
+                                                    @if( can("edit_cartoon") )
+                                                    <a class="dropdown-item" href="{{ route('edit.cartoon.page', $cartoon->cartoon_code) }}" class="btn btn-outline-dark">
+                                                        <i class="fas fa-edit"></i>
+                                                        Edit
+                                                    </a>
+                                                    @endif
 
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="10" class="text-center">No data found</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="10">{{  ($check_search == true) ? null : $cartoons->links() }}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="10" class="text-center">No data found</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="4"></td>
+                                        <td>{{$actual_weight}} kg</td>
+                                        <td>{{$weight}} kg</td>
+                                        <td colspan="4"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="col-md-12">
+                            <p>{{ ($check_search == true) ? null : $cartoons->links() }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -201,7 +216,7 @@
     });
 </script>
 <script>
-    $(function () {
+    $(function() {
         $('[data-toggle="popover"]').popover()
     })
 </script>
@@ -286,7 +301,7 @@
     }
 
 
-    function locationChange(e){
+    function locationChange(e) {
 
         let location_id = Array();
 

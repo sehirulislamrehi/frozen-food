@@ -20,7 +20,7 @@
     <div class="br-pageheader">
         <nav class="breadcrumb pd-0 mg-0 tx-12">
             <a class="breadcrumb-item" href="{{ route('dashboard') }}">Dashboard</a>
-            <a class="breadcrumb-item" href="#">Edit product</a>
+            <a class="breadcrumb-item" href="{{ route('products.all') }}">All Product</a>
             <a class="breadcrumb-item active" href="#">{{ $product->name }}</a>
         </nav>
     </div>

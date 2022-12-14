@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Backend\SystemModule\Products;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProductionModule\CartoonDetail;
 use App\Models\SystemModule\Product;
 use App\Models\SystemModule\ProductDetails;
 use App\Models\SystemModule\ProductStock;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ProductStockController extends Controller
@@ -38,72 +40,6 @@ class ProductStockController extends Controller
     //stock_add_modal function end
 
 
-    //stock_add function start
-    public function stock_add(Request $request, $id){
-        try {
-            if (can('edit_products')) {
-
-                $validator = Validator::make($request->all(), [
-                    'type' => 'required|in:In,Out',
-                    'quantity' => 'required|numeric|min:0|not_in:0',
-                    'cartoon_name' => 'required'
-                ]);
-
-                if ($validator->fails()) {
-                    return response()->json(['errors' => $validator->errors()], 422);
-                } 
-                else {
-
-                    $product_details = ProductDetails::where("id", decrypt($id))->first();
-
-                    if( $product_details ){ 
-
-                        $product_stocks = new ProductStock();
-
-                        $product_stocks->product_details_id = $product_details->id;
-                        $product_stocks->quantity = $request->quantity;
-                        $product_stocks->type = $request->type;
-                        $product_stocks->cartoon_name = $request->cartoon_name;
-                        $product_stocks->date_time = Carbon::now()->toDateTimeString();
-
-                        if( $request->type == "In" ){
-                            $product_details->quantity += $request->quantity;
-                        }
-
-                        if( $request->type == "Out" ){
-                            $product_details->quantity -= $request->quantity;
-
-                            if( $product_details->quantity < 0 ){
-                                return response()->json(['warning' => 'Stock quantity cannot be negative.'], 200);
-                            }
-                        }
-
-                        if( $product_stocks->save() ){
-
-                            if( $product_details->save() ){
-                                return response()->json(['success' => 'Stock updated'], 200);
-                            }
-
-                        }
-
-                    }
-                    else{
-                        return response()->json(['warning' => 'No product details found'], 200);
-                    }
-                    
-                }
-            } 
-            else {
-                return response()->json(['warning' => unauthorized()], 200);
-            }
-        } 
-        catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 200);
-        }
-    } 
-    //stock_add function end
-
-
     //stock_summary function start
     public function stock_summary($id){
         try {
@@ -112,10 +48,17 @@ class ProductStockController extends Controller
                 $product_details = ProductDetails::where("id", decrypt($id))->with("group","company","location")->first();
 
                 if ( $product_details ) {
-
                     $product = Product::where("id", $product_details->product_id)->select("code","name")->first();
+                    $product_details_id = $product_details->id;
+                    $in_quantity = 0;
+                    $out_quantity = 0;
 
-                    return view("backend.modules.system_module.products.pages.stock_summary", compact('product_details','product'));
+                    $cartoon_details = [];
+                    $cartoon_details = CartoonDetail::where("product_details_id", $product_details->id)
+                    ->select("quantity","blast_freezer_entries_id","created_at","cartoon_id")->With("cartoon")->paginate(50);
+
+
+                    return view("backend.modules.system_module.products.pages.stock_summary", compact('product_details','cartoon_details','product','in_quantity','out_quantity'));
 
                 } 
                 else {

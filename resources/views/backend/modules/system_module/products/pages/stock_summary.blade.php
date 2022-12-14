@@ -52,11 +52,6 @@
                                             <td> <strong>Product Code:</strong> {{ $product->code }} </td>
                                             <td colspan="2"> <strong>Product Name:</strong> {{ $product->name }} </td>
                                         </tr>
-                                        <tr>
-                                            <td> <strong>Manufacture Date:</strong> {{ $product_details->manufacture_date }}</td>
-                                            <td> <strong>Expiry Date:</strong> {{ $product_details->expiry_date }}</td>
-                                            <td> <strong>Quantity Available (kg):</strong> {{ $product_details->quantity }}</td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -74,16 +69,48 @@
                                                 <th>SID.</th>
                                                 <th>Type</th>
                                                 <th>Cartoon</th>
-                                                <th>Quantity (kg)</th>
-                                                <th>Date & Time</th>
+                                                <th>In Quantity (kg)</th>
+                                                <th>Out Quantity (kg)</th>
+                                                <th>MF. Date</th>
+                                                <th>Exp. Date</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            
+                                            @foreach( $cartoon_details as $key => $cartoon_detail )
+                                            <tr>
+                                                <td>{{ $key + 1 }}</td>
+                                                <td>{{ $cartoon_detail->cartoon->status }}</td>
+                                                <td>{{ $cartoon_detail->cartoon->cartoon_code }}</td>
+                                                @if( $cartoon_detail->cartoon->status == "In" )
+                                                    @php
+                                                        $in_quantity += $cartoon_detail->quantity;
+                                                    @endphp
+                                                    <td>{{ $cartoon_detail->quantity }} kg</td>
+                                                    <td>0</td>
+                                                @else
+                                                    @php
+                                                        $out_quantity += $cartoon_detail->quantity;
+                                                    @endphp
+                                                    <td>0</td>
+                                                    <td>{{ $cartoon_detail->quantity }} kg</td>
+                                                @endif
+                                                <td>{{ $cartoon_detail->cartoon->manufacture_date }}</td>
+                                                <td>{{ $cartoon_detail->cartoon->expiry_date }}</td>
+                                            </tr>
+                                            @endforeach
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3"></td>
+                                                <td>{{$in_quantity}} kg</td>
+                                                <td>{{$out_quantity}} kg</td>
+                                                <td colspan="2"></td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                                 <div class="col-md-12">
+                                    {{ $cartoon_details->links() }}
                                 </div>
                             </div>
                         </div>

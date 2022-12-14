@@ -18,4 +18,8 @@ class CartoonDetail extends Model
         return $this->belongsTo(ProductDetails::class);
     }
 
+    public function cartoon(){
+        return $this->belongsTo(Cartoon::class);
+    }
+
 }

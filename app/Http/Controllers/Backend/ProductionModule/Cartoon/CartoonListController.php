@@ -28,8 +28,9 @@ class CartoonListController extends Controller
                 $product = "";
                 $check_search = false;
 
-                $query = Cartoon::orderBy("id","desc")
+                $query = Cartoon::orderBy("id","asc")
                 ->select("id","cartoon_name","cartoon_code","actual_cartoon_weight","cartoon_weight","packet_quantity","status","product_id","created_at")
+                ->where("status","In")
                 ->with("product");
 
                 if( $request->search ){
@@ -59,24 +60,21 @@ class CartoonListController extends Controller
                 }
 
                 if( auth('super_admin')->check() ){
-                    if( $check_search == true ){
-                        $cartoons = $query->get();
-                    }
-                    else{
-                        $cartoons = $query->paginate(20);
-                    }
                     $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
                 }
                 else{
                     $auth = auth('web')->user();
                     $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
-                    if( $check_search == true ){
-                        $cartoons = $query->whereIn("location_id",$user_location)->get();
-                    }
-                    else{
-                        $cartoons = $query->whereIn("location_id",$user_location)->paginate(20);
-                    }
+                    $query->whereIn("location_id",$user_location);
+                    $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
                     $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
+                }
+
+                if( $check_search == true ){
+                    $cartoons = $query->get();
+                }
+                else{
+                    $cartoons = $query->paginate(20);
                 }
 
                 return view("backend.modules.production_module.cartoon.index",compact("cartoons","groups","search","search_group","company","location",
