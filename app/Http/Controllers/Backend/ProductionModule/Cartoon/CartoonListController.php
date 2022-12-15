@@ -130,7 +130,7 @@ class CartoonListController extends Controller
         try{
             if( can("edit_cartoon") ){
                 $validator = Validator::make($request->all(),[
-                    "cartoon_name" => "required|max:20",
+                    "cartoon_name" => "required|max:50",
                     "cartoon_weight" => "required|min:1",
                     "packet_quantity" => "required|integer|min:1",
                     "per_packet_weight" => "required|min:0",

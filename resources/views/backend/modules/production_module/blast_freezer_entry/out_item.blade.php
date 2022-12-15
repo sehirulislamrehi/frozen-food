@@ -292,7 +292,7 @@
     <script>
         function createNewCartoon(){
             let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
-            if( stored_codes ){
+            if( stored_codes && stored_codes.length != 0 ){
                 $.ajax({
                     method : "GET",
                     url: "{{ route('blast.freezser.validate.code') }}",

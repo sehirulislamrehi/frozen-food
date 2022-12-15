@@ -23,6 +23,7 @@ USE `frozen_food`;
 DROP TABLE IF EXISTS `blast_freezer_entries`;
 
 CREATE TABLE `blast_freezer_entries` (
+  `remaining_quantity` double unsigned zerofill NOT NULL,
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Auto generated code',
   `group_id` bigint(20) unsigned NOT NULL,
@@ -33,7 +34,7 @@ CREATE TABLE `blast_freezer_entries` (
   `product_details_id` bigint(20) unsigned NOT NULL,
   `lead_time` datetime NOT NULL COMMENT 'Trolley out time',
   `trolley_outed` datetime DEFAULT NULL,
-  `quantity` double NOT NULL COMMENT 'Quantity in Kg',
+  `quantity` double unsigned NOT NULL COMMENT 'Quantity in Kg',
   `status` enum('In','Out') COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -51,11 +52,11 @@ CREATE TABLE `blast_freezer_entries` (
   CONSTRAINT `blast_freezer_entries_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `blast_freezer_entries_product_details_id_foreign` FOREIGN KEY (`product_details_id`) REFERENCES `product_details` (`id`) ON DELETE CASCADE,
   CONSTRAINT `blast_freezer_entries_trolley_id_foreign` FOREIGN KEY (`trolley_id`) REFERENCES `trolleys` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `blast_freezer_entries` */
 
-insert  into `blast_freezer_entries` values (2,'BF755589',1,3,6,1,4,2,'2022-10-11 14:40:00','2022-10-11 14:40:08',100,'Out','2022-10-11 14:30:27','2022-10-11 14:40:08'),(4,'BF447624',1,3,6,1,4,2,'2022-10-13 11:20:00','2022-10-13 11:18:35',20,'Out','2022-10-13 11:11:06','2022-10-13 11:18:35'),(6,'BF82223',1,3,6,1,3,2,'2022-10-19 15:50:00','2022-10-19 15:48:20',100,'Out','2022-10-19 15:43:27','2022-10-19 15:48:20'),(7,'BF325602',1,3,6,2,2,2,'2022-10-19 16:00:00','2022-10-19 16:00:14',100,'Out','2022-10-19 15:51:43','2022-10-19 16:00:14'),(8,'BF672288',1,3,6,2,3,2,'2022-10-19 16:02:00','2022-10-19 16:01:10',100,'Out','2022-10-19 15:53:21','2022-10-19 16:01:10'),(9,'BF672783',1,3,6,3,4,2,'2022-10-19 16:03:00','2022-10-19 16:02:08',100,'Out','2022-10-19 15:53:59','2022-10-19 16:02:08');
+insert  into `blast_freezer_entries` values (0000000000000000000050,11,'BF826733',1,3,6,1,2,2,'2022-12-15 09:50:00','2022-12-15 09:46:52',50,'Out','2022-12-15 09:46:23','2022-12-15 09:46:52'),(0000000000000000000020,12,'BF231090',1,3,6,1,2,2,'2022-12-15 09:50:00','2022-12-15 09:47:25',50,'Out','2022-12-15 09:47:16','2022-12-15 09:54:53');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

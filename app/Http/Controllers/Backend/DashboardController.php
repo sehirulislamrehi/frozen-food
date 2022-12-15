@@ -13,6 +13,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
+
         if( auth('super_admin')->check() || auth('web')->check() ){
             Session::put("unique_code", Str::random(16));
             return view('backend.dashboard');

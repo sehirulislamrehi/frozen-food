@@ -28,9 +28,6 @@ CREATE TABLE `product_details` (
   `group_id` bigint(20) unsigned NOT NULL,
   `company_id` bigint(20) unsigned NOT NULL,
   `location_id` bigint(20) unsigned NOT NULL,
-  `manufacture_date` date NOT NULL,
-  `expiry_date` date NOT NULL,
-  `quantity` double NOT NULL COMMENT 'Quantity in KG.',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -42,11 +39,11 @@ CREATE TABLE `product_details` (
   CONSTRAINT `product_details_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `product_details_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `product_details_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `product_details` */
 
-insert  into `product_details` values (2,3,1,3,6,'2022-10-10','2023-10-10',120,'2022-10-11 14:27:28','2022-10-11 14:27:28');
+insert  into `product_details` values (2,3,1,3,6,'2022-10-11 14:27:28','2022-10-11 14:27:28'),(3,4,1,3,6,'2022-12-15 09:57:50','2022-12-15 09:57:50');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

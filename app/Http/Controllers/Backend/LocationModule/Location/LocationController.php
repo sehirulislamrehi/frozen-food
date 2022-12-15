@@ -91,16 +91,16 @@ class LocationController extends Controller
             if( can("add_location") ){
 
                 if( auth('super_admin')->check() ){
-                    $companies = Location::where("type","Company")->select("id","name")->get();
+                    $companies = Location::where("type","Company")->select("id","name")->where("is_active", true)->get();
                 }  
                 else{
                     $auth = auth('web')->user();
 
                     if( $auth->company_id ){
-                        $companies = Location::where("type","Company")->select("id","name")->where("id", $auth->company_id)->get();
+                        $companies = Location::where("type","Company")->select("id","name")->where("is_active", true)->where("id", $auth->company_id)->get();
                     }
                     else{
-                        $companies = Location::where("type","Company")->select("id","name")->where("location_id", $auth->group_id)->get();
+                        $companies = Location::where("type","Company")->select("id","name")->where("is_active", true)->where("location_id", $auth->group_id)->get();
                     }
                     
                 }
@@ -165,16 +165,16 @@ class LocationController extends Controller
 
                 if( $location ){
                     if( auth('super_admin')->check() ){
-                        $companies = Location::where("type","Company")->select("id","name")->get();
+                        $companies = Location::where("type","Company")->select("id","name")->where("is_active", true)->get();
                     }  
                     else{
                         $auth = auth('web')->user();
     
                         if( $auth->company_id ){
-                            $companies = Location::where("type","Company")->select("id","name")->where("id", $auth->company_id)->get();
+                            $companies = Location::where("type","Company")->select("id","name")->where("is_active", true)->where("id", $auth->company_id)->get();
                         }
                         else{
-                            $companies = Location::where("type","Company")->select("id","name")->where("location_id", $auth->group_id)->get();
+                            $companies = Location::where("type","Company")->select("id","name")->where("is_active", true)->where("location_id", $auth->group_id)->get();
                         }
                     }
                     return view("backend.modules.location_module.location.modals.edit",compact('location', 'companies'));

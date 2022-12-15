@@ -89,7 +89,7 @@ class CompanyController extends Controller
             if( can("add_company") ){
 
                 if( auth('super_admin')->check() ){
-                    $groups = Location::where("type","Group")->select("id","name")->get();
+                    $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
                 }
                 else{
                     $auth = auth('web')->user();
@@ -156,7 +156,7 @@ class CompanyController extends Controller
 
                 if( $company ){
                     if( auth('super_admin')->check() ){
-                        $groups = Location::where("type","Group")->select("id","name")->get();
+                        $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
                     }
                     else{
                         $auth = auth('web')->user();

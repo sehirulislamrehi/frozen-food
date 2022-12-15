@@ -23,7 +23,10 @@
 <tables all="no">
 <table>app_infos</table>
 <table>blast_freezer_entries</table>
+<table>cartoon_details</table>
+<table>cartoons</table>
 <table>devices</table>
+<table>email_lists</table>
 <table>failed_jobs</table>
 <table>freezer_details</table>
 <table>freezers</table>
@@ -34,7 +37,6 @@
 <table>permission_role</table>
 <table>permissions</table>
 <table>product_details</table>
-<table>product_stocks</table>
 <table>products</table>
 <table>role_locations</table>
 <table>roles</table>

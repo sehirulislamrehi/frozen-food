@@ -19,6 +19,7 @@ class Authenticate
      */
     public function handle(Request $request, Closure $next)
     {
+
         if (auth('super_admin')->check()) {
             return $next($request);
         } 

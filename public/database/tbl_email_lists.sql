@@ -18,28 +18,31 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`frozen_food` /*!40100 DEFAULT CHARACTER
 
 USE `frozen_food`;
 
-/*Table structure for table `products` */
+/*Table structure for table `email_lists` */
 
-DROP TABLE IF EXISTS `products`;
+DROP TABLE IF EXISTS `email_lists`;
 
-CREATE TABLE `products` (
+CREATE TABLE `email_lists` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `code` int(11) NOT NULL,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `factor` int(11) NOT NULL COMMENT 'Factor in pieces',
-  `type` enum('Local','Export') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `life_time` enum('1','2') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Year',
+  `position` int(11) NOT NULL,
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `designation` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '0',
+  `group_id` bigint(20) unsigned NOT NULL,
+  `company_id` bigint(20) unsigned NOT NULL,
+  `location_id` bigint(20) unsigned NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `products_code_unique` (`code`),
-  UNIQUE KEY `products_name_unique` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  KEY `email_lists_group_id_foreign` (`group_id`),
+  KEY `email_lists_company_id_foreign` (`company_id`),
+  KEY `email_lists_location_id_foreign` (`location_id`),
+  CONSTRAINT `email_lists_company_id_foreign` FOREIGN KEY (`company_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `email_lists_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `email_lists_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-/*Data for the table `products` */
-
-insert  into `products` values (3,12345,'Chicken Singara (100 gm)',100,'Local','1',1,'2022-10-11 14:25:50','2022-10-20 15:14:16'),(4,33889,'Chicken Samosa (80 gm)',10,'Local','1',1,'2022-12-15 09:57:35','2022-12-15 09:57:35');
+/*Data for the table `email_lists` */
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
