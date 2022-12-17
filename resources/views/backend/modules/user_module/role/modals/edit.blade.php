@@ -71,7 +71,7 @@
             <div class="col-md-12 col-12 form-group select-company">
                 <label>Select company</label><span class="require-span">*</span>
                 <div class="company-block">
-                    <select name="company_id[]" class="form-control company_id chosen" multiple onchange="companyChange(this)">
+                    <select name="company_id[]" class="form-control company_id chosen" onchange="companyChange(this)">
                         <option value="" selected disabled>Select company</option>
                     </select>
                 </div>
@@ -215,7 +215,7 @@
                     $(".company-block").remove();
                     $(".select-company").append(`
                         <div class="company-block">
-                            <select name="company_id[]" class="form-control company_id chosen" multiple onchange="companyChange(this)">>
+                            <select name="company_id[]" class="form-control company_id chosen" onchange="companyChange(this)">>
                                 <option value="" selected disabled>Select company</option>
                             </select>
                         </div>

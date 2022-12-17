@@ -17,33 +17,69 @@ use Yajra\DataTables\Facades\DataTables;
 class RoleController extends Controller
 {
     //index start
-    public function index(){
+    public function index(Request $request){
         if( can('roles') ){
-            return view("backend.modules.user_module.role.index");
+            $search_group = "";
+            $search_company = "";
+            $search_location = "";
+
+            if( $request->group_id ){
+                $search_group = Location::where("type","Group")->select("id","name")->where("is_active", true)->where("id",$request->group_id)->first();
+            }
+            if( $request->company_id ){
+                $search_company = Location::where("type","Company")->select("id","name")->where("is_active", true)->where("id",$request->company_id)->first();
+            }
+            if( $request->location_id ){
+                $search_location = Location::where("type","Location")->select("id","name")->where("is_active", true)->where("id",$request->location_id)->first();
+            }
+            
+            if( auth('super_admin')->check() ){
+                $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
+            }
+            else{
+                $auth = auth('web')->user();
+                $user_location = $auth->user_location->where("type","Group")->pluck("location_id");
+                $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->whereIn("id",$user_location)->get();
+            }
+
+            return view("backend.modules.user_module.role.index", compact('groups','search_group','search_company','search_location'));
         }else{
             return view("errors.403");
         }
     }
 
     //data
-    public function data(){
+    public function data(Request $request){
         if( can('roles') ){
 
-            if( auth('super_admin')->check() ){
-                $role = Role::select("id","name","is_active")->get();
-            }
-            else{
+            $query = Role::select("id","name","is_active");
 
+            if( auth('web')->check() ){
                 $auth = auth('web')->user();
-
                 $user_location = $auth->user_location->where("type","Location")->pluck("location_id");
-
-                $role = Role::orderBy('id', 'desc')->where("id","!=",$auth->role_id)
+                $query->where("id","!=",$auth->role_id)
                 ->whereHas('role_location', function ($query) use ($user_location) {
                     $query->whereIn('location_id', $user_location);
-                })    
-                ->select("id","name","is_active")->get();
+                });
             }
+
+            if( $request->group_id ){
+                $query->whereHas('role_location', function ($query) use ($request) {
+                    $query->where('location_id', $request->group_id);
+                });
+            }
+            if( $request->company_id ){
+                $query->whereHas('role_location', function ($query) use ($request) {
+                    $query->where('location_id', $request->company_id);
+                });
+            }
+            if( $request->location_id ){
+                $query->whereHas('role_location', function ($query) use ($request) {
+                    $query->where('location_id', $request->location_id);
+                });
+            }
+
+            $role = $query->get();
             
             return DataTables::of($role)
             ->rawColumns(['action', 'is_active'])
@@ -112,6 +148,16 @@ class RoleController extends Controller
             }else{
                 try{
                     if( $request['permission'] ){
+
+                        $location_ids = implode(",",$request->location_id);
+                        $name = $request->name;
+                        $exists = DB::select("SELECT roles.name, role_locations.role_id FROM role_locations
+                        LEFT JOIN roles ON role_locations.role_id = roles.id WHERE roles.name = '$name' AND role_locations.location_id IN ".'('.$location_ids .')'." AND role_locations.type = 'Location'");
+
+                        if( count($exists) != 0 ){
+                            return response()->json(['warning' => $name .' role already exists'],200);
+                        }
+
                         $role = new Role();
                         $role->name = $request->name;
                         $role->is_active = true;
@@ -205,7 +251,7 @@ class RoleController extends Controller
     public function update(Request $request, $id){
         if( can('edit_roles') ){
             $validator = Validator::make($request->all(), [
-                'name' => 'required|unique:roles,name,'. $id,
+                'name' => 'required',
             ]);
     
             if( $validator->fails() ){
@@ -213,6 +259,16 @@ class RoleController extends Controller
             }else{
                 try{
                     if( $request['permission'] ){
+
+                        $location_ids = implode(",",$request->location_id);
+                        $name = $request->name;
+                        $exists = DB::select("SELECT roles.name, role_locations.role_id FROM role_locations
+                        LEFT JOIN roles ON role_locations.role_id = roles.id WHERE roles.name = '$name' AND role_locations.location_id IN ".'('.$location_ids .')'." AND role_locations.type = 'Location' AND roles.id != $id");
+
+                        if( count($exists) != 0 ){
+                            return response()->json(['warning' => $name .' role already exists'],200);
+                        }
+
                         $role = Role::find($id);
                         $role->name = $request->name;
                         $role->is_active = $request->is_active;
