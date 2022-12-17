@@ -14,6 +14,10 @@ class DashboardController extends Controller
     public function index()
     {
 
+        $m = 6;
+        $cost = [1,2,3,4,5,6];
+
+
         if( auth('super_admin')->check() || auth('web')->check() ){
             Session::put("unique_code", Str::random(16));
             return view('backend.dashboard');
