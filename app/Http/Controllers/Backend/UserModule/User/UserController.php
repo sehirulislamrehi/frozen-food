@@ -139,8 +139,9 @@ class UserController extends Controller
     //add user start
     public function add(Request $request){
         if( can('add_user') ){
+
             $validator = Validator::make($request->all(),[
-                'staff_id' => 'required|integer',
+                'staff_id' => 'required|integer|unique:users,staff_id',
                 'role_id' => 'required|integer|exists:roles,id',
                 'group_id' => 'required',
                 'company_id' => 'required',

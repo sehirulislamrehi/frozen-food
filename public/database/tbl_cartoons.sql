@@ -54,7 +54,7 @@ CREATE TABLE `cartoons` (
 
 /*Data for the table `cartoons` */
 
-insert  into `cartoons` values (1,'cartoon 1','CN221610',29.22,30,10,1,10,0,'In',3,'2022-12-15','2023-12-15',1,3,6,'2022-12-15 09:54:03','2022-12-15 09:54:53');
+insert  into `cartoons` values (1,'cartoon 1','CN221610',8,80,10,0.4,10,0,'In',3,'2022-12-15','2023-12-15',1,3,6,'2022-12-15 09:54:03','2022-12-17 10:22:56');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
