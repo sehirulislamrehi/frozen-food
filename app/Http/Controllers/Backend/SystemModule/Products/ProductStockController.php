@@ -52,13 +52,14 @@ class ProductStockController extends Controller
                     $product_details_id = $product_details->id;
                     $in_quantity = 0;
                     $out_quantity = 0;
+                    $stock = DB::select("SELECT SUM(quantity) as stock FROM cartoon_details LEFT JOIN cartoons ON cartoon_details.cartoon_id = cartoons.id WHERE cartoons.status = 'In' AND cartoon_details.product_details_id = $product_details->id");
 
                     $cartoon_details = [];
                     $cartoon_details = CartoonDetail::where("product_details_id", $product_details->id)
                     ->select("quantity","blast_freezer_entries_id","created_at","cartoon_id")->With("cartoon")->paginate(50);
 
 
-                    return view("backend.modules.system_module.products.pages.stock_summary", compact('product_details','cartoon_details','product','in_quantity','out_quantity'));
+                    return view("backend.modules.system_module.products.pages.stock_summary", compact('product_details','cartoon_details','product','in_quantity','out_quantity','stock'));
 
                 } 
                 else {

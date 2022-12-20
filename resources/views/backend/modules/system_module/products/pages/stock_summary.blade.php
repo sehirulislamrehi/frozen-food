@@ -50,7 +50,8 @@
                                         </tr>
                                         <tr>
                                             <td> <strong>Product Code:</strong> {{ $product->code }} </td>
-                                            <td colspan="2"> <strong>Product Name:</strong> {{ $product->name }} </td>
+                                            <td> <strong>Product Name:</strong> {{ $product->name }} </td>
+                                            <td> <strong>Product Stock:</strong> {{ $stock[0]->stock ?? 0 }} kg </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -67,7 +68,7 @@
                                         <thead>
                                             <tr>
                                                 <th>SID.</th>
-                                                <th>Type</th>
+                                                <th>Status</th>
                                                 <th>Cartoon</th>
                                                 <th>In Quantity (kg)</th>
                                                 <th>Out Quantity (kg)</th>

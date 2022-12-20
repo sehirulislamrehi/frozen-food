@@ -64,7 +64,7 @@
                                         <select name="group_id" class="form-control chosen" onchange="groupChange(this)">
                                             <option value="" disabled selected>Select group</option>
                                             @foreach( $groups as $group )
-                                            <option value="{{ $group->id }}" @if($search_group && $group->id == $search_group->id) selected @endif>{{ $group->name }}</option>
+                                            <option value="{{ $group->id }}">{{ $group->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -75,9 +75,6 @@
                                         <div class="company-block">
                                             <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">
                                                 <option value="" selected disabled>Select company</option>
-                                                @if($company)
-                                                <option value="{{ $company->id }}" selected>{{ $company->name }}</option>
-                                                @endif
                                             </select>
                                         </div>
                                     </div>
@@ -88,9 +85,6 @@
                                         <div class="location-block">
                                             <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
                                                 <option value="" selected disabled>Select location</option>
-                                                @if($location)
-                                                <option value="{{ $location->id }}" selected>{{ $location->name }}</option>
-                                                @endif
                                             </select>
                                         </div>
                                     </div>
@@ -101,9 +95,6 @@
                                         <div class="product-block">
                                             <select name="product_id" class="form-control product_id chosen">
                                                 <option value="" selected disabled>Select product</option>
-                                                @if($product)
-                                                <option value="{{ $product->id }}" selected>{{ $product->name }}</option>
-                                                @endif
                                             </select>
                                         </div>
                                     </div>
@@ -117,6 +108,14 @@
                                         </a>
                                     </div>
 
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p><strong>Group result for </strong> @if( $search_group ) {{$search_group->name}} @else All @endif</p>
+                                        <p><strong>Company result for </strong> @if( $company ) {{$company->name}} @else All @endif</p>
+                                        <p><strong>Location result for </strong> @if( $location ) {{$location->name}} @else All @endif</p>
+                                        <p><strong>Product result for </strong> @if( $product ) {{$product->name}} @else All @endif</p>
+                                    </div>
                                 </div>
                             </form>
                         </div>
