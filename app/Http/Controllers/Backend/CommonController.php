@@ -53,7 +53,7 @@ class CommonController extends Controller
 
             if( auth('super_admin')->check() ){
                 if( $request->company_ids ){
-                    $locations = Location::where("type","Location")->select("id","name")->whereIn("location_id", $request->company_ids)->where("is_active", true)->get();
+                    $locations = Location::where("type","Location")->select("id","name","location_id")->whereIn("location_id", $request->company_ids)->where("is_active", true)->with("location_company")->get();
                 }
                 else{
                     $locations = [];
@@ -84,7 +84,7 @@ class CommonController extends Controller
                     }
 
                     $user_location = $auth->user_location->where("type","Location")->whereIn("location_id",$all_id)->pluck("location_id");
-                    $locations = Location::where("type","Location")->select("id","name")->where("is_active", true)->whereIn("id", $user_location)->get();
+                    $locations = Location::where("type","Location")->select("id","name","location_id")->where("is_active", true)->whereIn("id", $user_location)->with("location_company")->get();
                    
                 }
                 else{
@@ -107,18 +107,15 @@ class CommonController extends Controller
     }
     //company_wise_location function end
 
-
+    
     //location_wise_device function start
     public function location_wise_device(Request $request){
         try{
-            
             $device = Device::where("location_id",$request->location_id)->select("id","device_number")->get();
-            
             return response()->json([
                 'status' => 'success',
                 'data' => $device
             ], 200);
-
         }
         catch( Exception $e ){
             return response()->json([
@@ -140,7 +137,6 @@ class CommonController extends Controller
             else{
                 $role = [];
             }
-            
             
             return response()->json([
                 'status' => 'success',

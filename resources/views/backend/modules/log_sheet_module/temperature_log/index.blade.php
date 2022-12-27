@@ -98,9 +98,12 @@
                                             <td>Date & Time</td>
 
                                             @for( $i = 0 ; $i < $total_freezer ; $i++ )
-                                            <td @if( ($i%2) == 0 ) class="even" @endif >Temp. (°C)</td>
-                                            <td @if( ($i%2) == 0 ) class="even" @endif >D. Manual Id</td>
-                                            <td @if( ($i%2) == 0 ) class="even" @endif >Type</td>
+                                                @php
+                                                    $mod_value = $i % 2;
+                                                @endphp
+                                            <td @if( $mod_value == 0 ) class="even" @endif >Temp. (°C)</td>
+                                            <td @if( $mod_value == 0 ) class="even" @endif >D. Manual Id</td>
+                                            <td @if( $mod_value == 0 ) class="even" @endif >Type</td>
                                             @endfor
                                         </tr>
                                     </thead>
@@ -119,9 +122,12 @@
                                                     <td>{{ $key }}</td>
 
                                                     @foreach( $temperature_log as $key => $log )
-                                                    <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->temperature }}</td>
-                                                    <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->device_manual_id }}</td>
-                                                    <td @if( ($key%2) == 0 ) class="even" @endif >{{ $log->type }}</td>
+                                                        @php
+                                                            $mod_value = $key % 2;
+                                                        @endphp
+                                                    <td @if( $mod_value == 0 ) class="even" @endif >{{ $log->temperature }}</td>
+                                                    <td @if( $mod_value == 0 ) class="even" @endif >{{ $log->device_manual_id }}</td>
+                                                    <td @if( $mod_value == 0 ) class="even" @endif >{{ $log->type }}</td>
                                                     @endforeach
                                                 </tr>
                                                     @php

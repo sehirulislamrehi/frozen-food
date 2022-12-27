@@ -232,7 +232,7 @@
                     
                     $.each(response.data, function(key, value){
                         $(".location_id").append(`
-                            <option value="${value.id}">${value.name}</option>
+                            <option value="${value.id}">${value.location_company.name} > ${value.name}</option>
                         `);
                     })
 

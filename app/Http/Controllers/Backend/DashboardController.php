@@ -13,56 +13,49 @@ class DashboardController extends Controller
 {
     public function index()
     {
-
-        $m = 6;
-        $cost = [1,2,3,4,5,6];
-
-
-        if( auth('super_admin')->check() || auth('web')->check() ){
-            Session::put("unique_code", Str::random(16));
+        if (auth('super_admin')->check() || auth('web')->check()) {
             return view('backend.dashboard');
-        }
-        else{
+        } else {
             return view("errors.404");
         }
     }
 
 
     //order_progress function start
-    public function order_progress(){
-        try{
+    public function order_progress()
+    {
+        try {
             $month = Carbon::now()->month;
             $this_month = Carbon::now()->month - 1;
             $year = Carbon::now()->year;
             $data = [];
 
-            for( $i = 0 ; $i < 6 ; $i++ ){
+            for ($i = 0; $i < 6; $i++) {
 
 
-                array_push($data,
+                array_push(
+                    $data,
                     [
                         "total_order" => 8,
                         "total_income" => 3,
                         "possible_income" => 123,
-                        "time" => Carbon::create()->day(1)->month($month)->format('M') .' '. $year,
+                        "time" => Carbon::create()->day(1)->month($month)->format('M') . ' ' . $year,
                     ]
                 );
-                
+
                 $month--;
 
-                if( $i == $this_month && $month < 6 ){
+                if ($i == $this_month && $month < 6) {
                     $year = $year - 1;
                 }
-                
-                if( $month == 0 ){
+
+                if ($month == 0) {
                     $month = 12;
                 }
             }
 
             return response()->json(['data' => $data], 200);
-
-        }
-        catch( Exception $e ){
+        } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 200);
         }
     }
@@ -71,28 +64,27 @@ class DashboardController extends Controller
 
 
     // database_download function start
-    public function database_download(){
-        
-        try{
+    public function database_download()
+    {
+
+        try {
             $username = "root";
             $password = "";
             $db_name = "frozen_food";
-            $name = Carbon::now()->toDateString() .'.sql';
+            $name = Carbon::now()->toDateString() . '.sql';
             $upload_path = public_path('database/');
-            $full_path = $upload_path.$name;
-            
+            $full_path = $upload_path . $name;
+
             exec("mysqldump -u$username -p$password $db_name > $full_path");
-            
+
             $headers = array(
                 'Content-Type: application/sql',
             );
-        
-            return Response::download($full_path,$name,$headers);
+
+            return Response::download($full_path, $name, $headers);
+        } catch (\Exception $e) {
+            return back()->with('warning', $e->getMessage());
         }
-        catch( \Exception $e ){
-            return back()->with('warning',$e->getMessage());
-        }
-        
     }
     // database_download function ends
 
@@ -100,4 +92,3 @@ class DashboardController extends Controller
 
 
 }
-

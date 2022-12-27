@@ -232,48 +232,58 @@
     </script>
     <script>
         function selectCode(e){
-
-            let blast_freezer_entries_code = e.dataset.code;
-            let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
-            let codes_array = Array();
-            
-            if( stored_codes ){
-                if( e.checked == true ){
-                    if(stored_codes.indexOf(blast_freezer_entries_code) !== -1 ){
-                        //Value exists!
-                    } 
+            try{
+                let blast_freezer_entries_code = e.dataset.code;
+                let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
+                let codes_array = Array();
+                
+                if( stored_codes ){
+                    if( e.checked == true ){
+                        if(stored_codes.indexOf(blast_freezer_entries_code) !== -1 ){
+                            //Value exists!
+                        } 
+                        else{
+                            stored_codes.push(blast_freezer_entries_code)
+                            localStorage.setItem("stored_codes",JSON.stringify(stored_codes))
+                        }
+                        
+                    }
                     else{
-                        stored_codes.push(blast_freezer_entries_code)
+                        let index = stored_codes.indexOf(blast_freezer_entries_code);
+                        stored_codes.splice(index, 1);
                         localStorage.setItem("stored_codes",JSON.stringify(stored_codes))
                     }
                 }
                 else{
-                    let index = stored_codes.indexOf(blast_freezer_entries_code);
-                    stored_codes.splice(index, 1);
-                    localStorage.setItem("stored_codes",JSON.stringify(stored_codes))
+                    codes_array.push(blast_freezer_entries_code)
+                    localStorage.setItem("stored_codes",JSON.stringify(codes_array))
                 }
             }
-            else{
-                codes_array.push(blast_freezer_entries_code)
-                localStorage.setItem("stored_codes",JSON.stringify(codes_array))
+            catch(error) {
+                swal("",`${error}`,"error")
             }
         }
     </script>
 
     <script>
         window.addEventListener("load", (event) => {
-            let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
-            if( stored_codes ){
-                let selected_codes = document.querySelectorAll(".selected_codes")
+            try{
+                let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
+                if( stored_codes ){
+                    let selected_codes = document.querySelectorAll(".selected_codes")
 
-                for( let i = 0 ; i < selected_codes.length ; i++ ){
-                    let blast_freezer_entries_code = selected_codes[i].dataset.code;
+                    for( let i = 0 ; i < selected_codes.length ; i++ ){
+                        let blast_freezer_entries_code = selected_codes[i].dataset.code;
 
-                    if(stored_codes.indexOf(blast_freezer_entries_code) !== -1 ){
-                        selected_codes[i].checked = true;
+                        if(stored_codes.indexOf(blast_freezer_entries_code) !== -1 ){
+                            selected_codes[i].checked = true;
+                        }
+                    
                     }
-                   
                 }
+            }
+            catch(error) {
+                swal("",`${error}`,"error")
             }
         });
     </script>
@@ -291,35 +301,40 @@
     </script>
     <script>
         function createNewCartoon(){
-            let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
-            if( stored_codes && stored_codes.length != 0 ){
-                $.ajax({
-                    method : "GET",
-                    url: "{{ route('blast.freezser.validate.code') }}",
-                    data: { 
-                        codes: stored_codes 
-                    },
-                    success: function(response){
-                        swal('',`${response.message}`,`${response.status}`)
+            try{    
+                let stored_codes = JSON.parse(localStorage.getItem("stored_codes")) 
+                if( stored_codes && stored_codes.length != 0 ){
+                    $.ajax({
+                        method : "GET",
+                        url: "{{ route('blast.freezser.validate.code') }}",
+                        data: { 
+                            codes: stored_codes 
+                        },
+                        success: function(response){
+                            swal('',`${response.message}`,`${response.status}`)
 
-                        if( response.redirect_url ){
-                            document.getElementById("codes").value = stored_codes
-                            document.getElementById("cartoon-create-step-one").setAttribute("action",response.redirect_url)
-                            document.getElementById("cartoon-create-step-one").submit()
-                            localStorage.removeItem("stored_codes")
-                        }
-                        else{
-                            document.getElementById("codes").value = ""
-                            document.getElementById("cartoon-create-step-one").setAttribute("action","")
-                        }
-                    },
-                    error: function(response){
+                            if( response.redirect_url ){
+                                document.getElementById("codes").value = stored_codes
+                                document.getElementById("cartoon-create-step-one").setAttribute("action",response.redirect_url)
+                                document.getElementById("cartoon-create-step-one").submit()
+                                localStorage.removeItem("stored_codes")
+                            }
+                            else{
+                                document.getElementById("codes").value = ""
+                                document.getElementById("cartoon-create-step-one").setAttribute("action","")
+                            }
+                        },
+                        error: function(response){
 
-                    },
-                })
+                        },
+                    })
+                }
+                else{
+                    swal("","Please select at least one trolley","warning")
+                }
             }
-            else{
-                swal("","Please select at least one trolley","warning")
+            catch(error) {
+                swal("",`${error}`,"error")
             }
         }
     </script>
