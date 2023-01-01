@@ -96,7 +96,7 @@ class ProductsController extends Controller
                 $validator = Validator::make($request->all(),[
                     'code' =>  'required|unique:products,code|integer',
                     'name' =>  'required|unique:products,name',
-                    'factor' =>  'required|integer|min:1',
+                    // 'factor' =>  'required|integer|min:1',
                     'type' => 'required|in:Local,Export',
                     'is_active' => 'required|in:0,1',
                 ]);
@@ -111,7 +111,7 @@ class ProductsController extends Controller
 
                     $product->code = $request->code;
                     $product->name = $request->name;
-                    $product->factor = $request->factor;
+                    $product->factor = $request->factor ?? null;
                     $product->type = $request->type;
 
                     $product->life_time = ( $request->type == "Local" ) ? product_life_time("Local") : product_life_time("Export");
@@ -153,9 +153,8 @@ class ProductsController extends Controller
                         array_push($result,[
                             'code' => $data[0],
                             'name' => $data[1],
-                            'factor' => $data[2],
-                            'type' => $data[3],
-                            'life_time' => $data[4],
+                            'type' => $data[2],
+                            'life_time' => product_life_time($data[2]),
                             'is_active' => true
                         ]);
                     }
@@ -238,7 +237,7 @@ class ProductsController extends Controller
                 $validator = Validator::make($request->all(),[
                     'code' =>  'required|integer|unique:products,code,'. $id,
                     'name' =>  'required|unique:products,name,'. $id,
-                    'factor' =>  'required|integer|min:1',
+                    // 'factor' =>  'required|integer|min:1',
                     'type' => 'required|in:Local,Export',
                     'is_active' => 'required|in:0,1',
                 ]);
@@ -272,7 +271,7 @@ class ProductsController extends Controller
 
                         $product->code = $request->code;
                         $product->name = $request->name;
-                        $product->factor = $request->factor;
+                        $product->factor = $request->factor ?? null;
                         $product->type = $request->type;
 
                         $product->life_time = ( $request->type == "Local" ) ? product_life_time("Local") : product_life_time("Export");
