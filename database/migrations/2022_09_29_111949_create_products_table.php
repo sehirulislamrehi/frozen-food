@@ -16,7 +16,7 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
 
-            $table->integer("code")->unique();
+            $table->integer("code")->nullable();
             $table->string("name")->unique();
             $table->integer('factor')->comment("Factor in pieces")->nullable();
             $table->enum('type',['Local','Export']);

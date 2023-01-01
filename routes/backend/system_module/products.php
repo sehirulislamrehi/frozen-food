@@ -16,7 +16,7 @@ Route::group(['prefix' => 'products'], function(){
     Route::post("import",[ProductsController::class,"import"])->name("products.import");
 
     //edit
-    Route::get("edit-page/{code}",[ProductsController::class,"edit_page"])->name("products.edit.page");
+    Route::get("edit-page/{id}",[ProductsController::class,"edit_page"])->name("products.edit.page");
     Route::post("edit/{id}",[ProductsController::class,"edit"])->name("products.edit");
 
 
@@ -24,7 +24,7 @@ Route::group(['prefix' => 'products'], function(){
     Route::group(['prefix' => 'details'], function(){
         
         //data route
-        Route::get("data/{code}",[ProductDetailsController::class,"data"])->name("products.details.data");
+        Route::get("data/{id}",[ProductDetailsController::class,"data"])->name("products.details.data");
 
         //add
         Route::get("add-modal/{id}",[ProductDetailsController::class,"add_modal"])->name("products.details.add.modal");

@@ -23,7 +23,7 @@ class BlastFreezerEntryController extends Controller
                     $blast_freezer_entries = BlastFreezerEntry::orderBy("id","desc")
                     ->where("status","In")
                     ->with('device','trolley','product_details')
-                    ->paginate(20);
+                    ->paginate(60);
                 }
                 else{
                     $auth = auth('web')->user();
@@ -33,7 +33,7 @@ class BlastFreezerEntryController extends Controller
                     ->where("status","In")
                     ->with('device','trolley','product_details')
                     ->whereIn("location_id",$user_location)
-                    ->paginate(20);
+                    ->paginate(60);
                 }
 
                 $current_time = Carbon::parse(date('Y-m-d H:i:s', strtotime(Carbon::now())));

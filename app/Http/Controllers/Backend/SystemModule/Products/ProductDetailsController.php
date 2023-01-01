@@ -16,11 +16,11 @@ use Yajra\DataTables\Facades\DataTables;
 class ProductDetailsController extends Controller
 {
     //data function start
-    public function data($code)
+    public function data($id)
     {
         if (can('products')) {
 
-            $product = Product::where("code", $code)->select("id")->first();
+            $product = Product::where("id", $id)->select("id")->first();
 
             if ($product) {
 

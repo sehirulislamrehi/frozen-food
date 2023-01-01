@@ -32,7 +32,7 @@
             <div class="col-md-12">
                 <div class="card card-primary card-outline">
                     <div class="card-header">
-                        <a href="{{ route('products.edit.page', $product->code) }}" class="btn btn-success btn-sm">
+                        <a href="{{ route('products.edit.page', $product->id) }}" class="btn btn-success btn-sm">
                             <i class="fas fa-angle-left"></i>
                             Back
                         </a>

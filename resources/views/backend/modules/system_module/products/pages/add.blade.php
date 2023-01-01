@@ -67,7 +67,7 @@
 
                                                 <!-- Name -->
                                                 <div class="col-md-3 form-group">
-                                                    <label>Name</label>
+                                                    <label>Name</label><span class="require-span">*</span>
                                                     <input type="text" class="form-control" name="name">
                                                 </div>
 
@@ -79,7 +79,7 @@
 
                                                 <!-- Type -->
                                                 <div class="col-md-2 form-group">
-                                                    <label>Type</label>
+                                                    <label>Type</label><span class="require-span">*</span>
                                                     <select name="type" class="form-control">
                                                         <option value="Local">Local</option>
                                                         <option value="Export">Export</option>
@@ -88,7 +88,7 @@
 
                                                 <!-- Status -->
                                                 <div class="col-md-2 form-group">
-                                                    <label>Status</label>
+                                                    <label>Status</label><span class="require-span">*</span>
                                                     <select name="is_active" class="form-control">
                                                         <option value="1">Active</option>
                                                         <option value="0">Inactive</option>

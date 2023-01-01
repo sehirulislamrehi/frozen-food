@@ -73,7 +73,7 @@
 
                                                 <!-- Name -->
                                                 <div class="col-md-3 form-group">
-                                                    <label>Name</label>
+                                                    <label>Name</label><span class="require-span">*</span>
                                                     <input type="text" class="form-control" name="name" value="{{ $product->name }}">
                                                 </div>
 
@@ -85,7 +85,7 @@
 
                                                 <!-- Type -->
                                                 <div class="col-md-2 form-group">
-                                                    <label>Type</label>
+                                                    <label>Type</label><span class="require-span">*</span>
                                                     <select name="type" class="form-control">
                                                         <option value="Local" @if( $product->type == "Local" ) selected @endif >Local</option>
                                                         <option value="Export" @if( $product->type == "Export" ) selected @endif >Export</option>
@@ -94,7 +94,7 @@
 
                                                 <!-- Status -->
                                                 <div class="col-md-2 form-group">
-                                                    <label>Status</label>
+                                                    <label>Status</label><span class="require-span">*</span>
                                                     <select name="is_active" class="form-control">
                                                         <option value="1" @if( $product->is_active == 1 ) selected @endif >Active</option>
                                                         <option value="0" @if( $product->is_active == 0 ) selected @endif >Inactive</option>
@@ -172,7 +172,7 @@
             $('.user-datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('products.details.data', $product->code) }}",
+                ajax: "{{ route('products.details.data', $product->id) }}",
                 order: [
                     [0, 'Desc']
                 ],

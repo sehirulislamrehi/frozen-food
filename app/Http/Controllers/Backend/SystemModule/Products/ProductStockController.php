@@ -48,7 +48,7 @@ class ProductStockController extends Controller
                 $product_details = ProductDetails::where("id", decrypt($id))->with("group","company","location")->first();
 
                 if ( $product_details ) {
-                    $product = Product::where("id", $product_details->product_id)->select("code","name")->first();
+                    $product = Product::where("id", $product_details->product_id)->select("code","name","id")->first();
                     $product_details_id = $product_details->id;
                     $in_quantity = 0;
                     $out_quantity = 0;

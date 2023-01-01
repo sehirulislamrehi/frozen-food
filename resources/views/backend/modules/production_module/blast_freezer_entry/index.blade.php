@@ -102,147 +102,159 @@
         <!-- freezer entry data row start -->
         <div class="row blast-freezer-entry">
 
+            @php
+                $sum_quantity = 0;
+            @endphp
             <!-- card item start -->
             @foreach( $blast_freezer_entries as $key => $blast_freezer_entry )
+                @php
+                    $sum_quantity += $blast_freezer_entry->quantity;
+                @endphp
+            
+                <div class="col-md-4">
+                    {{--@php
+                        $different_in_hour = $current_time->diffInHours($blast_freezer_entry->lead_time);
+                        
+                        if( $current_min < date('i',strtotime($blast_freezer_entry->lead_time)) ){
+                            $different_in_min = date('i',strtotime($blast_freezer_entry->lead_time)) - $current_min - 1;
+                        }
+                        else{
+                            $different_in_min = 60 - ($current_min - date('i',strtotime($blast_freezer_entry->lead_time))) - 1;
+                        }
+                    @endphp--}}
 
-            <div class="col-md-4">
-                {{--@php
-                    $different_in_hour = $current_time->diffInHours($blast_freezer_entry->lead_time);
-                    
-                    if( $current_min < date('i',strtotime($blast_freezer_entry->lead_time)) ){
-                        $different_in_min = date('i',strtotime($blast_freezer_entry->lead_time)) - $current_min - 1;
-                    }
-                    else{
-                        $different_in_min = 60 - ($current_min - date('i',strtotime($blast_freezer_entry->lead_time))) - 1;
-                    }
-                @endphp--}}
+                    <div class="card-item">
 
-                <div class="card-item">
+                        
+                        <div id="timer-{{ $key + 1 }}" class="timer">
+                            @if( date('Y-m-d H:i:s') > $blast_freezer_entry->lead_time )
+                                <p id="demo-{{ $key + 1 }}" class="timer-countdown"></p>
+                            @else
+                                <p id="demo-{{ $key + 1 }}" class="timer-countdown"></p>
+                            @endif
+                        </div>
+                        <script>
+                            // Update the count down every 1 second
+                            setInterval(function() {
 
-                    
-                    <div id="timer-{{ $key + 1 }}" class="timer">
-                        @if( date('Y-m-d H:i:s') > $blast_freezer_entry->lead_time )
-                            <p id="demo-{{ $key + 1 }}" class="timer-countdown"></p>
-                        @else
-                            <p id="demo-{{ $key + 1 }}" class="timer-countdown"></p>
-                        @endif
-                    </div>
-                    <script>
-                        // Update the count down every 1 second
-                        setInterval(function() {
+                                let id = "{{ $key + 1 }}"
 
-                            let id = "{{ $key + 1 }}"
+                                let lead_time = "{{ $blast_freezer_entry->lead_time }}";
 
-                            let lead_time = "{{ $blast_freezer_entry->lead_time }}";
+                                let countDownDate = new Date(`${lead_time}`).getTime();
 
-                            let countDownDate = new Date(`${lead_time}`).getTime();
-
-                            // Get today's date and time
-                            let now = new Date().getTime();
-                                
-                            // Find the distance between now and the count down date
-                            let distance = countDownDate - now;
-
-                            let timer = document.getElementById(`demo-${id}`);
-
-                            if( distance < 0 ){
-                                document.getElementById(`demo-${id}`).innerHTML = "<small>Time over. Please out the trolley</small>";
-
-                                if( timer.parentElement.parentElement.classList.contains("time-almost-over") ){
-                                    timer.parentElement.parentElement.classList.remove("time-almost-over")
-                                }
-
-                                if( timer.parentElement.parentElement.classList.contains("time-over") ){
-                                    timer.parentElement.parentElement.classList.remove("time-over")
-                                }
-                                else{
-                                    timer.parentElement.parentElement.classList.add("time-over")
-                                }
-                            }
-                            else{
-                                // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                                let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                                let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                // Get today's date and time
+                                let now = new Date().getTime();
                                     
-                                
-                                timer.innerHTML = hours + " <span class='time-name'>H : </span> "
-                                + minutes + " <span class='time-name'>M : </span> " + seconds + " <span class='time-name'>S</span> ";
+                                // Find the distance between now and the count down date
+                                let distance = countDownDate - now;
 
-                                if( hours == 0 && minutes < 5 ){
+                                let timer = document.getElementById(`demo-${id}`);
+
+                                if( distance < 0 ){
+                                    document.getElementById(`demo-${id}`).innerHTML = "<small>Time over. Please out the trolley</small>";
+
                                     if( timer.parentElement.parentElement.classList.contains("time-almost-over") ){
                                         timer.parentElement.parentElement.classList.remove("time-almost-over")
                                     }
+
+                                    if( timer.parentElement.parentElement.classList.contains("time-over") ){
+                                        timer.parentElement.parentElement.classList.remove("time-over")
+                                    }
                                     else{
-                                        timer.parentElement.parentElement.classList.add("time-almost-over")
+                                        timer.parentElement.parentElement.classList.add("time-over")
                                     }
                                 }
-                            }
-                        }, 1000);
-                    </script>
+                                else{
+                                    // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                    let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                    let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                    let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                                        
+                                    
+                                    timer.innerHTML = hours + " <span class='time-name'>H : </span> "
+                                    + minutes + " <span class='time-name'>M : </span> " + seconds + " <span class='time-name'>S</span> ";
 
-                    <div class="card-content">
-                        <p>
-                            <strong>Code :</strong>
-                            {{ $blast_freezer_entry->code }}
-                        </p>
-                        <p>
-                            <strong>Device Manual ID :</strong>
-                            {{ $blast_freezer_entry->device->device_manual_id }}
-                        </p>
-                        <p>
-                            <strong>Trolley :</strong>
-                            {{ $blast_freezer_entry->trolley->code }}
-                        </p>
-                        <p>
-                            <strong>Product :</strong>
-                            {{ $blast_freezer_entry->product_details->product->code }} - {{ $blast_freezer_entry->product_details->product->name }}
-                        </p>
-                        <p>
-                            <strong>Lead Time :</strong>
-                            {{ date("Y-m-d H:i", strtotime($blast_freezer_entry->lead_time)) }}
-                        </p>
-                        <p>
-                            <strong>Trolley out at :</strong>
-                            {{ $blast_freezer_entry->trolley_outed ? date("Y-m-d H:i", strtotime($blast_freezer_entry->trolley_outed)) : 'Currently In' }}
-                        </p>
-                        <p>
-                            <strong>Quantity :</strong>
-                            {{ $blast_freezer_entry->quantity }} Kg
-                        </p>
-                        <p>
-                            <strong>Status :</strong>
-                            {{ $blast_freezer_entry->status }}
-                        </p>
-                        <p>
-                            <strong>Created :</strong>
-                            {{ $blast_freezer_entry->created_at->toDayDateTimeString() }}
-                        </p>
+                                    if( hours == 0 && minutes < 5 ){
+                                        if( timer.parentElement.parentElement.classList.contains("time-almost-over") ){
+                                            timer.parentElement.parentElement.classList.remove("time-almost-over")
+                                        }
+                                        else{
+                                            timer.parentElement.parentElement.classList.add("time-almost-over")
+                                        }
+                                    }
+                                }
+                            }, 1000);
+                        </script>
+
+                        <div class="card-content">
+                            <p>
+                                <strong>Code :</strong>
+                                {{ $blast_freezer_entry->code }}
+                            </p>
+                            <p>
+                                <strong>Device Manual ID :</strong>
+                                {{ $blast_freezer_entry->device->device_manual_id }}
+                            </p>
+                            <p>
+                                <strong>Trolley :</strong>
+                                {{ $blast_freezer_entry->trolley->code }}
+                            </p>
+                            <p>
+                                <strong>Product :</strong>
+                                {{ $blast_freezer_entry->product_details->product->code }} - {{ $blast_freezer_entry->product_details->product->name }}
+                            </p>
+                            <p>
+                                <strong>Lead Time :</strong>
+                                {{ date("Y-m-d H:i", strtotime($blast_freezer_entry->lead_time)) }}
+                            </p>
+                            <p>
+                                <strong>Trolley out at :</strong>
+                                {{ $blast_freezer_entry->trolley_outed ? date("Y-m-d H:i", strtotime($blast_freezer_entry->trolley_outed)) : 'Currently In' }}
+                            </p>
+                            <p>
+                                <strong>Quantity :</strong>
+                                {{ $blast_freezer_entry->quantity }} Kg
+                            </p>
+                            <p>
+                                <strong>Status :</strong>
+                                {{ $blast_freezer_entry->status }}
+                            </p>
+                            <p>
+                                <strong>Created :</strong>
+                                {{ $blast_freezer_entry->created_at->toDayDateTimeString() }}
+                            </p>
+                        </div>
+
+                        <div class="card-footer text-center">
+
+                            @if( can("edit_blast_freezer_entry") )
+                            <button type="button" data-content="{{ route('blast.freezer.entry.edit.modal', encrypt($blast_freezer_entry->id)) }}" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
+                                Edit
+                            </button>
+                            @endif
+
+                            @if( can("delete_blast_freezer_entry") )
+                            <button type="button" data-content="{{ route('blast.freezer.entry.delete.modal', encrypt($blast_freezer_entry->id)) }}" data-target="#myModal" class="btn btn-danger" data-toggle="modal">
+                                Delete
+                            </button>
+                            @endif
+
+                        </div>
+
                     </div>
-
-                    <div class="card-footer text-center">
-
-                        @if( can("edit_blast_freezer_entry") )
-                        <button type="button" data-content="{{ route('blast.freezer.entry.edit.modal', encrypt($blast_freezer_entry->id)) }}" data-target="#myModal" class="btn btn-outline-dark" data-toggle="modal">
-                            Edit
-                        </button>
-                        @endif
-
-                        @if( can("delete_blast_freezer_entry") )
-                        <button type="button" data-content="{{ route('blast.freezer.entry.delete.modal', encrypt($blast_freezer_entry->id)) }}" data-target="#myModal" class="btn btn-danger" data-toggle="modal">
-                            Delete
-                        </button>
-                        @endif
-
-                    </div>
-
                 </div>
-            </div>
             @endforeach
             <!-- card item end -->
 
         </div>
         <!-- freezer entry data row end -->
+
+        <div class="row mt-3 mb-3">
+            <div class="col-md-12">
+                <p>Total quantity: <strong>{{ $sum_quantity }} kg</strong>  </p>
+            </div>
+        </div>
 
         <div class="row">
             {{ $blast_freezer_entries->links() }}

@@ -96,7 +96,7 @@
                                     </td>
                                     <td>
                                         @if( can("edit_products") )
-                                        <a href="{{ route('products.edit.page', $product->code) }}">
+                                        <a href="{{ route('products.edit.page', $product->id) }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         @endif

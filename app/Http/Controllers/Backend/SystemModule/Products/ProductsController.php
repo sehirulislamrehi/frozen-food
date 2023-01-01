@@ -94,7 +94,7 @@ class ProductsController extends Controller
             if( can('add_products') ){
 
                 $validator = Validator::make($request->all(),[
-                    'code' =>  'required|unique:products,code|integer',
+                    // 'code' =>  'required|unique:products,code|integer',
                     'name' =>  'required|unique:products,name',
                     // 'factor' =>  'required|integer|min:1',
                     'type' => 'required|in:Local,Export',
@@ -109,7 +109,7 @@ class ProductsController extends Controller
                 
                     $product = new Product();
 
-                    $product->code = $request->code;
+                    $product->code = $request->code ?? null;
                     $product->name = $request->name;
                     $product->factor = $request->factor ?? null;
                     $product->type = $request->type;
@@ -122,7 +122,7 @@ class ProductsController extends Controller
                         return response()->json([
                             'status' => 'success',
                             'message' => 'Product uploaded',
-                            'redirect' => route('products.edit.page', $product->code)
+                            'redirect' => route('products.edit.page', $product->id)
                         ], 200);
                     }
                }
@@ -191,11 +191,11 @@ class ProductsController extends Controller
 
 
     //edit_page function start
-    public function edit_page($code){
+    public function edit_page($id){
         try{
             if( can("edit_products") ){
 
-                $product = Product::where("code", $code)->first();
+                $product = Product::where("id", $id)->first();
 
                 if( $product ){
 
@@ -235,7 +235,7 @@ class ProductsController extends Controller
             if( can('edit_products') ){
                 $id = decrypt($id);
                 $validator = Validator::make($request->all(),[
-                    'code' =>  'required|integer|unique:products,code,'. $id,
+                    // 'code' =>  'required|integer|unique:products,code,'. $id,
                     'name' =>  'required|unique:products,name,'. $id,
                     // 'factor' =>  'required|integer|min:1',
                     'type' => 'required|in:Local,Export',
@@ -269,7 +269,7 @@ class ProductsController extends Controller
                             }
                         }
 
-                        $product->code = $request->code;
+                        $product->code = $request->code ?? null;
                         $product->name = $request->name;
                         $product->factor = $request->factor ?? null;
                         $product->type = $request->type;

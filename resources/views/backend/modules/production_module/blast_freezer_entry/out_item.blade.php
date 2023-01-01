@@ -154,8 +154,16 @@
             </div>
             @endif
 
+            @php
+                $sum_quantity = 0;
+            @endphp
+
             <!-- card item start -->
             @foreach( $blast_freezer_entries as $key => $blast_freezer_entry )
+
+                @php
+                    $sum_quantity += $blast_freezer_entry->remaining_quantity;
+                @endphp
             <div class="col-md-4">
                 <div class="card-item">
 
@@ -211,6 +219,12 @@
 
         </div>
         <!-- freezer entry data row end -->
+
+        <div class="row mt-3 mb-3">
+            <div class="col-md-12">
+                <p>Total quantity: <strong>{{ $sum_quantity }} kg</strong>  </p>
+            </div>
+        </div>
 
         <div class="row">
             {{ $blast_freezer_entries->links() }}
