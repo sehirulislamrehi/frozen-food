@@ -50,11 +50,11 @@ CREATE TABLE `cartoons` (
   CONSTRAINT `cartoons_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `cartoons_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `cartoons_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `cartoons` */
 
-insert  into `cartoons` values (1,'cartoon 1','CN221610',75,80,10,0.4,10,0,'In',3,'2022-12-15','2023-12-15',1,3,6,'2022-12-15 09:54:03','2022-12-20 09:59:34'),(2,'PRAN Samosa','CN258936',80,100,10,0.8,NULL,0,'In',4,'2022-12-19','2023-12-19',1,3,6,'2022-12-19 11:21:51','2022-12-19 11:21:51');
+insert  into `cartoons` values (7,'Jotpot paratha 80gm','CN996331',49,50,24,1.92,24,2,'In',3,'2023-01-01','2024-01-01',1,3,6,'2023-01-01 12:49:08','2023-01-01 12:49:08');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

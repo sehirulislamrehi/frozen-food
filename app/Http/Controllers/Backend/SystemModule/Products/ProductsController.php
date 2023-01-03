@@ -169,7 +169,7 @@ class ProductsController extends Controller
                             $code = $code[0]->code;
                         }
 
-                        return redirect()->back()->with('error', 'Data insert failed. Please follow the sample file properly. Last entry code : '.$code.'');
+                        return redirect()->back()->with('error', $e->getMessage() . ' Last entry code : '.$code.'');
                     }
 
                     return redirect()->back()->with('success', 'Product inserted');

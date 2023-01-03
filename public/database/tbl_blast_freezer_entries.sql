@@ -52,11 +52,11 @@ CREATE TABLE `blast_freezer_entries` (
   CONSTRAINT `blast_freezer_entries_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `blast_freezer_entries_product_details_id_foreign` FOREIGN KEY (`product_details_id`) REFERENCES `product_details` (`id`) ON DELETE CASCADE,
   CONSTRAINT `blast_freezer_entries_trolley_id_foreign` FOREIGN KEY (`trolley_id`) REFERENCES `trolleys` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `blast_freezer_entries` */
 
-insert  into `blast_freezer_entries` values (0,11,'BF826733',1,3,6,1,2,2,'2022-12-15 09:50:00','2022-12-15 09:46:52',50,'Out','2022-12-15 09:46:23','2022-12-20 09:59:34'),(20,12,'BF231090',1,3,6,1,2,2,'2022-12-15 09:50:00','2022-12-15 09:47:25',50,'Out','2022-12-15 09:47:16','2022-12-15 09:54:53'),(110,13,'BF841525',1,3,6,1,3,2,'2022-12-17 10:09:00',NULL,110,'In','2022-12-17 10:06:54','2022-12-17 10:06:54'),(0,14,'BF586226',1,3,6,1,4,3,'2022-12-17 10:10:00','2022-12-19 11:18:32',100,'Out','2022-12-17 10:07:35','2022-12-19 11:21:51');
+insert  into `blast_freezer_entries` values (0,21,'BF784487',1,3,6,3,8,2,'2023-01-01 12:55:00','2023-01-01 12:46:59',50,'Out','2023-01-01 12:46:40','2023-01-01 12:49:08');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

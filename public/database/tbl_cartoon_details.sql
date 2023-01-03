@@ -37,11 +37,11 @@ CREATE TABLE `cartoon_details` (
   CONSTRAINT `cartoon_details_blast_freezer_entries_id_foreign` FOREIGN KEY (`blast_freezer_entries_id`) REFERENCES `blast_freezer_entries` (`id`) ON DELETE CASCADE,
   CONSTRAINT `cartoon_details_cartoon_id_foreign` FOREIGN KEY (`cartoon_id`) REFERENCES `cartoons` (`id`) ON DELETE CASCADE,
   CONSTRAINT `cartoon_details_product_details_id_foreign` FOREIGN KEY (`product_details_id`) REFERENCES `product_details` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `cartoon_details` */
 
-insert  into `cartoon_details` values (1,1,12,2,30,'2022-12-15 09:54:03','2022-12-15 09:54:53'),(3,2,14,3,100,'2022-12-19 11:21:51','2022-12-19 11:21:51'),(4,1,11,2,50,'2022-12-20 09:59:00','2022-12-20 09:59:34');
+insert  into `cartoon_details` values (9,7,21,2,50,'2023-01-01 12:49:08','2023-01-01 12:49:08');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
