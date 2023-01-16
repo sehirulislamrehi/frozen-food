@@ -4,28 +4,21 @@ namespace App\Http\Controllers\Backend\UserModule\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\LocationModule\Location;
-use App\Models\UserModule\BuySell;
-use App\Models\PriceCoverage\Prefix;
-use App\Models\UserModule\Role;
-use App\Models\Reports\Transaction;
 use App\Models\UserModule\User;
 use App\Models\UserModule\UserLocation;
-use App\Models\UserModule\Validity;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
     //index start
     public function index()
     {
+
         if (can('all_user')) {
             return view("backend.modules.user_module.user.index");
         } else {
