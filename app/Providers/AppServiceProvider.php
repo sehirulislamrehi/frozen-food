@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Models\SettingsModule\AppInfo;
-use App\Models\SettingsModule\Page;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
@@ -28,7 +27,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         Schema::defaultStringLength(191);
 
 
@@ -41,6 +39,5 @@ class AppServiceProvider extends ServiceProvider
         View::share([
             'app_info' => $app_info,
         ]);
-
     }
 }

@@ -2,7 +2,7 @@
 SQLyog Job Agent Version 8.2 Copyright(c) Webyog Softworks Pvt. Ltd. All Rights Reserved.
 
 
-MySQL - 5.7.35 : Database - frozen_food
+MySQL - 5.5.68-MariaDB : Database - frozen_food
 *********************************************************************
 */
 
@@ -14,7 +14,7 @@ MySQL - 5.7.35 : Database - frozen_food
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`frozen_food` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`frozen_food` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_bin */;
 
 USE `frozen_food`;
 
@@ -39,7 +39,7 @@ CREATE TABLE `super_admins` (
 
 /*Data for the table `super_admins` */
 
-insert  into `super_admins` values (1,'Super Admin','superadmin@gmail.com','1671336311fNoAuw2YQnUa.jpg','1858361812',NULL,'$2y$10$S68jriMmIpV4XUVxVaNfKuoKwP6aaBeyDHua0oBxdcLHIAXFPQvtK','IlMggc9S48wegaEPKT7Z4m0CJeK7opJXgX8H9JtX5lrqRsjcTqgHvl6AWzOr',NULL,'2022-12-18 10:05:11');
+insert  into `super_admins` values (1,'Super Admin','superadmin@gmail.com','1671336311fNoAuw2YQnUa.jpg','1858361812',NULL,'$2y$10$S68jriMmIpV4XUVxVaNfKuoKwP6aaBeyDHua0oBxdcLHIAXFPQvtK','3cTEzzBtoWw681FxwSgOXUvE00R3e9QS7ECUr32xhhWjPZIx156slGZgmt6k',NULL,'2022-12-18 10:05:11');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

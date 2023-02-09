@@ -9,8 +9,9 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
-use \Mpdf\Mpdf as PDF; 
+use PDF; 
 use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class TrolleyController extends Controller
 {
@@ -119,35 +120,13 @@ class TrolleyController extends Controller
 
                 if( $trolley ){
 
-                    // Setup a filename 
-                    $documentFileName = "qr-code-". $trolley->code;
-                    
-                    // Create the mPDF document
-                    $document = new PDF( [
-                        'mode' => 'utf-8',
-                        'format' => 'A4',
-                        'margin_header' => '3',
-                        'margin_top' => '20',
-                        'margin_bottom' => '20',
-                        'margin_footer' => '2',
-                    ]);     
-
-                    // Set some header informations for output
-                    $header = [
-                        'Content-Type' => 'application/pdf',
-                        'Content-Disposition' => 'inline; filename="'.$documentFileName.'"'
-                    ];
-
+                    $documentFileName = "qr-code-". $trolley->code . ".pdf";
                     $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+                    
+                    $qrcode = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate($trolley->code));
+                    $pdf = PDF::loadView('backend.modules.system_module.trolley.pdf.qrcode', compact('qrcode','trolley','xml'));
+                    return $pdf->stream();
 
-                    // Write some simple Content
-                    $document->WriteHTML(view('backend.modules.system_module.trolley.pdf.qrcode', compact('trolley','xml')));
-                    
-                    // Save PDF on your public storage 
-                    Storage::disk('public')->put($documentFileName, $document->Output($documentFileName, "S"));
-                    
-                    // Get file back from storage with the give header informations
-                    return Storage::disk('public')->download($documentFileName, 'Request', $header); //
                 }
                 else{
                     return back()->with('warning', 'No trolley found');

@@ -144,17 +144,21 @@ class ProductsController extends Controller
             if( can('add_products') ){
                 $files = $request->file('file');
                 $type = $request->file('file')->getClientOriginalExtension();
-            
+                
+
                 if( $type == "csv" ){
-                    $datas = Excel::toArray(new ProductImport, $files);
                     $result = [];
 
-                    foreach( $datas[0] as $data ){
+                    $file = fopen($_FILES["file"]["tmp_name"], "r");
+                    $row = 1;
+                    while (($data = fgetcsv($file, 1000, ",")) !== FALSE) {
+                        $num = count($data);
+                        $row++;
                         array_push($result,[
-                            'code' => $data[0],
-                            'name' => $data[1],
-                            'type' => $data[2],
-                            'life_time' => product_life_time($data[2]),
+                            'code' => utf8_encode($data[0]),
+                            'name' => utf8_encode($data[1]),
+                            'type' => utf8_encode($data[2]),
+                            'life_time' => product_life_time(utf8_encode($data[2])),
                             'is_active' => true
                         ]);
                     }

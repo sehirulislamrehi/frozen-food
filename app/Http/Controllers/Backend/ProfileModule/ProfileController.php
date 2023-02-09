@@ -52,8 +52,8 @@ class ProfileController extends Controller
                 }
                 $image = $request->file('image');
                 $img = time().Str::random(12).'.'.$image->getClientOriginalExtension();
-                $location = public_path('images/profile/'.$img);
-                Image::make($image)->save($location);
+                $location = public_path('images/profile/');
+                $image->move($location, $img);
                 $user->image = $img;
             }
 

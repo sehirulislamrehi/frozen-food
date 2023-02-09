@@ -230,6 +230,7 @@ class RoleController extends Controller
 
             if( auth('super_admin')->check() ){
                 $groups = Location::where("type","Group")->select("id","name")->where("is_active", true)->get();
+
                 return view("backend.modules.user_module.role.modals.edit", compact('role', 'groups','modules'));
             }
             else{
@@ -260,14 +261,17 @@ class RoleController extends Controller
                 try{
                     if( $request['permission'] ){
 
-                        $location_ids = implode(",",$request->location_id);
-                        $name = $request->name;
-                        $exists = DB::select("SELECT roles.name, role_locations.role_id FROM role_locations
-                        LEFT JOIN roles ON role_locations.role_id = roles.id WHERE roles.name = '$name' AND role_locations.location_id IN ".'('.$location_ids .')'." AND role_locations.type = 'Location' AND roles.id != $id");
-
-                        if( count($exists) != 0 ){
-                            return response()->json(['warning' => $name .' role already exists'],200);
+                        if( $request->location_id ){
+                            $location_ids = implode(",",$request->location_id);
+                            $name = $request->name;
+                            $exists = DB::select("SELECT roles.name, role_locations.role_id FROM role_locations
+                            LEFT JOIN roles ON role_locations.role_id = roles.id WHERE roles.name = '$name' AND role_locations.location_id IN ".'('.$location_ids .')'." AND role_locations.type = 'Location' AND roles.id != $id");
+    
+                            if( count($exists) != 0 ){
+                                return response()->json(['warning' => $name .' role already exists'],200);
+                            }
                         }
+                        
 
                         $role = Role::find($id);
                         $role->name = $request->name;

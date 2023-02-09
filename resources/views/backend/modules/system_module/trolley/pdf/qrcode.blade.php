@@ -1,9 +1,6 @@
-@php
-    $qrcode = QrCode::encoding('UTF-8')->size(300)->generate($trolley->code);
-    $qrcode = str_replace($xml,'',$qrcode);
-@endphp
+
 <p style="text-align: center;">
-    {!! $qrcode !!}
+<img src="data:image/png;base64, {!! $qrcode !!}">
 
     <br><br><br>
     <span>Code : {{ $trolley->code }}</span>

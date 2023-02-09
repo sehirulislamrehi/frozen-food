@@ -101,60 +101,70 @@
             <div class="col-md-12 form-group main-group">
                 <div class="row">
 
-                    @foreach( $modules as $module )
-                    @foreach( $module->permission as $module_permission )
-                    @if($module->key == $module_permission->key )
-                    <div class="permission_block" style="padding: 0;">
-                        <p style="
-                                border-bottom: 1px solid #e0d9d9;
-                                background: #323232;
-                                color: white;
-                                padding: 5px;
-                            ">
-                            <label>
-                                <input type="checkbox" class="module_check" name="permission[]"
-                                    value="{{ $module_permission->id }}" @php $i=0; @endphp @foreach( $role->permission as
-                                $role_permission )
-                                @if( $role_permission->id == $module_permission->id )
-                                {{ $i++ }}
-                                @endif
-                                @endforeach
-                                @if( $i != 0 )
-                                checked
-                                @endif
-                                >
-                                <span>{{ $module->name }}</span>
-                            </label>
-                        </p>
-                        <div class="sub_module_block">
-                            <ul>
-                                @foreach( $module->permission as $sub_module_permission )
-                                @if( $sub_module_permission->key != $module->key )
-                                <p>
-                                    <label>
-                                        <input type="checkbox" class="sub_module_check" name="permission[]"
-                                            value="{{ $sub_module_permission->id }}" @php $j=0; @endphp @foreach(
-                                            $role->permission as $role_permission )
-                                        @if( $role_permission->id == $sub_module_permission->id )
-                                        {{ $j++ }}
-                                        @endif
+                    @foreach( $modules as $index => $module )
+                    @foreach( $module->permission as $index_2 => $module_permission )
+                        @if($module->key == $module_permission->key )
+                        <div class="permission_block" style="padding: 0;">
+                            <p style="
+                                    border-bottom: 1px solid #e0d9d9;
+                                    background: #323232;
+                                    color: white;
+                                    padding: 5px;
+                                ">
+                                <label>
+                                    <input type="checkbox" class="module_check" name="permission[]"
+                                        value="{{ $module_permission->id }}"
+                                         
+                                        @php $i=0; @endphp 
+                                        @foreach($role->permission as $role_permission)
+                                            @if( $role_permission->id == $module_permission->id )
+                                                {{ $i++ }}
+                                            @endif
                                         @endforeach
-                                        @if( $i == 0 )
-                                        disabled
+
+                                        @if( $i != 0 )
+                                            checked
                                         @endif
-                                        @if( $j > 0 )
-                                        checked
-                                        @endif
-                                        />
-                                        <span>{{ $sub_module_permission->display_name }}</span>
-                                    </label>
-                                </p>
-                                @endif
-                                @endforeach
-                            </ul>
+                                    >
+                                    <span>{{ $module->name }}</span>
+                                </label>
+                            </p>
+                            <div class="sub_module_block">
+                                <ul>
+                                    @foreach( $module->permission as $sub_module_permission )
+                                    @if( $sub_module_permission->key != $module->key )
+                                    <p>
+                                        <label>
+                                            <input type="checkbox" class="sub_module_check" name="permission[]"
+                                                value="{{ $sub_module_permission->id }}"
+                                                 
+                                                @php 
+                                                    $j=0; 
+                                                @endphp 
+                                                
+                                                @foreach( $role->permission as $role_permission )
+                                                    @if( $role_permission->id == $sub_module_permission->id )
+                                                        {{ $j++ }}
+                                                    @endif
+                                                @endforeach
+
+                                                @if( $i == 0 )
+                                                    disabled
+                                                @endif
+                                                @if( $j > 0 )
+                                                    checked
+                                                @endif
+                                                
+                                            />
+                                            <span>{{ $sub_module_permission->display_name }}</span>
+                                        </label>
+                                    </p>
+                                    @endif
+                                    @endforeach
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    @endif
+                        @endif
                     @endforeach
                     @endforeach
                 </div>

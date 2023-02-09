@@ -2,7 +2,7 @@
 SQLyog Job Agent Version 8.2 Copyright(c) Webyog Softworks Pvt. Ltd. All Rights Reserved.
 
 
-MySQL - 5.7.35 : Database - frozen_food
+MySQL - 5.5.68-MariaDB : Database - frozen_food
 *********************************************************************
 */
 
@@ -14,7 +14,7 @@ MySQL - 5.7.35 : Database - frozen_food
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`frozen_food` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`frozen_food` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_bin */;
 
 USE `frozen_food`;
 
@@ -52,11 +52,9 @@ CREATE TABLE `blast_freezer_entries` (
   CONSTRAINT `blast_freezer_entries_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `blast_freezer_entries_product_details_id_foreign` FOREIGN KEY (`product_details_id`) REFERENCES `product_details` (`id`) ON DELETE CASCADE,
   CONSTRAINT `blast_freezer_entries_trolley_id_foreign` FOREIGN KEY (`trolley_id`) REFERENCES `trolleys` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `blast_freezer_entries` */
-
-insert  into `blast_freezer_entries` values (0,21,'BF784487',1,3,6,3,8,2,'2023-01-01 12:55:00','2023-01-01 12:46:59',50,'Out','2023-01-01 12:46:40','2023-01-01 12:49:08'),(50,22,'BF666685',1,3,6,2,9,2,'2023-01-15 09:27:00','2023-01-15 09:23:34',50,'Out','2023-01-15 09:18:12','2023-01-15 09:23:34');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
