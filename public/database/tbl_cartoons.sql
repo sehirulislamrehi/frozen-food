@@ -50,9 +50,11 @@ CREATE TABLE `cartoons` (
   CONSTRAINT `cartoons_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `cartoons_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `cartoons_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `cartoons` */
+
+insert  into `cartoons` values (1,'Humza paratha 1600gm','CN466467',9.6,90,56,1.6,20,2,'In',2761,'2023-02-14','2025-02-14',1,3,6,'2023-02-14 11:14:00','2023-02-14 11:14:00'),(2,'Humza paratha 1600gm','CN79575',120,200,20,3.5,8,2,'In',4,'2023-02-14','2024-02-14',1,3,6,'2023-02-14 11:17:17','2023-02-14 11:17:17'),(3,'Humza paratha 1600gm','CN682294',120,180,12,3.6,2,2,'In',2761,'2023-02-14','2025-02-14',1,3,6,'2023-02-14 11:24:21','2023-02-14 11:24:21'),(4,'Humza paratha 1600gm','CN911938',80,80,24,3.5,12,2,'In',4,'2023-02-15','2024-02-15',1,3,6,'2023-02-15 03:55:23','2023-02-15 03:55:23');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
