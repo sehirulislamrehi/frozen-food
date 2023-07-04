@@ -20,28 +20,7 @@
 <databases all="no">
 <database name = "frozen_food">
 <objects all="no">
-<tables all="no">
-<table>blast_freezer_entries</table>
-<table>cartoon_details</table>
-<table>cartoons</table>
-<table>devices</table>
-<table>freezer_details</table>
-<table>freezers</table>
-<table>locations</table>
-<table>migrations</table>
-<table>modules</table>
-<table>permission_role</table>
-<table>permissions</table>
-<table>product_details</table>
-<table>products</table>
-<table>role_locations</table>
-<table>roles</table>
-<table>sub_modules</table>
-<table>super_admins</table>
-<table>temperature_2023_02</table>
-<table>trolleys</table>
-<table>user_locations</table>
-<table>users</table>
+<tables all="yes">
 </tables>
 </objects>
 </database>
