@@ -10,7 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use PDF; 
-use Illuminate\Support\Facades\Storage;
+use Milon\Barcode\DNS1D;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class TrolleyController extends Controller
@@ -87,7 +88,7 @@ class TrolleyController extends Controller
                         '.( can("trolley") ? '
                         <a class="dropdown-item" href="'. route('trolley.download.qr.code', encrypt($trolley->id)) .'" target="_blank" class="btn btn-outline-dark">
                             <i class="fas fa-download"></i>
-                            Download QR Code
+                            Barcode
                         </a>
                         ': '') .'
 
@@ -116,16 +117,21 @@ class TrolleyController extends Controller
         try{
             if( can("trolley") ){
 
-                $trolley = Trolley::where("id", decrypt($id))->select("code")->first();
+                $trolley = Trolley::where("id", decrypt($id))->select("code","name")->first();
 
                 if( $trolley ){
 
-                    $documentFileName = "qr-code-". $trolley->code . ".pdf";
+                    $documentFileName = "barcode-". $trolley->code . ".pdf";
                     $xml = '<?xml version="1.0" encoding="UTF-8"?>';
-                    
-                    $qrcode = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate($trolley->code));
-                    $pdf = PDF::loadView('backend.modules.system_module.trolley.pdf.qrcode', compact('qrcode','trolley','xml'));
-                    return $pdf->stream();
+
+                    $pdf = PDF::setOptions(
+                        [
+                            'isHtml5ParserEnabled'=>true,
+                            'isRemoteEnabled'=>true
+                        ]
+                    )->loadView('backend.modules.system_module.trolley.pdf.qrcode',compact('trolley','xml'));
+                    $pdf->setPaper('a7', 'landscape');
+                    return $pdf->stream($trolley->code. ".pdf");
 
                 }
                 else{

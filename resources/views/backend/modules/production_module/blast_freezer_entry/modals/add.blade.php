@@ -14,10 +14,10 @@
             <!-- select group -->
             <div class="col-md-6 col-12 form-group">
                 <label>Select Group</label><span class="require-span">*</span>
-                <select name="group_id" class="form-control chosen" onchange="groupChange(this)">
+                <select name="group_id" class="form-control chosen" onchange="groupChange(null,this)">
                     <option value="" disabled selected>Select group</option>
-                    @foreach( $groups as $group )
-                    <option value="{{ $group->id }}">{{ $group->name }}</option>
+                    @foreach( $groups as $key => $group )
+                    <option value="{{ $group->id }}" @if( $key == 0 ) selected @endif >{{ $group->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -108,9 +108,17 @@
 </script>
 
 
+
 <script>
-    function groupChange(e) {
-        let group_id = e.value
+    function groupChange(id = null, e) {
+        let group_id = 1;
+        if(id == null){
+            group_id = e.value
+        }
+        else{
+            group_id = id
+        }
+
         $.ajax({
             type: "GET",
             url: "{{ route('group.wise.company') }}",
@@ -151,6 +159,7 @@
             },
         })
     }
+    groupChange(1,this)
 
     function companyChange(e) {
         let company_id = Array();
@@ -230,7 +239,7 @@
                     `);
                     $.each(response.trolley, function(key, value) {
                         $(".trolley_id").append(`
-                            <option value="${value.id}">${value.code} ( ${value.name} )</option>
+                            <option value="${value.id}">${value.name} - ${value.code}</option>
                         `);
                     })
 
@@ -244,9 +253,11 @@
                         </div>
                     `);
                     $.each(response.product_details, function(key, value) {
-                        $(".product_details_id").append(`
-                            <option value="${value.id}">${value.product.name}</option>
-                        `);
+                        if(value.product){
+                            $(".product_details_id").append(`
+                                <option value="${value.id}">${value.product.name}</option>
+                            `);
+                        }
 
                     })
 
@@ -260,5 +271,6 @@
         })
     }
 </script>
+
 
 
