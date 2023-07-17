@@ -128,29 +128,29 @@ class CommonController extends Controller
 
 
     //location_wise_role function start
-    public function location_wise_role(Request $request){
-        try{
+    // public function location_wise_role(Request $request){
+    //     try{
             
-            if( $request->location_ids ){
-                $role = RoleLocation::whereIn("location_id",$request->location_ids)->where("type","Location")->with("role")->select("role_id")->groupBy("role_id")->get();
-            }
-            else{
-                $role = [];
-            }
+    //         if( $request->location_ids ){
+    //             $role = RoleLocation::whereIn("location_id",$request->location_ids)->where("type","Location")->with("role")->select("role_id")->groupBy("role_id")->get();
+    //         }
+    //         else{
+    //             $role = [];
+    //         }
             
-            return response()->json([
-                'status' => 'success',
-                'data' => $role
-            ], 200);
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => $role
+    //         ], 200);
 
-        }
-        catch( Exception $e ){
-            return response()->json([
-                'status' => 'error',
-                'data' => $e->getMessage()
-            ], 200);
-        }
-    }
+    //     }
+    //     catch( Exception $e ){
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'data' => $e->getMessage()
+    //         ], 200);
+    //     }
+    // }
     //location_wise_role function end
 
 
@@ -183,12 +183,14 @@ class CommonController extends Controller
             $device = Device::whereIn("location_id",$request->location_ids)->select("id","device_manual_id")->where("type","Blast Freeze")->get();
             $trolley = Trolley::whereIn("location_id",$request->location_ids)->select("id","code","name")->where("status","Free")->where("is_active", true)->get();
             $product_details = ProductDetails::whereIn("location_id",$request->location_ids)->select("id","product_id")->with("product")->get();
+            $role = RoleLocation::whereIn("location_id",$request->location_ids)->where("type","Location")->with("role")->select("role_id")->groupBy("role_id")->get();
             
             return response()->json([
                 'status' => 'success',
                 'device' => $device,
                 'trolley' => $trolley,
                 'product_details' => $product_details,
+                'role' => $role,
             ], 200);
 
         }

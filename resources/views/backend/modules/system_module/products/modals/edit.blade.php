@@ -84,6 +84,6 @@
     'location_type' => 'single',
 ])
 @include("backend.modules.common.script.location_change",[
-    "location_wise_role" => false,
-    "location_wise_device" => false    
+    "location_type" => 'single',
+    "device" => 'single'    
 ])

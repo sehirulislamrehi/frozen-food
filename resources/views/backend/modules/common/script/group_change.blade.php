@@ -33,7 +33,7 @@
                     else{
                         $(".select-company").append(`
                             <div class="company-block">
-                                <select name="company_id[]" class="form-control company_id chosen" onchange="companyChange(this)">>
+                                <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">>
                                     <option value="" selected disabled>Select company</option>
                                 </select>
                             </div>
@@ -54,7 +54,7 @@
                     else{
                         $(".select-location").append(`
                             <div class="location-block">
-                                <select name="location_id[]" class="form-control location_id chosen" onchange="locationChange(this)">
+                                <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
                                     <option value="" selected disabled>Select location</option>
                                 </select>
                             </div>

@@ -246,7 +246,7 @@ class FreezerController extends Controller
                         $freezer->name = $request->name;
     
                         if( $freezer->save() ){
-    
+                            
                             if( $request->device_ids ){
 
                                 DB::statement("DELETE FROM freezer_details WHERE freezer_id = $freezer->id");

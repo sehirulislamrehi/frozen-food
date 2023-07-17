@@ -218,6 +218,6 @@
     'location_type' => 'multiple',
 ])
 @include("backend.modules.common.script.location_change",[
-    "location_wise_role" => true,
-    "location_wise_device" => false    
+    "location_type" => 'single',
+    "device" => 'single'    
 ])

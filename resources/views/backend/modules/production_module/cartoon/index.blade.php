@@ -89,11 +89,11 @@
                                     </div>
 
                                     <!-- Select Product -->
-                                    <div class="col-md-2 select-product">
-                                        <label>Select Product</label>
-                                        <div class="product-block">
-                                            <select name="product_id" class="form-control product_id chosen">
-                                                <option value="" selected disabled>Select product</option>
+                                    <div class="col-md-2 col-12 form-group select-product_details">
+                                        <label>Select product details</label><span class="require-span">*</span>
+                                        <div class="product_details-block">
+                                            <select name="product_details_id" class="form-control product_details_id chosen">
+                                                <option value="" selected disabled>Select product details</option>
                                             </select>
                                         </div>
                                     </div>
@@ -226,8 +226,13 @@
 @include("backend.modules.common.script.company_change",[
     'location_type' => 'single',
 ])
+@include("backend.modules.common.script.location_change",[
+    "location_type" => 'single',
+    "device" => 'single'    
+])
 
-<script>
+
+<!-- <script>
     function locationChange(e) {
 
         let location_id = Array();
@@ -267,6 +272,6 @@
             },
         })
     }
-</script>
+</script> -->
 
 @endsection

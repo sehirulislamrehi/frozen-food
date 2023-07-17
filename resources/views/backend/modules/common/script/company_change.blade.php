@@ -34,7 +34,7 @@
                     else{
                         $(".select-location").append(`
                             <div class="location-block">
-                                <select name="location_id[]" class="form-control location_id chosen" onchange="locationChange(this)">
+                                <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
                                     <option value="" selected disabled>Select location</option>
                                 </select>
                             </div>
