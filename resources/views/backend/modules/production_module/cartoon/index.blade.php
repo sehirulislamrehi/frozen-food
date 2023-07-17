@@ -62,10 +62,9 @@
                                     <div class="col-md-2 col-12 form-group">
                                         <label>Select Group</label>
                                         <select name="group_id" class="form-control chosen" onchange="groupChange(this)">
-                                            <option value="" disabled selected>Select group</option>
-                                            @foreach( $groups as $group )
-                                            <option value="{{ $group->id }}">{{ $group->name }}</option>
-                                            @endforeach
+                                            @include("backend.modules.common.components.select_group",[
+                                                'group' => $groups
+                                            ])
                                         </select>
                                     </div>
 
@@ -219,87 +218,16 @@
         $('[data-toggle="popover"]').popover()
     })
 </script>
+
+@include("backend.modules.common.script.group_change",[
+    'company_type' => 'single',
+    'location_type' => 'single',
+])
+@include("backend.modules.common.script.company_change",[
+    'location_type' => 'single',
+])
+
 <script>
-    function groupChange(e) {
-        let group_id = e.value
-        $.ajax({
-            type: "GET",
-            url: "{{ route('group.wise.company') }}",
-            data: {
-                group_id: group_id,
-            },
-            success: function(response) {
-                if (response.status == "success") {
-                    $(".company-block").remove();
-                    $(".select-company").append(`
-                        <div class="company-block">
-                            <select name="company_id" class="form-control company_id chosen" onchange="companyChange(this)">
-                                <option value="" selected disabled>Select company</option>
-                            </select>
-                        </div>
-                    `);
-
-                    $(".location-block").remove();
-                    $(".select-location").append(`
-                        <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
-                                <option value="" selected disabled>Select location</option>
-                            </select>
-                        </div>
-                    `);
-
-                    $.each(response.data, function(key, value) {
-                        $(".company_id").append(`
-                            <option value="${value.id}">${value.name}</option>
-                        `);
-                    })
-
-                    $(".chosen").chosen();
-                }
-            },
-            error: function(response) {
-
-            },
-        })
-    }
-
-    function companyChange(e) {
-        let company_id = Array();
-        company_id.push(e.value)
-
-        $.ajax({
-            type: "GET",
-            url: "{{ route('company.wise.location') }}",
-            data: {
-                company_ids: company_id,
-            },
-            success: function(response) {
-                if (response.status == "success") {
-                    $(".location-block").remove();
-                    $(".select-location").append(`
-                        <div class="location-block">
-                            <select name="location_id" class="form-control location_id chosen" onchange="locationChange(this)">
-                                <option value="" selected disabled>Select location</option>
-                            </select>
-                        </div>
-                    `);
-
-                    $.each(response.data, function(key, value) {
-                        $(".location_id").append(`
-                            <option value="${value.id}">${value.name}</option>
-                        `);
-                    })
-
-                    $(".chosen").chosen();
-                }
-            },
-            error: function(response) {
-
-            },
-        })
-    }
-
-
     function locationChange(e) {
 
         let location_id = Array();
@@ -324,9 +252,11 @@
                     `);
 
                     $.each(response.product_details, function(key, value) {
-                        $(".product_id").append(`
-                            <option value="${value.product.id}">${value.product.name}</option>
-                        `);
+                        if(value.product){
+                            $(".product_id").append(`
+                                <option value="${value.product.id}">${value.product.name}</option>
+                            `);
+                        }
                     })
 
                     $(".chosen").chosen();
@@ -338,4 +268,5 @@
         })
     }
 </script>
+
 @endsection

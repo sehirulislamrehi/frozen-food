@@ -5,7 +5,7 @@
 <link href="{{ asset('backend/css/datatable/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <style>
     .data-indicator ul{
-        padding-left: 15px;
+        padding-left: 0;
     }
     .data-indicator ul li{
         display: inline;

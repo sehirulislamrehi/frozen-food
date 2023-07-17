@@ -15,10 +15,9 @@
             <div class="col-md-12 col-12 form-group">
                 <label>Select Group</label><span class="require-span">*</span>
                 <select name="group_id" class="form-control chosen" onchange="groupChange(this)">
-                    <option value="" disabled selected>Select group</option>
-                    @foreach( $groups as $group )
-                    <option value="{{ $group->id }}">{{ $group->name }}</option>
-                    @endforeach
+                    @include("backend.modules.common.components.select_group",[
+                        'group' => $groups
+                    ])
                 </select>
             </div>
 
@@ -89,7 +88,7 @@
 
 
 
-<script>
+<!-- <script>
     function groupChange(e){
         let group_id = e.value
         $.ajax({
@@ -201,4 +200,16 @@
             },
         })
     }
-</script>
+</script> -->
+
+@include("backend.modules.common.script.group_change",[
+    'company_type' => 'single',
+    'location_type' => 'single',
+])
+@include("backend.modules.common.script.company_change",[
+    'location_type' => 'single',
+])
+@include("backend.modules.common.script.location_change",[
+    'location_wise_role' => false,
+    'location_wise_device' => true,
+])

@@ -111,7 +111,7 @@ class CommonController extends Controller
     //location_wise_device function start
     public function location_wise_device(Request $request){
         try{
-            $device = Device::where("location_id",$request->location_id)->select("id","device_number")->get();
+            $device = Device::whereIn("location_id",$request->location_ids)->select("id","device_number")->get();
             return response()->json([
                 'status' => 'success',
                 'data' => $device

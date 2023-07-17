@@ -8,7 +8,7 @@
 <div class="modal-body">
 
     <div class="row data-indicator">
-    <div class="col-md-12">
+        <div class="col-md-12">
             <ul>
                 <li>
                     <strong>Group :</strong>
@@ -44,12 +44,22 @@
                 @endforeach
             </ul>
         </div>
+
+        <div class="col-md-12">
+            <ul>
+                <li>
+                    <strong>Role :</strong>
+                </li>
+                <span>{{ $user->role->name }}</span>
+            </ul>
+        </div>
     </div>
 
     <form class="ajax-form" method="post" action="{{ route('user.update', $user->id) }}">
         @csrf
 
         <div class="row">
+
             <!-- name -->
             <div class="col-md-6 col-12 form-group">
                 <label for="name">Name</label>
@@ -69,13 +79,12 @@
             </div>
 
             <!-- select group -->
-            <div class="col-md-12 col-12 form-group">
+            <div class="col-md-6 col-12 form-group">
                 <label>Select Group</label><span class="require-span">*</span>
                 <select name="group_id" class="form-control chosen" onchange="groupChange(this)">
-                    <option value="" disabled selected>Select group</option>
-                    @foreach( $groups as $group )
-                    <option value="{{ $group->id }}">{{ $group->name }}</option>
-                    @endforeach
+                    @include("backend.modules.common.components.select_group",[
+                        'group' => $groups
+                    ])
                 </select>
             </div>
 
@@ -150,151 +159,14 @@
 
 
 
-<script>
-    function groupChange(e){
-        let group_id = e.value
-        $.ajax({
-            type : "GET",
-            url : "{{ route('group.wise.company') }}",
-            data: {
-                group_id : group_id,
-            },
-            success: function(response){
-                if( response.status == "success" ){
-                    $(".company-block").remove();
-                    $(".select-company").append(`
-                        <div class="company-block">
-                            <select name="company_id[]" class="form-control company_id chosen" multiple onchange="companyChange(this)">>
-                                <option value="" selected disabled>Select company</option>
-                            </select>
-                        </div>
-                    `);
-
-                    $(".location-block").remove();
-                    $(".select-location").append(`
-                        <div class="location-block">
-                            <select name="location_id[]" class="form-control location_id chosen" multiple onchange="locationChange(this)">
-                                <option value="" selected disabled>Select location</option>
-                            </select>
-                        </div>
-                    `);
-                    
-                    $.each(response.data, function(key, value){
-                        $(".company_id").append(`
-                            <option value="${value.id}">${value.name}</option>
-                        `);
-                    })
-
-                    $(".role-block").remove();
-                    $(".select-role").append(`
-                        <div class="role-block">
-                            <select name="role_id" class="form-control role_id chosen">
-                                <option value="" selected disabled>Select role</option>
-                            </select>
-                        </div>
-                    `);
-
-                    $(".chosen").chosen();
-                }
-            },
-            error: function(response){
-
-            },
-        })
-    }
-    function companyChange(e){
-        
-        let company_ids = Array();
-        for( let i = 1 ; i <= e.length ; i++ ){
-            if(e[i]){
-                if( e[i].selected == true ){
-                    company_ids.push(e[i].value)
-                }
-            }
-        }
-
-        $.ajax({
-            type : "GET",
-            url : "{{ route('company.wise.location') }}",
-            data: {
-                company_ids : company_ids,
-            },
-            success: function(response){
-                if( response.status == "success" ){
-                    $(".location-block").remove();
-                    $(".select-location").append(`
-                        <div class="location-block">
-                            <select name="location_id[]" class="form-control location_id chosen" multiple onchange="locationChange(this)">
-                                <option value="" selected disabled>Select location</option>
-                            </select>
-                        </div>
-                    `);
-                    
-                    $.each(response.data, function(key, value){
-                        $(".location_id").append(`
-                            <option value="${value.id}">${value.location_company.name} > ${value.name}</option>
-                        `);
-                    })
-
-                    $(".role-block").remove();
-                    $(".select-role").append(`
-                        <div class="role-block">
-                            <select name="role_id" class="form-control role_id chosen">
-                                <option value="" selected disabled>Select role</option>
-                            </select>
-                        </div>
-                    `);
-
-                    $(".chosen").chosen();
-                }
-            },
-            error: function(response){
-
-            },
-        })
-    }
-    function locationChange(e){
-
-        let location_ids = Array();
-        for( let i = 1 ; i <= e.length ; i++ ){
-            if(e[i]){
-                if( e[i].selected == true ){
-                    location_ids.push(e[i].value)
-                }
-            }
-        }
-
-        $.ajax({
-            type : "GET",
-            url : "{{ route('location.wise.role') }}",
-            data: {
-                location_ids : location_ids,
-            },
-            success: function(response){
-                if( response.status == "success" ){
-                    $(".role-block").remove();
-                    $(".select-role").append(`
-                        <div class="role-block">
-                            <select name="role_id" class="form-control role_id chosen">
-                                <option value="" selected disabled>Select role</option>
-                            </select>
-                        </div>
-                    `);
-
-                    $.each(response.data, function(key, value){
-                        if( value.role.is_active == true ){
-                            $(".role_id").append(`
-                                <option value="${value.role.id}">${value.role.name}</option>
-                            `);
-                        }
-                    })
-
-                    $(".chosen").chosen();
-                }
-            },
-            error: function(response){
-
-            },
-        })
-    }
-</script>
+@include("backend.modules.common.script.group_change",[
+    'company_type' => 'multiple',
+    'location_type' => 'multiple',
+])
+@include("backend.modules.common.script.company_change",[
+    'location_type' => 'multiple',
+])
+@include("backend.modules.common.script.location_change",[
+    "location_wise_role" => true,
+    "location_wise_device" => false    
+])

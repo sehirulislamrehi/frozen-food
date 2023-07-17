@@ -14,11 +14,10 @@
             <!-- select group -->
             <div class="col-md-6 col-12 form-group">
                 <label>Select Group</label><span class="require-span">*</span>
-                <select name="group_id" class="form-control chosen" onchange="groupChange(null,this)">
-                    <option value="" disabled selected>Select group</option>
-                    @foreach( $groups as $key => $group )
-                    <option value="{{ $group->id }}" @if( $key == 0 ) selected @endif >{{ $group->name }}</option>
-                    @endforeach
+                <select name="group_id" class="form-control chosen" onchange="groupChange(this)">
+                    @include("backend.modules.common.components.select_group",[
+                        'group' => $groups
+                    ])
                 </select>
             </div>
 
@@ -109,7 +108,7 @@
 
 
 
-<script>
+<!-- <script>
     function groupChange(id = null, e) {
         let group_id = 1;
         if(id == null){
@@ -270,7 +269,90 @@
             },
         })
     }
+</script> -->
+
+@include("backend.modules.common.script.group_change",[
+    'company_type' => 'single',
+    'location_type' => 'single',
+])
+@include("backend.modules.common.script.company_change",[
+    'location_type' => 'single',
+])
+
+<script>
+    function locationChange(e){
+        let location_id = Array();
+
+        location_id.push(e.value)
+
+        $.ajax({
+            type: "GET",
+            url: "{{ route('location.wise.data') }}",
+            data: {
+                location_ids: location_id,
+            },
+            success: function(response) {
+                if (response.status == "success") {
+
+                    //device
+                    $(".device-block").remove();
+                    $(".select-device").append(`
+                        <div class="device-block">
+                            <select name="device_id" class="form-control device_id chosen">
+                                <option value="" selected disabled>Select device</option>
+                            </select>
+                        </div>
+                    `);
+                    $.each(response.device, function(key, value) {
+                        $(".device_id").append(`
+                            <option value="${value.id}">${value.device_manual_id}</option>
+                        `);
+                    })
+
+                    //trolley
+                    $(".trolley-block").remove();
+                    $(".select-trolley").append(`
+                        <div class="trolley-block">
+                            <select name="trolley_id" class="form-control trolley_id chosen">
+                                <option value="" selected disabled>Select trolley</option>
+                            </select>
+                        </div>
+                    `);
+                    $.each(response.trolley, function(key, value) {
+                        $(".trolley_id").append(`
+                            <option value="${value.id}">${value.name} - ${value.code}</option>
+                        `);
+                    })
+
+                    //product_details
+                    $(".product_details-block").remove();
+                    $(".select-product_details").append(`
+                        <div class="product_details-block">
+                            <select name="product_details_id" class="form-control product_details_id chosen">
+                                <option value="" selected disabled>Select product details</option>
+                            </select>
+                        </div>
+                    `);
+                    $.each(response.product_details, function(key, value) {
+                        if(value.product){
+                            $(".product_details_id").append(`
+                                <option value="${value.id}">${value.product.name}</option>
+                            `);
+                        }
+
+                    })
+
+
+                    $(".chosen").chosen();
+                }
+            },
+            error: function(response) {
+
+            },
+        })
+    }
 </script>
+
 
 
 
