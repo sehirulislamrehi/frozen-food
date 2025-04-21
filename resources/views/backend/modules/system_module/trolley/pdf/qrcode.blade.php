@@ -5,3 +5,4 @@
     <br>
     <span>{{ $trolley->name }}</span>
 </p>
+

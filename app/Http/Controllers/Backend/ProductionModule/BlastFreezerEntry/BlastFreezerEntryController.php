@@ -92,6 +92,14 @@ class BlastFreezerEntryController extends Controller
                     $blast_freezer_entries = $query->whereIn("location_id",$user_location)->paginate(20);
                 }
 
+                
+
+                // foreach( $blast_freezer_entries as $a ){
+                //     if( $a->code == 'BF73800' ){
+                //         return $a;
+                //     }
+                // }
+
                 return view("backend.modules.production_module.blast_freezer_entry.out_item", compact("blast_freezer_entries","from","to","search"));
 
             }

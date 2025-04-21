@@ -58,6 +58,9 @@
         margin: 0 0 0 10px;
         cursor: pointer;
     }
+    .product-name{
+        height: 40px;
+    }
 </style>
 @endsection
 
@@ -186,9 +189,9 @@
                             <strong>Trolley :</strong>
                             {{ $blast_freezer_entry->trolley->code }}
                         </p>
-                        <p>
+                        <p class="product-name">
                             <strong>Product :</strong>
-                            {{ $blast_freezer_entry->product_details->product->code }} - {{ $blast_freezer_entry->product_details->product->name }}
+                            {{ $blast_freezer_entry->product_details->product ? $blast_freezer_entry->product_details->product->code : 'N/A' }} - {{ $blast_freezer_entry->product_details->product ? $blast_freezer_entry->product_details->product->name : 'N/A' }}
                         </p>
                         <p>
                             <strong>Lead Time :</strong>

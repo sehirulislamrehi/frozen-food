@@ -34,38 +34,32 @@ use App\Models\LocationModule\Location;
 
     function HrisLogin($username, $password)
     {
-        $url = 'http://172.17.4.199:8686/api/hrisapi.svc/UserLoginValidate';
+        $url = "http://hris.prangroup.com:8696/Login/LoginHris/";
 
         $headers = array(
-            "Content-Type:application/json",
-
+            "Authorization: Basic YXV0aDoxMlByYW5AMTIzNDU2JA==",
+            "Content-Type: application/json",
         );
 
         $fields = [
-            'Key' => 'HR1S019XX78LOGIN',
-            'UserName' =>$username,
-            'Password' =>$password,
+            'username' => $username,
+            'password' => $password,
         ];
-        //print_r($fields);
-        $postdata=json_encode($fields);
-        // print_r($postdata);
-        // die();
-        $fields_string='';
+
+        $postdata = json_encode($fields);
 
         $ch = curl_init();
-        curl_setopt($ch,CURLOPT_URL, $url);
-
+        curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_POST, count($fields));
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 
-        $response = curl_exec($ch);
-        // print_r($response);
-        // die();
+        $response = json_decode(curl_exec($ch));
 
-        if (json_decode($response) == "Success") {
+        if ($response->status && $response->status == "Success") {
             return true;
         }
         return false;
